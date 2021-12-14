@@ -1,0 +1,18 @@
+from math import *
+from time import time
+from fractions import Fraction
+from decimal import *
+getcontext().prec = 40
+
+def binomial(n,k): return factorial(n)/factorial(k)/factorial(n-k)
+
+def p(nb, i) : return sum(binomial(nb, k)*((0.5**i)**(nb-k))*(1-2*0.5**(i))**(k) for k in range(nb))
+
+#def pfrac(nb, i) : return sum(binomial(nb, k)*((Fraction(1,2)**i)**(nb-k))*(1-2*Fraction(1,2)**(i))**(k) for k in range(nb))
+
+nb=32
+res = sum(i*p(nb, i) for i in range(1,64))
+
+#Decimal(res.numerator)/Decimal(res.denominator)
+
+solution = 6.3551758451

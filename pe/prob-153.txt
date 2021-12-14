@@ -1,0 +1,61 @@
+from time import time
+from math import *
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+def solve_squaresum(limit):
+	sq_limit = int(1+limit**0.5)
+	sqs = [i**2 for i in range(1,sq_limit+1)]
+	cnt=0
+	for i in range(len(sqs)):
+		for j in range(i, len(sqs)):
+			if gcd(i+1,j+1)==1:
+				sumij = sqs[i]+sqs[j]
+				added = i+1 if i==j else i+j+2
+				k=1
+				while sumij*k<=limit:
+					cnt += limit/sumij/k*added*k
+					k+=1
+	return cnt*2
+
+class DivSigma:
+	def __init__(self, n, p):
+		self.totients = [1]*n
+		for i in xrange(2, n):
+			if self.totients[i] == 1:
+				step = 1
+				scale = 1
+				while True:
+					step *= i
+					if step>=n: break
+					scale += step**p
+					pos = 1
+					mpos = step
+					while True:
+						if mpos>=n: break
+						if pos%i: self.totients[mpos] *= scale
+						pos+=1
+						mpos+=step
+	def __call__(self, i):
+		return self.totients[i]
+
+
+def solver(limit):
+	t1=time()
+	res = 0
+#	c = DivSigma(limit + 1,1)
+#	res += sum(c.totients)-1
+	for i in xrange(1,limit+1):
+		res += limit/i*i
+	print "Divsum calced in", time()-t1
+	t2=time()
+	res += solve_squaresum(limit)
+	print "Cplxsum calced in", time()-t2
+	print "Total in", time()-t1
+	return res
+
+#Divsum calced in 12.7029998302
+#Cplxsum calced in 88.4249999523
+#Total in 101.130999804
+#17971254122360635L
+

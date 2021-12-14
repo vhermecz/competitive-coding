@@ -1,0 +1,44 @@
+import base
+
+primes = base.primesbelow(100000000)
+
+class Factors:
+	def __init__(self, base, top, primes):
+		if base==0:
+			base+=1
+		span = top - base
+		self.base = base
+		self.totients = []
+		for i in range(span): self.totients.append([])
+		for i in primes:
+			step = 1
+			scale = 0
+			while True:
+				step *= i
+				scale += 1
+				pos = ((base + step - 1) / step) % i
+				mpos = (-base) % step
+				if mpos>=span: break
+				while True:
+					if mpos>=span: break
+					if mpos>=0 and pos%i: self.totients[mpos].append((i,scale))
+					pos+=1
+					mpos+=step
+
+	def __call__(self, i):
+		return self.totients[i-self.base]
+
+import collections
+types = collections.defaultdict(int)
+span = 10000000
+for step in range(10):
+	print step
+	base = span*step
+	top = span*(step+1)
+	a = Factors(base, top, primes)
+	for x in range(base, top):
+		factors = a(x)
+		mark = tuple(sorted([pow for pri, pow in factors]))
+		types[mark]+=1
+
+print len(types.keys())

@@ -1,0 +1,9 @@
+limit = 0
+for a in range(100,999):
+	for b in range(100,999):
+		pal = str(a*b)
+		if pal == pal[::-1] and limit < a*b:
+			limit = a*b 
+			print a*b,a,b
+
+solution 906609

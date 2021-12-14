@@ -1,0 +1,48 @@
+# finding
+#  a = p1^a1 * p2^a2 * ... * pn^an  | pi el prime
+#  divsum(a) = divsum(p1^a1) * divsum(p2^a2) * ... * divsum(pn^an) - a
+#  divsum(p1^a1) = p1^(a1-1) + divsum(p1^(a1-1))
+#  divsum(1) = 0
+
+class Divsum:
+	def __init__(self, n):
+		self.totients = [1 for i in range(n)]
+		for i in range(2, n):
+			if self.totients[i] == 1:
+				for j in range(i, n, i):
+					s = 0
+					p = 1
+					k = j
+					while k%i==0:
+						s += p
+						p *= i
+						k /= i
+					s += p
+					self.totients[j] *= s
+	def __call__(self, i):
+		return self.totients[i]-i
+
+c = Divsum(10**6+1)
+d = [False]*(10**6+1)
+rmax=0
+rmin=0
+for i in range(10**6+1):
+	if d[i]==True: continue
+	d[i]=True
+	ch = [i]
+	sch = set(ch)
+	while True:
+		i = c(i)
+		if i>10**6: break
+		if d[i]: break
+		if i in sch: break
+		d[i] = True
+		ch.append(i)
+		sch.add(i)
+	
+	if i in sch:
+		ch = ch[ch.index(i):]
+		if len(ch) > rmax:
+			rmax = len(ch)
+			rmin = min(ch)
+

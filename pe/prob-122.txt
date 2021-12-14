@@ -1,0 +1,52 @@
+from itertools import *
+from time import *
+
+# bad
+t1=time()
+s = list()
+for i in range(201): s.append(set())
+
+s[1] = set( [(1, 0, 0)] )
+
+for i in range(1, 201):
+	limit = max(s[i])[0]
+	scores = set([e[0] for e in s[i]])
+	for a,b in combinations_with_replacement(s[i], 2):
+		sm = a[0] + b[0]
+		if sm > limit and not sm in scores and sm <= 200:
+			cnd = set(s[i])
+			cnd.add( (sm, a[0], b[0]) )
+			if len(s[sm]) == 0 or len(cnd) < len(s[sm]):
+				s[sm] = cnd
+
+scores = [len(e)-1 for e in s]
+sol = sum([len(e)-1 for e in s])
+t2=time()
+
+print sol,t2-t1
+
+# good
+def solve(t_limit):
+	t1=time()
+	s = list()
+	for i in range(t_limit+1): s.append([])
+	s[1].append( [(1, 0, 0)] )
+	for i in range(1, t_limit+1):
+		for ss in s[i]:
+			limit = max(ss)[0]
+			scores = set([e[0] for e in ss])
+			for a,b in combinations_with_replacement(ss, 2):
+				sm = a[0] + b[0]
+				if sm > limit and not sm in scores and sm <= t_limit:
+					cnd = ss[:]
+					cnd.append( (sm, a[0], b[0]) )
+					if len(s[sm])>0 and len(cnd) < len(s[sm][0]):
+						s[sm] = []
+					if not cnd in s[sm] and (len(s[sm])==0 or len(cnd) == len(s[sm][0])):
+						s[sm].append(cnd)
+	scores2 = [min([len(e)-1 for e in ss]) for ss in s[1:]]
+	sol = sum(scores2)
+	t2=time()
+	print t_limit, sol,t2-t1
+
+solve(200)

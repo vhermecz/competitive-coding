@@ -1,0 +1,13 @@
+primes = tmp
+cnt = 0
+idx = 0
+limit = 100000000
+while True:
+	vallimit = limit/primes[idx]
+	idxlimit = bisect.bisect(primes, vallimit)
+	if idxlimit<idx:
+		break
+	cnt += idxlimit - idx
+	idx+=1
+
+solution = 17427258

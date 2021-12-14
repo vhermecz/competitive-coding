@@ -1,0 +1,16 @@
+def squareroot(apositiveint):
+  x = apositiveint // 2
+  seen = set([x])
+  while x * x != apositiveint:
+    x = (x + (apositiveint // x)) // 2
+    if x in seen: return (False, x)
+    seen.add(x)
+  return (True, x)
+
+tot = 0
+for a in range(1,101):
+	sr = squareroot(a*(10**200))
+	if not sr[0]:
+		tot+=sum(map(int, str(sr[1])[:100]))
+
+solution = 40886

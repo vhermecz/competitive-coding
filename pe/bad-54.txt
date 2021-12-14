@@ -1,0 +1,41 @@
+# 1   High Card: Highest value card.
+# 2   One Pair: Two cards of the same value.
+# 3   Two Pairs: Two different pairs.
+# 4   Three of a Kind: Three cards of the same value.
+# 5   Straight: All cards are consecutive values.
+# 6   Flush: All cards of the same suit.
+# 7   Full House: Three of a kind and a pair.
+# 8   Four of a Kind: Four cards of the same value.
+# 9   Straight Flush: All cards are consecutive values of same suit.
+# 10  Royal Flush: Ten, Jack, Queen, King, Ace, in same suit.
+def handscore(cs):
+	v = sorted(c[0] for c in cs)
+	dv = list(reversed(v))
+	vnosing = [i for i in v if v.count(i)>1]
+	isconsec = range(v[0],v[0]+5)==v
+	ss = set(c[1] for c in cs)
+	ns = len(ss)
+	h = sorted(v.count(i) for i in set(v))
+	if ns==1 and v[0]==10: return tuple([10, 14,0] + dv) # Royal Flush
+	if ns==1 and isconsec: return tuple([9, v[4],0] + dv) # Straight Flush
+	if h == [1,4]: return tuple([8, v[2],0] + dv) # Four of a Kind
+	if h == [2,3]: return tuple([7, v[2],0] + dv) # Full House
+	if ns==1: return tuple([6, max(v),0] + dv) # Flush
+	if isconsec: return tuple([5, v[4],0] + dv) # Straight
+	if h == [1,1,3]: return tuple([4, v[2],0] + dv) # Three of a Kind
+	if h == [1,2,2]: return tuple([3, max(vnosing),min(vnosing)] + dv) # Two Pairs # added min(dropsingles(v)) not sure if valid
+	if h == [1,1,1,2]: return tuple([2, max(vnosing),0] + dv) # One Pair
+	return tuple([1, v[4],0] + dv) # High Card
+
+def maphand(cs): return [("  23456789TJQKA".index(c[0]),c[1]) for c in cs]
+
+from urllib import urlopen
+
+cnt = 0
+for l in urlopen("http://projecteuler.net/project/poker.txt"):
+	hands = l.strip().split(" ")
+	h1 = maphand(hands[:5])
+	h2 = maphand(hands[5:])
+	if handscore(h1)>handscore(h2): cnt+=1
+
+solution=376

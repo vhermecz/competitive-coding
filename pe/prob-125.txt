@@ -1,0 +1,30 @@
+
+def ispali(n):
+	no = n
+	n2 = 0
+	while n>0:
+		n2 = n2*10+ (n%10)
+		n/=10
+	return n2==no
+
+import time
+t1 = time.time()
+buff = []
+nums = set()
+cnt = 0
+for n in range(2,10002):
+	n2 = n**2
+	buff = [ni + n2 for ni in buff]
+	buff.append((n-1)**2+n2)
+	nums |= set(buff)
+	cnt += len(buff)
+
+limit = 10**8
+nums = [n for n in nums if n<limit]
+nums = [n for n in nums if ispali(n)]
+
+t2 = time.time()
+print t2-t1
+
+# solution = 2906969179
+# time = 

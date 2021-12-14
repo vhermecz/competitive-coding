@@ -1,0 +1,88 @@
+#http://userpages.monmouth.com/~chenrich/MagicSquares/ModularDivision.html
+modulo = 10**5
+
+def fact10less_flat(n):
+	res = [1]*(n+1)
+	prd=1
+	for i in xrange(1,n+1):
+		res[i] = prd
+		if i%2==0 or i%5==0: continue
+		prd = (prd * i) % modulo
+		res[i] = prd
+	return res
+
+fact10less_precalc = fact10less_flat(modulo)
+
+def fact10less_fast(n):
+	res = 1
+	if n/modulo>1:
+		prd=fact10less_precalc[modulo]
+		res = pow(prd,n/modulo,modulo)
+	res = (res * fact10less_precalc[n%modulo]) % modulo
+	return res
+
+def fact10less(n):
+	res = 1
+	if n/modulo>1:
+		prd=1
+		for i in xrange(1,modulo):
+			if i%2==0 or i%5==0: continue
+			prd = (prd * i) % modulo
+		res = pow(prd,n/modulo,modulo)
+	for i in xrange(1,n%modulo+1):
+		if i%2==0 or i%5==0: continue
+		res = (res * i) % modulo
+	return res
+
+def memoize(f):
+	cache= {}
+	def memf(*x):
+		if x not in cache:
+			cache[x] = f(*x)
+		return cache[x]
+	return memf
+
+@memoize
+def factmod(n):
+	if n<=1: return (1,0,0)
+	# fact10less *fact(n/2)*2^n/2 *fact(n/5)*5^n/5 /fact(n/10)*10^n/10
+	fbase = fact10less_fast(n)
+	f2 = factmod(n/2)
+	f5 = factmod(n/5)
+	f10 = factmod(n/10)
+	return (moddiv(fbase*f2[0]*f5[0],f10[0],modulo), f2[1]+f5[1]-f10[1]+n/2, f2[2]+f5[2]-f10[2]+n/5)
+
+def resolve(v):
+	return (v[0]*pow(2,v[1]-v[2],modulo))%modulo
+
+def moddiv(n,d,m):
+	n%=m
+	d%=m
+	r = []
+	for i in xrange(m):
+		if (d*i)%m==n: r.append(i)
+	if len(r)!=1: print "OUCH"
+	return r[0]
+
+def moddiv(n,d,m):
+	return isolve(d,m,n)[0]%m
+
+# http://new.math.uiuc.edu/math348/publicSP11/jimcarlsonpy.pdf p12
+def isolve(a,b,c):
+	q, r = divmod(a,b)
+	if r == 0:
+		return( [0,c/b] )
+	else:
+		sol = isolve( b, r, c )
+		u = sol[0]
+		v = sol[1]
+		return( [ v, u - q*v ] )
+
+from time import time
+t1=time()
+v=factmod(10**12)
+r=resolve(v)
+t2=time()
+print t2-t1,r
+
+# 0.016 16576

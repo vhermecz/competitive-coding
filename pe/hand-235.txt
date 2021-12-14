@@ -1,0 +1,7 @@
+def u(k,r): return (900-3*k)*r**(k-1)
+
+def s(n,r): return sum(u(k,r) for k in range(1,n+1))
+
+s(5000,1.00232210863287608)
+
+r=1.002322108633

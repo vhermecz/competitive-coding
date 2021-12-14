@@ -1,0 +1,71 @@
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from math import *
+
+def genproblemset(n):
+	total = factorial(n)**2
+	segments = [total/i**2 for i in range(1,n+1)]
+	denom = reduce(gcd, segments)
+	segments = [seg / denom for seg in segments]
+	return (total/denom/2, segments)
+
+def getsizeleft(segments):
+	sizeleft = [0] * (len(segments)-1) + [segments[len(segments)-1]]
+	for i in range(len(segments)-2,-1,-1):
+		sizeleft[i] = sizeleft[i+1] + segments[i]
+	return sizeleft
+
+def solver(limit, items):
+	if len(items)>25 and max(items)>1:
+		items = filter(limit, items, 2,1000)
+	st = [len(items), items, getsizeleft(items), 0]
+	def solve(limit, pos, used):
+		if limit==0:
+			st[3] |= used
+			return 1
+		if limit<0: return 0
+		if pos >= st[0]: return 0
+		if st[2][pos]<limit: return 0
+		return solve(limit, pos+1, used) + solve(limit-st[1][pos], pos+1, used|(1<<pos))
+	cnt = solve(limit, 0, 0)
+	used = [items[i] for i in range(len(items)) if (1<<i)&st[3]]
+	return (cnt, used)
+
+def filter1(limit, items):
+	for i in range(2,100):
+		mods = [n%i for n in items]
+		if limit%i==0 and sum(mods) < i:
+			items = [items[i] for i in range(len(items)) if mods[i]==0]
+	return items
+
+def filter(limit, items, f ,t):
+	for i in range(f,t+1):
+		mods = [n%i for n in items]
+		sub_items = sorted(i for i in mods if i>0)
+		hist = [(n, mods.count(n)) for n in sorted(set([0]+sub_items))]
+		reqed = set([0])
+#		print i, hist, limit%i, sum(sub_items), sum(sub_items)/i
+		if len(sub_items)==0 or len(sub_items)>15:
+			continue
+		for m in range(0, sum(sub_items)/i+1):
+			s = solver(m*i+limit%i, sub_items)
+			reqed |= set(s[1])
+		oldlen = len(items)
+		items = [items[e] for e in range(len(items)) if mods[e] in reqed]
+		newlen = len(items)
+		if newlen<oldlen:
+			print i, oldlen, newlen
+#			print i, reqed, len(items), hist
+	return items
+
+limit, items = genproblemset(80)
+solver(limit, items)
+
+
+from time import time
+t1=time()
+limit, items = genproblemset(35)
+res = solver(limit, items)
+t2=time()
+print t2-t1,res
+

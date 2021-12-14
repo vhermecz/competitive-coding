@@ -1,0 +1,41 @@
+from fractions import Fraction
+C = Fraction(60)
+cache = dict()
+def solve(n):
+	if n == 1: return set([C])
+	if not cache.has_key(n):
+#		res = set([1/(1/C+1/rem) for rem in solve(n-1)]) # my bad
+		res = set([])
+		for i in range(1,n/2+1):
+			for a in solve(i):
+				for b in solve(n-i):
+					res.add(a+b)
+					res.add(1/(1/a+1/b))
+		cache[n] = res
+	return cache[n]
+
+from time import time
+
+total1=time()
+total=set([])
+for i in range(1,19):
+	t1=time()
+	a=solve(i)
+	total|=a
+	t2=time()
+	print i, t2-t1, len(a)
+
+total2=time()
+print total2-total1, len(total)
+
+#[len(reduce(lambda a,b:a|b,[solve(i) for i in range(1,j+1)])) for j in range(1,10)]
+
+solution = 3857447
+time = 1542sec
+
+#timeline
+# 2754782, 680sec => critical problem: counted same values from different num of capacitors used as different
+# 2754782, 340sec => performance: double work as calced a+b and b+a as well. (halvenes reqed time)
+# 1748380, 344sec => critical problem: recursion for serial connection was broken (only 1/(1/C+1/s(n-1)) instead of 1/(1/s(i)+1/s(n-i))
+# 3857447, 1542sec => good
+# by using float it completes in 35sec, but the result is bad

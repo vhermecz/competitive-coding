@@ -1,0 +1,18 @@
+import math
+totest = 1
+sum = 0
+
+while totest < 2000000:
+	totest+=1
+	tester = 2
+	end = math.sqrt(totest)
+	while tester < end:
+		if totest % tester == 0:
+			break
+		tester+=1
+	if tester > end:
+		sum += totest
+
+print sum
+
+solution: 142913828922

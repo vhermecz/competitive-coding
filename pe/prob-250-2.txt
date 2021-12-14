@@ -1,0 +1,12 @@
+from time import time
+
+t1 = time()
+bigmod = 10**16
+sol = [1] + [0]*249
+for i in range(1,250251):
+	v = pow(i,i,250)
+	sol = [(sol[j]+sol[(j-v)%250])%bigmod for j in range(250)]
+
+t2 = time()
+print t2-t1
+print sol[0]-1

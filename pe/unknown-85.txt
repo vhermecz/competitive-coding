@@ -1,0 +1,8 @@
+minab=min([abs(a*b-2000000) for a,b in itertools.combinations_with_replacement([n*(n+1)/2 for n in range(1,2001)], 2)])
+[(a,b) for a,b in itertools.combinations_with_replacement([n*(n+1)/2 for n in range(1,2001)], 2) if abs(a*b-2000000)==minab]
+
+a,b = 666, 3003
+
+solution = 36*77
+
+2772

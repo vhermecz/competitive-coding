@@ -1,0 +1,26 @@
+import itertools
+from time import time 
+
+def solve(limit):
+	lut = [i**2 for i in range(limit)]
+	cnt = 0
+	for ax,ay,bx,by in itertools.product(range(limit), repeat=4):
+		if ax==ay==0: continue
+		if bx==by==0: continue
+		if not(ax>bx or ax==bx and ay>by): continue
+		soa = lut[ax] + lut[ay]
+		sob = lut[bx] + lut[by]
+		sab = lut[abs(ax-bx)] + lut[abs(ay-by)]
+		l = sorted(list([soa,sob,sab]))
+		if l[0]+l[1] == l[2]:
+			cnt+=1
+	return cnt
+
+t1 = time()
+sol = solve(51)
+t2 = time()
+print t2-t1
+print sol
+
+solution = 14234
+time = 9.12

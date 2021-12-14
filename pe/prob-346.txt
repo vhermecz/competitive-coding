@@ -1,0 +1,21 @@
+from time import time
+
+def f(x, i): return sum(x**i2 for i2 in range(i+1))
+
+nums = []
+
+t1=time()
+for i in range(2,40):
+	for x in range(2,10**6+1):
+		v = f(x,i)
+		if v < 10**12:
+			nums.append(v)
+		else:
+			break
+
+nums = set(nums)
+
+t2=time()
+print t2-t1, sum(nums)+1
+
+# 6.56500005722 336108797689259276

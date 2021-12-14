@@ -1,0 +1,74 @@
+from time import time
+
+t1=time()
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def droot(n, base=10):
+	s = 0
+	while n>0:
+		s+=n%base
+		n/=base
+	return s
+
+def drootseq(n):
+	r = []
+	while n>9:
+		r.append(n)
+		n = droot(n)
+	r.append(n)
+	return r
+
+def drootbin(n):
+	return droot(n, 2)
+
+# 0-empty 1..- i-1
+seg7digits = [0b00000000, 0b01110111, 0b00010010, 0b01011101, 0b01011011, 0b00111010, 0b01101011, 0b01101111, 0b01110010, 0b01111111, 0b01111011]
+
+# -1 for empty, digit otherwise
+def transdigit(d1, d2):
+	return drootbin(seg7digits[d1+1] ^ seg7digits[d2+1])
+
+def transnumber(n1,n2):
+	r = 0 
+	while n1+n2!=0:
+		d1 = -1 if n1==0 else n1%10
+		d2 = -1 if n2==0 else n2%10
+		r += transdigit(d1,d2)
+		n1/=10
+		n2/=10
+	return r
+
+def samclock(n):
+	return 2*sum(transnumber(n,0) for n in drootseq(n))
+
+def maxclock(n):
+	s = drootseq(n)
+	r = transnumber(s[0],0) + transnumber(s[-1],0)
+	for i in range(len(s)-1):
+		r += transnumber(s[i], s[i+1])
+	return r
+
+primes = primesbelow(2*10**7)
+
+r = 0
+for p in [p for p in primes if p>10**7]:
+	r += samclock(p)-maxclock(p)
+
+t2=time()
+
+print t2-t1, r
+#pypy:		13.774 13625242
+#cpython:	56.513 13625242

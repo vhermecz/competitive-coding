@@ -1,0 +1,19 @@
+def gcd(a,b):
+	while b != 0:
+		a,b = b,a%b
+	return a
+
+from math import *
+from time import *
+t1=time()
+cnt=0
+for d in range(4,12001):
+	for n in range(int(math.floor(d/3.0)+1), int(math.ceil(d/2.0))):
+		if gcd(n,d)==1:
+			cnt+=1
+
+t2=time()
+print t2-t1
+
+solution = 7295372
+time = 27.218

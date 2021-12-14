@@ -1,0 +1,43 @@
+#def getcost(n):
+#	if n<2: return 0
+#	st = [1,4]
+#	n-=2
+#	while n>0:
+#		st = sorted(st)
+#		st.append(st[0]+4)
+#		st[0]+=1
+#		n-=1
+#	return sum(st)
+#
+#for i in range(2,100):
+#    print i, getcost(i), getcost(i)-getcost(i-1)
+#
+#lastcost= 0
+#lastdelta = 0
+#lastcnt = 0
+#for i in range(2,10000):
+#	cost = getcost(i)
+#	delta = cost-lastcost
+#	if delta==lastdelta:
+#		lastcnt+=1
+#	else:
+#		print delta, lastcnt
+#		lastdelta=delta
+#		lastcnt=1
+#	lastcost = cost
+##    print i, getcost(i), getcost(i)-getcost(i-1)
+
+def fastsolve(n):
+	lenseq = [1,1,1,1]
+	for i in range(100): lenseq.append(lenseq[-1]+lenseq[-4])
+	deltaseq = range(5,109)
+	n-=1
+	res=0
+	for i in range(len(lenseq)):
+		res+=min(n, lenseq[i])*deltaseq[i]
+		n -= min(n, lenseq[i])
+		if n==0: return res
+
+sol = fastsolve(10**9)
+# 64564225042
+

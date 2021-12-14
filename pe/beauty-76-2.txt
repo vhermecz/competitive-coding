@@ -1,0 +1,8 @@
+cache = dict()
+def solve(n,mi):
+	if n==0: return 1
+	if not cache.has_key((n,mi)):
+		cache[(n,mi)] = sum(solve(n-i, i) for i in range(mi, n+1))
+	return cache[(n,mi)]
+
+solve(100,1)-1

@@ -1,0 +1,153 @@
+import math
+from Tkinter import *
+
+res = 0.000001
+projlen = 150
+g = 9.81
+projection = [0]*int(150/res)
+timeprint = [0]*int(150/res)
+degprint = [-1]*int(150/res)
+
+tstep = 0.00001
+tstep = 0.01
+
+def addsphere(center, radius, t=0):
+	start = int(math.floor(max(0,(center-radius)/res)))
+	end = int(math.ceil((center+radius)/res))
+#	print "adding sphere", start, end
+	for section in range(start, end+1):
+		swellsq = radius**2 - (res*section-center)**2
+		if swellsq>=0:
+			swell = swellsq**0.5
+			if (swell > projection[section]):
+				projection[section] = swell
+				timeprint[section] = t
+				#deg = math.atan2(swell,res*section-center)*180/math.pi
+				deg = res*section-center
+				degprint[section] = deg
+
+def animate(height, vblow):
+	tstep = 0.0001
+	t=tstep
+	t = 20/g
+	while True:
+		((height-center)*2/g)
+		center = height - g/2*t**2
+		radius = vblow*t
+		if center+radius<=0: break
+#		print t, center, radius
+		addsphere(center, radius, t)
+		t+=tstep
+		if t>2.07:break
+
+def animate_bycenter(height, vblow):
+	center = height
+	while True:
+		t=((height-center)*2/g)**0.5
+		center = height - g/2*t**2
+		radius = vblow*t
+		if center+radius<=0: break
+		print t, center, radius
+		addsphere(center, radius, t)
+		center-=res
+
+def integrate():
+	tot = 0
+	for swell in projection:
+		tot += swell**2*math.pi*res
+	return tot
+
+def display(projection):
+	master = Tk()
+	w = Canvas(master, width=1500, height=800)
+	w.pack()
+	xzoom = 1500.0/len(projection)
+	yzoom = 800.0/max(projection)
+	for i in range(len(projection)):
+		w.create_rectangle(i*xzoom,0,(i+1)*xzoom, projection[i]*yzoom, fill="black")
+	mainloop()
+
+def solve_fast(height, vblow):
+	shift = 40.77 # 0.01
+	shift = 31.75 # 0.001
+	shift = vblow**2/g
+	center = height-shift/2
+	while True:
+		t=((height-center)*2/g)**0.5
+		radius = vblow*t
+		swellsq = radius**2 - shift**2
+		if swellsq>=0:
+			swell = swellsq**0.5
+			idx = int((center+shift)/res)
+			if idx<0:break
+			print center, idx
+			#projection[idx]=swell
+			#timeprint[idx]=t
+		center-=res
+
+def solve_fast_inplace(height, vblow,res):
+	t1=time()
+	shift = vblow**2/g
+	shiftsq = shift**2
+	center = height-shift/2
+	tot = 0
+	while True:
+		t=((height-center)*2/g)**0.5
+		radius = vblow*t
+		swellsq = radius**2 - shiftsq
+		if swellsq>=0:
+			idx = int((center+shift)/res)
+			if idx<0:break
+#			print center, idx
+			tot += swellsq*math.pi*res
+		center-=res
+	t2=time()
+	print t2-t1
+	return tot
+
+def solve_fast_inplace2(height, vblow,res):
+	t1=time()
+	shift = vblow**2/g
+	shiftsq = shift**2
+	center = -shift
+	tot = 0
+	while True:
+		swellsq = (height-center)*2*shift - shiftsq
+		if swellsq<0: break
+		# idx = center+shift
+		tot += swellsq*math.pi*res
+		center+=res
+	t2=time()
+	print t2-t1, center
+	return tot
+
+t1=time()
+animate_bycenter(100,20)
+t2=time()
+print t2-t1
+#display(projection)
+#display(timeprint)
+solution = integrate()
+solution
+
+#1856682.0711267586
+#1856685.8157663934
+#1856687.011381734
+#1856687.0581670995
+#1856687.0528620027
+#1825841.9558569049
+#1856533.780929702
+#1856532.7019300337
+
+>>> solve_fast_inplace(100,20,0.01)
+1856768.4927099063	e-2
+1856568.0113188557	e-3	-200.48139105062
+1856535.6264357169	e-4 -32.384883138816804
+1856533.0051265454	e-5 -2.6213091714307666
+1856532.8632144714	e-6 -0.14191207406111062
+1856532.8370499350	e-7 -0.026164536364376545
+1856532.8368656803	e-7#2
+1856532.7429014945	e-8
+
+1856532.7429014945
+1856534.4318686526

@@ -1,0 +1,17 @@
+from math import *
+
+def binomial(n,k):
+	return factorial(n)/factorial(k)/factorial(n-k)
+
+def p(n):
+#	res = 0
+#	for i in range(1,n):
+#		res += binomial(n,i)-1
+#	res = 2**n - n - 1:
+	res *= binomial(26,n)
+	return res
+
+sols = [p(n) for n in range(2,27)]
+mval = max(sols)
+print mval, sols.index(mval)+2
+

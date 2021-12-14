@@ -1,0 +1,19 @@
+from time import time
+from itertools import *
+
+t1=time()
+dscores = [2*i for i in range(1,21)] + [50]
+scores = sorted(range(1,21) + [3*i for i in range(1,21)] + [25] + dscores)
+
+def add(a,b): return a+b
+
+checkouts = []
+checkouts.extend(dscores)
+checkouts.extend([add(a,b) for a,b in product(scores, dscores)])
+checkouts.extend([add(a,b) for a,b in product([add(a,b) for a,b in combinations_with_replacement(scores, 2)], dscores)])
+
+solution = len([i for i in checkouts if i<100])
+t2=time()
+print t2-t1,solution
+
+# 0.0420000553131 38182

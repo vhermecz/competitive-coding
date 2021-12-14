@@ -1,0 +1,19 @@
+def toBase2(i):
+	res = []
+	while i!=0:
+		res.append(str(i%2))
+		i/=2
+	res.reverse()
+	return "".join(res)
+
+sum = 0
+for i in range(1,1000000):
+	bin = toBase2(i)
+	dec = str(i)
+	if bin==bin[::-1] and dec==dec[::-1]:
+		sum += i
+		print dec, bin
+
+print sum
+
+solution = 872187

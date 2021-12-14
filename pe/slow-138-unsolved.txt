@@ -1,0 +1,34 @@
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from time import time
+
+def genpts(limit):
+	m_limit = int(limit**0.5)
+	pts = []
+	for m in xrange(2, m_limit+1):
+		for n in xrange(1,m):
+				if (m-n)%2==1 and gcd(m,n)==1:
+						a = m**2 - n**2
+						b = 2*m*n
+						c = m**2 + n**2
+						p = 2*m**2 + 2*m*n
+						yield tuple(sorted([a,b,c]))
+
+vs = [pt for pt in genpts(10**9) if (pt[1]-pt[0]*2) in [1,-1]]
+
+m**2 -2*m*n - n**2 = 0
+m = (1-r2)n
+m = (1+r2)n
+
+n**2 + 2mn - m**2 = 0
+n = (-1+-r2)m
+n = (r2-1)m
+
+(8, 15, 17)
+(136, 273, 305)
+(2448, 4895, 5473)
+(43920, 87841, 98209)
+(788120, 1576239, 1762289)
+(14142232, 28284465, 31622993)
+(253772064, 507544127, 567451585)
+

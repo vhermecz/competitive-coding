@@ -1,0 +1,20 @@
+from time import time
+
+values = [i**2 for i in range(1,101)]
+total = sum(values)
+minv = sum(values[:len(values)/2])
+maxv = sum(values[len(values)/2:])
+
+cases = [0]*(maxv-minv+1)
+t1=time()
+for n in xrange(100000000):
+	if n%50000==0:
+		n0 = cases.count(0)
+		n1 = cases.count(1)
+		no = len(cases)-n0-n1
+		print "%8d %8d %8d %8d %4.4f" % (2*n, n0,n1,no, time()-t1)
+	random.shuffle(values)
+	sh1value = sum(values[:50])
+	cases[sh1value-minv]+=1
+	cases[total-sh1value-minv]+=1
+

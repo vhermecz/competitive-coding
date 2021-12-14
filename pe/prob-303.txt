@@ -1,0 +1,59 @@
+from time import time
+# sieve should been added to handle multiples of allnines
+
+def isrepnine(n):
+	while n!=0:
+		if n%10!=9: break
+		n/=10
+	return n==0
+
+def digitsunder3(n):
+	while n!=0:
+		if n%10>2: break
+		n/=10
+	return n==0
+
+def numlen(n):
+	cnt=0
+	while n!=0:
+		n/=10
+		cnt+=1
+	return cnt
+
+def repunit(n):
+	return (10**(n)-1)/9
+
+def fpnallnine(n):
+	return repunit(numlen(n)*5)+repunit(numlen(n)*4)
+
+def fpn(n):
+	print n
+	if isrepnine(n): return fpnallnine(n)/n
+	cand=[0]
+	level = 1
+	while True:
+#		print level, len(cand)
+		nextlevel=level*10
+		nextcand = []
+		for i in range(level, nextlevel, level):
+			for c in cand:
+				m = c+i
+				t = m*n
+				if digitsunder3(t):
+					return m
+				if digitsunder3(t%nextlevel):
+					nextcand.append(m)
+		cand += nextcand
+		level=nextlevel
+
+def fpnslow(n):
+	i=1
+	while not digitsunder3(n*i): i+=1
+	return i
+
+t1=time()
+a = [fpn(i) for i in range(1,10001)]
+t2=time()
+print t2-t1,sum(a)
+#cpython 168.135 1111981904675169
+#pypy	  91.910 1111981904675169

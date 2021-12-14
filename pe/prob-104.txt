@@ -1,0 +1,27 @@
+import time
+
+fa = 1
+fb = 1
+fsa = fsb = 1
+k = 2
+
+pandigits = set("123456789")
+
+def is_pandigit(numstr):
+	return set(numstr) == pandigits
+
+t1 = time.time()
+while True:
+	fa,fb = fb,fa+fb
+	fsa,fsb = fsb,fsa+fsb
+	fsb %= 1000000000
+	k += 1
+	if is_pandigit(str(fsb)[-9:]) and is_pandigit(str(fb)[:9]):
+		break
+
+t2 = time.time()
+
+print t2-t1
+print k
+
+# solution = 329468

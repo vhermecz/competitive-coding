@@ -1,0 +1,131 @@
+from time import time
+
+t1=time()
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+primes = primesbelow(190)
+total = reduce(lambda a,b:a*b, primes)
+sqroot =  int(total**0.5)
+
+def root(n):
+	a = 1
+	ldiff=2*n
+	while True:
+		a2 = (a + n/a)/2
+		diff = abs(a2-a)
+		if diff==0 or ldiff==diff:
+			return a
+		a=a2
+		ldiff = diff
+
+# v0
+from time import time
+t1=time()
+a = int(root(total))
+cnt = 0
+while True:
+	if cnt%1000==0: print cnt
+	rem = total%a
+	if rem==0:
+		break
+	left = a-rem
+#	print rem, left
+#	s = log(a,10)
+#	s2 = log(left,10)
+	if left>100000:
+		d = int(left**0.5/10)
+#		print d
+		while total%(a-d)<rem:
+			d = int(d/2)
+		d *= 2
+		while total%(a-d)<rem:
+			d = int(d/1.0001)
+		if d==0:
+			d=1
+		a -= d
+	else:
+		a -=1
+	cnt +=1
+
+t2=time()
+print t2-t1,a
+
+
+## --- misc
+
+a = int(root(total)*99999/100000)
+rem = total%a
+k = total/a
+print rem, k
+for p in range(0,20):
+	i = 10**p
+	d = total/(a-i)-k
+	rem2 = total%(a-i)
+	print rem2-rem, a-rem2, d, i
+
+
+t2=time()
+print t2-t1, a
+
+total = rem + k*a = rem2 + (k+d1)*(a-i1) = rem3 + (k+d2)*(a-i2)
+
+d1 = i1*total/(a*(a-i1))
+
+rem = d1*a - k*i1 - d1*i1
+rem = i1*total/(a-i1) - k*i1 - i1^2*total/(a*(a-i1))
+rem * (a-i1) = i1*total - k*i1*(a-i1) - i1^2*total/a
+rem*a - rem*i1 = i1*total + k*i1^2 - k*i1*a - i1^2*total/a
+
+cond : k = total/a
+(k-total/a) * i1^2 + 
+
+
+
+rem - rem2 = d1*a - (k+d1)*i1
+rem - rem3 = d2*a - (k+d2)*i2
+
+
+
+
+total/(a-1) - total/a = 
+
+(total*a - total*(a-i)) / a*(a-i)
+
+
+
+
+
+
+
+
+total = rem + k*a = (k+d)*(a-i)
+rem + k*a = k*a + d*a - k*i - d*i
+rem = d*a - k*i - d*i
+
+k ~ a
+
+rem = rem2 + d*a - k*i - d*i
+
+
+
+total = rem2 + (k+d)*(a-dec)
+total = rem2 + k2*a - 10k2
+rem + k*a = rem2 + k*a + d*a - 10*k - 10*d
+rem2 = rem - d*a + dec*(k+d) 
+
+
+
+	

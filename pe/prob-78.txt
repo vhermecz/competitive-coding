@@ -1,0 +1,51 @@
+
+def solver(limit):
+	s = []
+	s.append([1]*limit)
+	for n in range(limit):
+		s.append([0]*limit)
+	s[1][0] = 1
+	for y in range(2,limit):
+		for x in range(y-1, -1, -1):
+			s[y][x] = (s[y-x-1][x] + s[y][x+1]) % 1000000
+	res = [s[i][0] for i in range(len(s))]
+	return res
+
+def solver2(limit):
+	ways = [0]*limit
+	ways[0] = 1
+	for i in range(1, len(ways)):
+		for j in range(i, len(ways)):
+			ways[j] = (ways[j] + ways[j-i]) % 1000000
+	return ways
+
+def timer(fun, limit):
+	t1=time()
+	r = fun(limit)
+	t2=time()
+	print t2-t1
+	return r
+
+
+pens = [x*(3*x - 1)/2 for x in range(1,1000)]
+pens2 = [x*(3*x + 1)/2 for x in range(1,1000)]
+pens = sorted(pens + pens2)
+
+from time import time
+t1=time()
+sols = [1]
+i=1
+while True:
+	n=0
+	j=0
+	while pens[j]<=i:
+		n = (n + sols[i-pens[j]] * [1,-1][(j/2)%2]) % 1000000
+		j+=1
+	if n==0:
+		print i
+		break
+	sols.append(n)
+	i+=1
+
+t2=time()
+print t2-t1

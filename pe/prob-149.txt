@@ -1,0 +1,33 @@
+from time import time
+
+def genprob():
+	res = [((100003 − 200003*k + 300007*k**3)%10**6)-500000 for k in range(1,56)] + [0]*(4*10**6-55)
+	for k in xrange(55,4*10**6):
+		res[k] = ((res[k-24] + res[k-55])%10**6)-500000
+	return res
+
+def genpasses(dim):
+	res = zip(range(0,dim), [dim]*dim, [dim]*dim) # vertical
+	res += zip(range(0,dim**2, dim), [1]*dim, [dim]*dim) # horizontal
+	res += zip(range(0,dim), [dim+1]*dim, range(dim,0,-1)) # diag-top
+	res += zip(range(0,dim**2, dim), [dim+1]*dim, range(dim,0,-1)) # diag-left
+	res += zip(range(0,dim), [dim-1]*dim, range(1,dim+1)) # vertical # antidiag-top
+	res += zip(range(dim-1,dim**2,dim), [dim-1]*dim, range(dim,0,-1)) # vertical # antidiag-right
+	return res
+
+t1=time()
+prob = genprob()
+sol = 0
+for pos, step, cnt in genpasses(2000):
+	state = 0
+	while cnt>0:
+		state += prob[pos]
+		if state<0: state=0
+		if state>sol: sol=state
+		pos+=step
+		cnt-=1
+
+t2=time()
+print t2-t1,sol
+#cpy 16.4430000782 52852124
+#pypy 26.7869999409 52852124

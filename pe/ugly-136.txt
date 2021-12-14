@@ -1,0 +1,57 @@
+import itertools
+from math import *
+from time import time
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def primesbetween(N,M):
+	l = M-N
+	sieve = [True] * l
+	for p in primes:
+		for t in xrange(-N%p, l, p):
+			sieve[t]=False
+	return [N+i for i in xrange(0,l) if sieve[i]]
+
+def solnum(v, facts):
+	divs = [reduce(lambda x,y:x*y, comb) for comb in itertools.product(*[[f[0]**a for a in range(f[1]+1)] for f in facts])]
+	nsol = sum(1 for d in divs if 3*d*d>v and (v+d*d)%(4*d)==0)
+	return nsol	
+
+t1 = time()
+limit = 5*10**7
+primes = primesbelow(limit)
+cnt = 0
+for p2 in range(0, int(ceil(log(limit,2)))):
+	p2v = 2**p2
+	for p in primes:
+		v = p2v*p
+		if v > limit: break
+		facts = []
+		if p==2:
+			facts = [(2,p2+1)]
+		else:
+			if p2==0:
+				facts = [(p, 1)]
+			else:
+				facts = [(2, p2), (p,1)]
+		if solnum(v,facts)==1:
+			cnt+=1
+
+t2=time()
+
+print t2-t1,cnt
+
+# 468.712000132 22219597 -> with primesbetween for limit 500000000
+# 78.6870000362 2544559

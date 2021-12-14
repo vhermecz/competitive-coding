@@ -1,0 +1,23 @@
+len = 1
+res = 0
+calc = [0]+[1]*9+[0]*20
+#  0.. 9 - eq
+# 10..19 - desc
+# 20..29 - asc
+
+res+=sum(calc)
+
+print len, res
+
+while len < 100:
+	calc2 = [0]*30
+	for i in range(10):
+		calc2[i] = calc[i]
+		calc2[10+i] = sum(calc[(i+1):10]) + sum(calc[(10+i):20])
+		calc2[20+i] = sum(calc[0:i]) + sum(calc[20:(20+i+1)])
+	calc=calc2
+	res+=sum(calc)
+	len+=1
+	print len, res
+
+

@@ -1,0 +1,11 @@
+# rephrasing: how many ways to produce n from the sum of 1,m..n (repeated, order is important, two non-one cannot be neighbours)
+
+cache = dict()
+def solve(m, n):
+	if n<=0: return 1
+	if not cache.has_key((m,n)):
+		cache[(m,n)] = sum([solve(m, n-i) for i in [1] + range(m+1,n+2)])
+	return cache[(m,n)]
+
+s = 1
+while solve(50, s)<10**6: s+=1

@@ -1,0 +1,118 @@
+from fractions import Fraction
+from time import time
+
+def gennums(n):
+	si = 290797
+	t = []
+	for i in range(n):
+		si = (si**2)%50515093
+		t.append(int(si%500))
+	return t
+
+def tofrac(exp):
+	return tuple([tofrac(item) for item in exp]) if isinstance(exp, tuple) else Fraction(exp)
+
+def genevents(lines):
+	#(y, isend, lnum)
+	events = []
+	for i in range(len(lines)):
+		line = lines[i]
+		ymin, ymax = sorted([line[0][1], line[1][1]])
+		events.append( (ymin, 0, i) )
+		events.append( (ymax, 1, i) )
+	return sorted(events)
+
+# from http://paulbourke.net/geometry/lineline2d/
+def endtouches(line1, line2):
+	d = (line2[1][1]-line2[0][1])*(line1[1][0]-line1[0][0]) - (line2[1][0]-line2[0][0])*(line1[1][1]-line1[0][1])
+	if d == 0:
+		return False
+	ua = ((line2[1][0]-line2[0][0])*(line1[0][1]-line2[0][1]) - (line2[1][1]-line2[0][1])*(line1[0][0]-line2[0][0]))
+	ub = ((line1[1][0]-line1[0][0])*(line1[0][1]-line2[0][1]) - (line1[1][1]-line1[0][1])*(line1[0][0]-line2[0][0]))
+	if d<0:	# missed this one
+		d=-1*d
+		ua=-1*ua
+		ub=-1*ub
+	if (0<ub<d) and (0<ua<d):
+		x = line1[0][0] + Fraction(ua * (line1[1][0]-line1[0][0]), d)
+		y = line1[0][1] + Fraction(ua * (line1[1][1]-line1[0][1]), d)
+		return (x,y)
+	return False
+
+def gettouches(lines):
+	events = genevents(lines)
+	buff = set()
+	res = []
+	for event in events:
+		if event[1]==0:
+			for cand in buff:
+				tmp = endtouches(lines[cand],lines[event[2]])
+				if isinstance(tmp, tuple):
+					res.append(tmp)
+			buff.add(event[2])
+		else:
+			buff.remove(event[2])
+	return set(res)
+
+def counttouches2(lines):
+	cnt = 0
+	for i in range(len(lines)):
+		for j in range(i+1,len(lines)):
+			if endtouches(lines[i],lines[j]):
+				cnt+=1
+	return cnt
+
+lines = []
+lines.append(((27, 44), (12, 32)))
+lines.append(((46, 53), (17, 62)))
+lines.append(((46, 70), (22, 40)))
+
+t1=time()
+numbers = gennums(20000)
+lines = [((numbers[4*i],numbers[4*i+1]),(numbers[4*i+2],numbers[4*i+3])) for i in range(5000)]
+#lines = [tofrac(line) for line in lines]
+solution = gettouches(lines)
+t2=time()
+print t2-t1, len(solution)
+
+# 6548173
+# 1329
+# 2111
+# 375
+# 759
+# still bad, noticed searched for touching segs instead of true intersections
+# 2868997 # not filtered for distinctness
+# 2868868
+
+line = lines[1]
+sorted([line[0][1], line[1][1]])
+
+
+# bad
+def endtouches(line1, line2):
+	d =  (line2[1][1]-line2[0][1])*(line1[1][0]-line1[0][0]) - (line2[1][0]-line2[0][0])*(line1[1][1]-line1[0][1])
+	if d == 0:
+		return False
+#		if len(set(line1) & set(line2)):
+#			print line1, line2
+#		sline1 = sorted(line1)
+#		sline2 = sorted(line2)
+#		if sline1[0] == sline2[1] or sline1[1] == sline2[0]:
+#			return True
+#		if len(set(line1) & set(line2)):
+#			return True # overlapping not handled
+#		return False
+	ua = ((line2[1][0]-line2[0][0])*(line1[0][1]-line2[0][1]) - (line2[1][1]-line2[0][1])*(line1[0][0]-line2[0][0]))
+	ub = ((line1[1][0]-line1[0][0])*(line1[0][1]-line2[0][1]) - (line1[1][1]-line1[0][1])*(line1[0][0]-line2[0][0]))
+	if d<0:	# missed this one
+		d=-1*d
+		ua=-1*ua
+		ub=-1*ub
+#	if (ua==0 or ub==0 or ua==d or ub==d):	# detects touches of seg w line instead of seg w seg
+#	if (ua==0 or ua==d) and (0<=ub<=d) or (ub==0 or ub==d) and (0<=ua<=d):
+#		return True
+	if (0<ub<d) and (0<ua<d):
+		x = line1[0][0] + Fraction(ua * (line1[1][0]-line1[0][0], d)
+		y = line1[0][1] + Fraction(ua * (line1[1][1]-line1[0][1], d)
+		return (x,y)
+	return False

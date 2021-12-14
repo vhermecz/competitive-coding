@@ -1,0 +1,42 @@
+from time import time
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+class Rad:
+	def __init__(self, n):
+		self.totients = [1 for i in xrange(n)]
+		for i in xrange(2, n):
+			if self.totients[i] == 1:
+				for j in xrange(i,n,i):
+					self.totients[j] *= i
+	def __call__(self, i):
+		return self.totients[i]
+
+def solve(limit):
+	cntab=0
+	cntb=0
+	cntc=0
+	t1=time()
+	rads = Rad(limit).totients
+	total = 0
+	for a in xrange(1,limit/2):
+		arad = rads[a]
+		for b in xrange(a+1,limit-a):
+			brad = rads[b]
+			if brad==b:continue
+			c=a+b
+			crad = rads[c]
+			if crad==c:continue
+			if arad*brad*crad<c and gcd(arad, brad) and gcd(arad*brad, crad)==1:
+				total += c
+#				asols.add(a)
+#				print a,b,c
+	print time()-t1, cntab,cntb,cntc
+	return total
+
+solve(120000)
+
+#pypy
+#666
+#324 - added brad==b continue 
+#228 - added crad==c continue

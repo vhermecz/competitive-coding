@@ -1,0 +1,47 @@
+class Factors:
+	def __init__(self, n, ):
+		self.totients = []
+		for i in range(n): self.totients.append([])
+		for i in xrange(2, n):
+			if len(self.totients[i]) == 0:
+				step = 1
+				scale = 0
+				while True:
+					step *= i
+					if step>=n: break
+					scale += 1
+					pos = 1
+					mpos = step
+					while True:
+						if mpos>=n: break
+						if pos%i: self.totients[mpos].append((i,scale))
+						pos+=1
+						mpos+=step
+	def __call__(self, i):
+		return self.totients[i]
+
+def divisors(n):
+	facts = factors[n]
+	return [reduce(lambda x,y:x*y, comb) for comb in itertools.product(*[[f[0]**a for a in range(f[1]+1)] for f in facts])]
+
+def divnum(n):
+	return reduce(lambda a,b:a*(b+1), (f[1] for f in factors[n]), 1)
+
+
+from time import time
+t1=time()
+cnt=0
+a = Factors(1000000)
+factors = a.totients
+for i in xrange(10,1000000):
+	if i%10000==0:print i, time()-t1
+	if divnum(i)>=10:
+		divs = divisors(i)
+		nsol = sum(1 for d in divs if 3*d*d>i and (i+d*d)%(4*d)==0)
+		if nsol==10:
+			cnt+=1
+
+print time()-t1,cnt
+
+# pypy	23.996 4989
+# cpy	25.909 4989

@@ -1,0 +1,73 @@
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def gennums(w, d, n): # generat w digit numbers with n continous d digits
+	dn = (10**n-1)/9*d
+	for i in range(0,w-n+1):
+		upshift = 10**(w-i)
+		upstart = int(10**(i-1))
+		upend = 10**(i)
+		lowend = 10**(w-i-n)
+		lowhightest = 10**(w-i-n-1)
+		lowstart = 1 if w-i-n>0 else 0
+#		print i, upshift, upstart, upend, lowend, lowstart
+		for up in xrange(upstart, upend):
+			if up%10!=d:
+				for down in xrange(lowstart, lowend, 2):
+					if not down/lowhightest==d:
+						yield up*upshift+dn*lowend+down
+
+def insertdigit(ns, ds, length):
+	res = []
+	for i in range(length+1):
+		attack = 10**i
+		for n in ns:
+			for d in ds:
+				neu = n/attack*10*attack+d*attack+n%attack
+				res.append(neu)
+	return res
+
+		
+
+def gennums2(w, d, n): # generat w digit numbers with n continous d digits
+	minval = 10**(w-1)
+	dn = [(10**n-1)/9*d]
+	while w-n>0:
+		dn = list(set(insertdigit(dn, [i for i in range(10) if i!=d],n)))
+		n+=1
+	dn = [n for n in dn if n>minval and n%2!=0]
+	return dn
+
+def isprime(n):
+	limit = int(n**0.5)+1
+	for p in primes:
+		if p>limit: return True
+		if n%p==0: return False
+
+def solve(w):
+	res = 0
+	for d in range(0,10):
+		n = w
+		while True:
+			reprimes = [num for num in gennums2(w, d, n) if isprime(num)]
+			if len(reprimes):
+				print d,n,len(reprimes),sum(reprimes)
+				res+=sum(reprimes)
+				break
+			n-=1
+	return res
+
+primes = primesbelow(10**6)
+
+solve(10)

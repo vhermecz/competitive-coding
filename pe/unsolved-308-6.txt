@@ -1,0 +1,28 @@
+from time import time
+def solver_im(m):
+	t1=time()
+	v7=0
+	it = 0
+	n = 1
+	pcnt = m+1
+	while True:
+		if v7==0:
+			pcnt-=1
+			if pcnt==0:
+				print n
+				return it
+		print it,n,v7, time()-t1
+		it += n + v7 + 1
+		n += 1
+		div = n-1
+		while True:
+			it += (2*div+2)*(1+n//div) + n*2
+			v7 = div - n%div - 1
+			if n%div==0:
+				it+=1
+				break
+			it += (2*n)+2
+			it -= (div - n%div)*2 # cheat
+			div -= 1
+
+solver_im(10001)

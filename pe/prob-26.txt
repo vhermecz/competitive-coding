@@ -1,0 +1,19 @@
+max = 0
+for i in range(2,1000):
+	rem = 1
+	rems = []
+	while rem!=0:
+		rem*=10
+		rem%=i
+		if rem in rems:
+			break
+		rems.append(rem)
+	if rem!=0:
+		cyc = len(rems)-rems.index(rem)		
+	else:
+		cyc = 0
+	if cyc > max:
+		max = cyc
+		print i, cyc
+
+solution=983

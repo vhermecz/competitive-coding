@@ -1,0 +1,101 @@
+import urllib
+words = [w.strip('"') for w in urllib.urlopen("http://projecteuler.net/project/words.txt").readline().split(",")]
+words = [w for w in words if len(set(w))<=10]
+maxwlen = max([len(w) for w in words])
+histogram = [(i, [len(w) for w in words].count(i)) for i in range(1,maxwlen+1)]
+sqrs = []
+for b in range(maxwlen+1):
+	sqrs.append([])
+
+for i in range(maxwlen):
+	for n in range(int(math.ceil(10**(i/2.0))), int(math.ceil(10**((i+1)/2.0)))):
+		n2 = n*n
+		sqrs[i+1].append(n2)
+
+words = [t[1] for t in sorted([(len(w), w) for w in words])]
+
+t1 = time.time()
+wordforms = []
+for i in range(len(words)):
+	if i%10==0:
+		print i, time.time()-t1
+	word = words[i]
+	wordnumdiffletters = len(set(word))
+	solutions = []
+	# filter for multi occurence letters
+	for num in sqrs[len(word)]:
+		if len(set(str(num))) == wordnumdiffletters:
+			solution = [' ']*10
+			bad = False
+			cnt = 0
+			for d,l in zip(str(num), word):
+				d = int(d)
+				if solution[d]!=' ':
+					bad = True
+					break
+				else:
+					solution[d] = l
+					cnt += 1
+			if not bad and len(set(solution)-set([' '])) == cnt:
+				solutions.append("".join(solution))
+	wordforms.append(solutions)
+
+words.reverse()
+wordforms.reverse()
+
+wordslet = ["".join(sorted(w)) for w in words]
+
+
+t1 = time.time()
+cnt = 0
+sol = -1
+soldet = (0,0)
+lensol = -1
+for i in range(len(words)):
+	if len(words[i])<lensol:
+		break
+	for j in range(i+1, len(words)):
+		if wordslet[i] == wordslet[j]:
+#		if len(set(words[i]+words[j])) <= 10:
+			for wf1 in wordforms[i]:
+				for wf2 in wordforms[j]:
+					commons = set(wf1+wf2)
+					if len(commons)<=10:
+						good = True
+						w1 = words[i]
+						w2 = words[j]
+						for l in set(wf1+wf2):
+							if l in wf1 and l in wf2:
+								if wf1.index(l)!=wf2.index(l):
+									good=False
+									break
+								w1 = w1.replace(l, str(wf1.index(l)))
+								w2 = w2.replace(l, str(wf1.index(l)))
+							elif l in wf1:
+								if wf2[wf1.index(l)]!=' ':
+									good=False
+									break
+								w1 = w1.replace(l, str(wf1.index(l)))
+							else:
+								if wf1[wf2.index(l)]!=' ':
+									good=False
+									break
+								w2 = w2.replace(l, str(wf2.index(l)))
+						if good:
+							cnt += 1
+							if w1 > sol or w2 > sol:
+								sol = max(int(w1), int(w2), sol)
+								soldet = (w1,w2,words[i],words[j])
+								lensol = len(str(sol))
+
+print time.time()-t1
+
+
+		0123456789 0123456789
+A WHILE  A          W H  I LE							
+A WRITE     A       W    TIRE
+4 18769
+0123456789
+ABCDEFGHIJ
+    J
+	

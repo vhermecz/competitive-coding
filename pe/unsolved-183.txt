@@ -1,0 +1,64 @@
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from fractions import Fraction
+from time import time
+
+def M(N):
+	v_max = 0
+	i = 1
+	while True:
+		v = Fraction(N**i,i**i)
+		if v < v_max: break
+		v_max = v
+		i+=1
+	return v_max
+
+def M(N):
+	vn = 0
+	vd = 1
+	i = 1
+	while True:
+		g = gcd(N,i)
+		Ng = N/g
+		ig = i/g
+		tn = Ng**i
+		td = ig**i
+		#v = Fraction(N**i,i**i)
+		if vd*tn<vn*td: break
+#		if v < v_max: break
+#		v_max = v
+		vn = tn
+		vd = td
+		i+=1
+	if i-1!=int(round(N/math.e)) or N%100==0:
+		print N,i-1, i-1-int(round(N/math.e))
+	return Fraction(vn, vd)
+
+def is_terminating(v):
+	v = v.denominator
+	while v%2==0: v/=2
+	while v%5==0: v/=5
+	return v==1
+
+def Mterminating(N):
+	i = int(round(N/math.e))
+	g = gcd(N,i)
+	v = i/g
+	while v%2==0: v/=2
+	while v%5==0: v/=5
+	return v==1
+
+def test(_from,_to):
+	t1 = time()
+	s = 0
+	for n in range(_from,_to+1):
+		s += n * [1,-1][Mterminating(n)]
+#		s += n * [1,-1][is_terminating(M(n))]
+	t2 = time()
+	print t2-t1
+	return s
+
+test(5,10000)
+
+solution = 48861552
+time = 0.0550000667572

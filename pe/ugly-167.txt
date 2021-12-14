@@ -1,0 +1,103 @@
+def u(a, n):
+	a = a[:]
+	n-=2
+	while n>0:
+		cand = a[-1]+1
+		found = 0
+		while found==0:
+			r = len(a)-1
+			l = 0
+			m = 0
+			while True:
+				s = a[l]+a[r]
+				if s<cand:
+					l+=1
+				if s>cand:
+					r-=1
+				if s==cand:
+					m+=1
+					l+=1
+					r-=1
+				if r<=l:
+					if m==1:
+						found = cand
+					break
+			cand+=1
+		a.append(found)
+		n-=1
+	return a
+
+def uspec(a, b, n):
+	if n==1: return a
+	if n==2: return b
+	t = 2*b+a
+	cnt=0
+	even=1
+	delay = 10**9
+	dif1 = 0
+	a = [a,b]
+	n -= 3
+	while n>=0:
+		if delay>0:
+			cand = a[-1]+1
+			found = 0
+			while found==0:
+				if even==2 and cand%2==0:
+					cand+=1
+				r = len(a)-1
+				l = 0
+				m = 0
+				while True:
+					s = a[l]+a[r]
+					if s<cand:
+						l+=1
+					if s>cand:
+						r-=1
+					if s==cand:
+						m+=1
+						l+=1
+						r-=1
+					if r<=l:
+						if m==1:
+							found = cand
+						break
+				cand+=1
+			delay-=1
+			if found%2==0:
+				delay = t/2
+		else:
+			cand = a[-1]+2-t
+			i = -1
+			while a[i]>cand:
+				i -= 1
+			if cand==a[i]:
+				found = a[i+1]+t
+			else:
+				found = a[-1] + 2
+		diff = found-a[-1]
+		if diff==t:
+			if dif1==0:
+				dif1 = len(a)
+			else:
+				times = n/(len(a)-dif1)
+				n %= len(a)-dif1
+				diff = (a[-1] - a[dif1-1])*times
+				for i in range(dif1, len(a)):
+					a[i] += diff
+				found += diff
+				dif1=0
+		a.append(found)
+		n-=1
+	return a[-1]
+
+from time import time
+t1=time()
+total = 0
+for i in range(2,11):
+	print i
+	total += uspec(2,2*i+1, 10**11)
+
+t2=time()
+print t2-t1,total
+
+#A100729: 32, 26, 444, 1628, 5906, 80, 126960, 380882, 2097152

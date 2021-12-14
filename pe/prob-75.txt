@@ -1,0 +1,40 @@
+from math import *
+from time import *
+
+def gcd(a,b):
+	while b != 0:
+		a,b = b,a%b
+	return a
+
+limit = int(1.5*10**6)
+m_limit = int((sqrt(4+8*limit)-2)/4)
+
+t1=time()
+ps = []
+for m in range(2, m_limit+1):
+	n_limit = min(m, (limit - 2*m**2 + 2*m - 1)/(2*m))
+	for n in range(1,n_limit):
+		if (m-n)%2==1 and gcd(m,n)==1:
+			a = m**2 - n**2
+			b = 2*m*n
+			c = m**2 + n**2
+			p = 2*m**2 + 2*m*n
+			ps.append(p)
+
+ps = sorted(ps)
+ps = [p for p in ps if p <= limit]
+
+solbuf = [0] * (limit+1)
+for p in ps:
+	for i in xrange(p, limit+1, p):
+		solbuf[i]+=1
+
+sol = [i for i in range(limit+1) if solbuf[i]==1]
+
+print len(sol)
+
+t2=time()
+print t2-t1
+
+solution = 161667
+time = 1.482

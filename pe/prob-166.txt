@@ -1,0 +1,70 @@
+
+def minvariation(st):
+	flip = lambda st:(st[3],st[2],st[1],st[0],st[7],st[6],st[5],st[4],st[11],st[10],st[9],st[8],st[15],st[14],st[13],st[12])
+	rotl = lambda st:(st[3],st[7],st[11],st[15],st[2],st[6],st[10],st[14],st[1],st[5],st[9],st[13],st[0],st[4],st[8],st[12])
+	vary = set()
+	for base in [st, flip(st)]:
+		for i in range(4):
+			vary.add(base)
+			base = rotl(base)
+	return sorted(vary)[0]
+
+from itertools import *
+from time import *
+t1=time()
+cnt=0
+sols = set()
+debug=0
+
+#1	2	3	4
+#5	6	7	8
+#9	10	11	12
+#13	14	15	16
+
+for x6,x7,x10,x11 in product(range(10), repeat=4):
+	if x10+x11==0: print x6,x7
+	total = x6+x7+x10+x11
+	s1011 = x10+x11
+	for x5 in range(max(s1011-9,0), min(s1011,9)+1):
+		x8 = s1011 - x5
+		s67 = x6 + x7
+		for x9 in range(max(s67-9,0), min(s67,9)+1):
+			x12 = s67 - x9
+			s611 = x6 + x11
+			for x13 in range(max(s611-9,0), min(s611,9)+1):
+				x1 = total - (x5 + x9 + x13)	# bug1: subtracting from total missed
+				if not(0<=x1<=9): continue	# bug2: used break instead of continue in each place
+				x4 = s611 - x13
+				x16 = total - (x4 + x8 + x12)
+				if not(0<=x16<=9): continue
+				s710 = x7+x10
+				if x1+x16!=s710: continue
+				s711 = x7+x11
+				for x2 in range(max(s711-9,0), min(s711,9)+1):
+					x14 = s711-x2
+					s131416 = x13+x14+x16
+					x15 = total - s131416
+					if not(0<=x15<=9): continue
+					x3 = total-(x1+x2+x4)
+					if not(0<=x3<=9): continue
+					if x3+x7+x11!=s131416: continue
+					cnt+=1
+#					sols.add( minvariation( (x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16 )) )
+#					check = list(set([x1+x2+x3+x4,x5+x6+x7+x8,x9+x10+x11+x12,x13+x14+x15+x16,x1+x5+x9+x13,x2+x6+x10+x14,x3+x7+x11+x15,x4+x8+x12+x16,x1+x6+x11+x16,x4+x7+x10+x13]))
+#					if len(check)!=1 or check[0]!=total:
+#						print "ERROR"
+#					if debug:
+#						print total
+#						print x1,x2,x3,x4
+#						print x5,x6,x7,x8
+#						print x9,x10,x11,x12
+#						print x13,x14,x15,x16
+
+t2=time()
+print cnt,len(sols), t2-t1
+#												cpy		pypy
+# bad1: 18525 - all unique with bug1,2			1 sec	?
+# bas2: 17870 - equi filtered out with bug1,2	4 sec	?
+# bad3: 2357984 - all unique, w bug2			? sec	?
+# bad4: 895053 - equi filtered out, w bug2		50 sec	25 sec
+# 7130034 - all unique good						19 sec	2 sec

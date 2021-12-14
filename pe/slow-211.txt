@@ -1,0 +1,38 @@
+from time import time
+class Divsqsum:
+	def __init__(self, n):
+		self.totients = [1]*n
+		for i in xrange(2, n):
+			if self.totients[i] == 1:
+				step = 1
+				scale = 1
+				while True:
+					step *= i
+					if step>=n: break
+					scale += step*step
+					pos = 1
+					mpos = step
+					while True:
+						if mpos>=n: break
+						if pos%i: self.totients[mpos] *= scale
+						pos+=1
+						mpos+=step
+	def __call__(self, i):
+		return self.totients[i]
+
+t1=time()
+a = Divsqsum(32*10**6)
+#a = Divsqsum(10**6)
+total = 0
+for i in xrange(1,len(a.totients)):
+	divsq = a.totients[i]
+	if int(divsq**0.5)**2==divsq:
+		print i, divsq
+		total += i
+
+t2=time()
+print t2-t1, total
+
+# 1922364685	
+
+# doomed, rewritten in java

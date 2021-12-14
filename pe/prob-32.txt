@@ -1,0 +1,12 @@
+res = set()
+for a in range(1,10000):
+	for b in range(1,1000):
+		tmp = str(a*b)+str(a)+str(b)
+		if len(tmp)==9 and len(set(tmp))==9 and not('0' in tmp):
+			print a,b,a*b
+			res.add(a*b)
+
+print res
+print sum(res)
+
+solution = 45228

@@ -1,0 +1,48 @@
+from time import time
+import random
+
+def genrules():
+	rules = []
+	topbit0 = 2**(problen-1)
+	topbit1 = 2**(problen-2)
+	topbit2 = 2**(problen-3)
+	lowmask = topbit0-1
+	for i in range(0,2**problen):
+		k = ((i&lowmask)<<1)|((i&topbit0>0) ^ ((i&topbit1>0) and (i&topbit2>0)))
+		rules.append(tuple(sorted([i,k])))
+	return rules
+
+def remap(rules, map):
+	return [tuple(sorted([map[a], map[b]])) for a,b in rules]
+
+def randomremap(rules):
+	map = dict(zip(random.sample(range(len(rules)),len(rules)), random.sample(range(len(rules)),len(rules))))
+	return remap(rules, map)
+
+def getruleset(rules):
+	ruleset = []
+	for i in range(2**problen): ruleset.append([])
+	for a,b in rules: ruleset[b].append(a)
+	return ruleset
+
+def solve(past, idx):
+	if idx==2**problen: return 1
+	past[idx]=0
+	res = solve(past, idx+1)
+	past[idx]=1
+	for i in ruleset[idx]:
+		if past[i]: return res
+	res += solve(past, idx+1)
+#	if idx==36: print 1, time()-t1, res
+	return res
+
+problen = 5
+t1=time()
+rules = genrules()
+#rules = randomremap(rules)
+ruleset = getruleset(rules)
+solve([0]*(2**problen), 0)
+
+# 3 28
+# 4 1596
+# 5 2961596

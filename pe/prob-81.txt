@@ -1,0 +1,24 @@
+import urllib
+f = urllib.urlopen("http://projecteuler.net/project/matrix.txt")
+data = [ [int(i) for i in l.strip().split(",") ]  for l in f ]
+
+sol = []
+for i in range(len(data)):
+    sol.append([0]*len(data))
+
+for p in range(1,2*len(data)):
+	for i in range(p):
+		if i<len(data) and p-i-1<len(data):
+			if i==0 and p-i-1==0:
+				cand = 0
+			elif i==0:
+				cand = sol[i][p-i-1-1]
+			elif p-i-1==0:
+				cand = sol[i-1][p-i-1]
+			else:
+				cand = min(sol[i][p-i-1-1], sol[i-1][p-i-1])
+			sol[i][p-i-1] = cand + data[i][p-i-1]
+
+sol[len(data)-1][len(data)-1]
+
+solution = 427337

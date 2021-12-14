@@ -1,0 +1,10 @@
+# first sol (1hr)
+radical(F)=factor(F)[,1]~
+F(n)=reducto(1,n)
+reducto(a,b)=if(b==1,a,r=radical(a+b);ms=vector(#r+1);for(i=1,i=#r,ms[i]=b%r[i]);ms[#r+1]=b-1;s=vecmin(ms);a+=s;b-=s;g=gcd(a,b);reducto(a/g,b/g))
+sum(x=1,100,reducto(1,x^3))
+
+# better sol (still slow) (20min)
+trv(x)=r=factorint(1+x^3)[,1];r[#r]-1
+sum(x=1,100,trv(x))
+

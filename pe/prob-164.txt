@@ -1,0 +1,22 @@
+from math import *
+from itertools import *
+from collections import *
+pieces = [str(a)+str(b)+str(c) for a,b,c in product(range(10), repeat=3) if a+b+c<=9]
+
+helper = defaultdict(list)
+state = defaultdict(int)
+for piece in pieces:
+	if piece[0]!='0':
+		state[piece[1:]] +=1
+	helper[piece[:2]].append(piece)
+
+for i in range(17):
+	state2 = defaultdict(int)
+	for k,v in state.iteritems():
+		for c in helper[k]:
+			state2[c[1:]] += v
+	state=state2
+
+sum(state.values())
+
+solution = 378158756814587

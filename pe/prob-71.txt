@@ -1,0 +1,29 @@
+def gcd(a,b):
+	while b != 0:
+		a,b = b,a%b
+	return a
+
+from math import *
+from time import *
+t1=time()
+nlo = 0
+dlo = 1
+nhi = 3
+dhi = 7
+cnt=0
+for d in range(4,1000001):
+	cnlo = int(math.floor(1.0*nlo*d/dlo))+1
+	cnhi = int(math.ceil(1.0*nhi*d/dhi))-1
+	for n in range(cnhi, cnlo-1, -1):
+		if gcd(n,d)==1:
+			nlo = n
+			dlo = d
+			break
+
+print nlo, dlo
+
+t2=time()
+print t2-t1
+
+solution = 428570
+time = 3.5

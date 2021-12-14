@@ -1,0 +1,155 @@
+cache = dict()
+
+def wins(a,b,c):
+	st = tuple(sorted([a,b,c]))
+	if cache.has_key(st): return cache[st]
+	if st[0]==0:
+		if st[1]==0:
+			return 1
+		else:
+			if st[1]==st[2]:
+				return 0
+			else:
+				return 1
+	# handle special cases
+	for i in range(3):
+		for v in range(st[i]):
+			if not wins(v, st[(i+1)%3], st[(i+2)%3]):
+				r = cache[st] = 1
+				return r
+	r = cache[st] = 0
+	return r
+
+# loses if:
+# 1 2n		2n+1
+
+# 2 4n		4n+2
+# 2 4n+1	4n+3
+# 3 4n		4n+3
+# 3 4n+1	4n+2
+
+# 4 8n		8n+4
+# 4 8n+1	8n+5
+# 4 8n+2	8n+6
+# 4 8n+3	8n+7
+# 5 8n		8n+5
+# 5 8n+1	8n+4
+# 5 8n+2	8n+7
+# 5 8n+3	8n+6
+# 6 8n		8n+6
+# 6 8n+1	8n+7
+# 6 8n+2	8n+4
+# 6 8n+3	8n+5
+# 7 8n		8n+7
+# 7 8n+1	8n+6
+# 7 8n+2	8n+5
+# 7 8n+3	8n+4
+
+# 8 16n		16n+8
+# 8 16n+1	16n+9
+# 8 16n+2	16n+10
+# 8 16n+3	16n+11
+# 8 16n+4	16n+12
+# 8 16n+5	16n+13
+# 8 16n+6	16n+14
+# 8 16n+7	16n+15
+
+wins(64,128,192)
+tmp = ([k for k in cache.keys() if cache[k]==0])
+tmp = sorted(tmp)
+for i in range(1,16):
+	f = [t for t in tmp if t[0]==i]
+	upsq = 2**int(log(i,2))
+	for j in range(0, upsq):
+		if (f[j][0], f[j][1]-upsq*2,f[j][2]-upsq*2) != (i, j, ((i-upsq)^j)+upsq):
+			print i, f[j], f[j][0], f[j][1]-upsq*2,f[j][2]-upsq*2, i, j, ((i-upsq)^j)+upsq
+
+def wins2(a,b,c):
+	st = sorted([a,b,c])
+	if st[0]==0:
+		if st[1]==0:
+			return 1
+		else:
+			if st[1]==st[2]:
+				return 0
+			else:
+				return 1
+	dnsq = 2**int(log(st[0],2))
+	upsq = 2*dnsq
+	st[0] %= dnsq
+	rem = st[1] / upsq
+	st[1] %= upsq
+	if st[1]>=dnsq: return 1
+	st[2] -= rem*upsq
+	if st[2]<dnsq: return 1
+	return int(st[2] != (st[0]^st[1])+dnsq)
+
+def winsspec(i):
+	dnsq = 2**int(log(i,2))
+	st0 = i-dnsq
+	st1 = 2*st0
+	if st1>=dnsq: return 1
+	st2 = st0+st1+dnsq
+	return int(st2 != (st0^st1)+dnsq)
+
+def winsspec2(base, delta):
+	st0 = delta
+	st1 = 2*delta
+	if st1>=base: return 1
+	st2 = st0+st1+base
+	return int(st2 != (st0^st1)+base)
+
+# if st1>=base: return 1 removed
+def winsspec3(base, delta):
+	st0 = delta
+	st1 = 2*delta
+	st2 = st0+st1
+	return int(st0+st1 != (st0^st1))
+
+#	return int(3*delta != (delta^(2*delta)))
+
+
+	# assert dn <= i < 2*dn <= 2*i < 4*dn
+	up = 2*dn
+	st0 = i-dn
+	rem = 1
+	st1 = st0*2
+
+
+
+
+for i in tmp[430:450]: print i
+
+import itertools
+for i,j,k in itertools.product(range(128), repeat=3):
+	if wins2(i,j,k) != wins(i,j,k):
+		print i,j,k
+
+from time import time
+t1=time()
+cnt = 0
+for i in range(1,1000000):
+	if 0 != winsspec(i):
+		cnt+=1
+
+t2=time()
+print cnt, t2-t1
+
+# solution
+t1=time()
+cnt = 0
+for i in range(0,30):
+	delta = 2**max(0,i-1)
+	while delta>0:
+		delta-=1
+		if 3*delta == (delta^(2*delta)):
+			cnt+=1
+
+if winsspec3(2**30,0)==0:
+	cnt+=1
+
+t2=time()
+print cnt, t2-t1
+
+solution = 2178309
+time = 194sec

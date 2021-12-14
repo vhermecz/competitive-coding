@@ -1,0 +1,76 @@
+class Totient:
+    def __init__(self, n):
+        self.totients = [1 for i in range(n)]
+        for i in range(2, n):
+            if self.totients[i] == 1:
+                for j in range(i, n, i):
+                    self.totients[j] *= i - 1
+                    k = j / i
+                    while k % i == 0:
+                        self.totients[j] *= i
+                        k /= i
+    def __call__(self, i):
+        return self.totients[i]
+
+from time import time
+
+def totientsunder(n):
+	a = Totient(n)
+	return a.totients
+
+def transitionsunder(n,totients):
+    r = []
+    for i in range(n):
+            r.append([])
+    for a in range(6, n):
+            for b in range(a+1,n):
+                    if totients[a] < totients[b] < a:
+                            r[a].append( b )
+    return r
+
+def transitionsunder2(n):
+	r = []
+	for a in range(6, n):
+		for b in range(a+1,n):
+			if totients[a] < totients[b] < a:
+				r.append( (a,b) )
+	return r
+
+def initresult(limit, trans):
+	result = [0] * limit
+	st = [6]
+	while True:
+		if len(st)==0: break
+		cur = st.pop()
+		if result[cur]==-1:continue
+		result[cur]=-1
+		st.extend(trans[cur])
+	return result
+
+def traverse(result, trans, m):
+	limit = len(result)
+	for i in range(limit-1, 5, -1):
+		if result[i]==-1:
+			s = 0
+			for n in trans[i]:
+				s += result[n]
+			s += 1
+			result[i] = s%m
+	return result[6]
+
+def solve(limit,m):
+	t1 = time()
+	totients = totientsunder(limit)
+	trans = transitionsunder(limit,totients)
+	del totients
+	result = initresult(limit, trans)
+	res = traverse(result, trans, m)
+	del trans
+	del result
+	t2 = time()
+	print t2-t1
+	return res
+
+limit = 29001
+mod = 10**8
+#res = solve(limit, mod)

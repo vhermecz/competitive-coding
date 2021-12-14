@@ -1,0 +1,23 @@
+import urllib
+dig = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+weight = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]
+res = 0
+for line in urllib.urlopen("http://projecteuler.net/project/roman.txt"):
+	line = line.strip()
+	num = line.replace("IV", "IIII").replace("IX", "VIIII").replace("XL", "XXXX").replace("XC", "LXXXX").replace("CD", "CCCC").replace("CM", "DCCCC")
+	mapping = dict(M=1000,D=500,C=100,L=50,X=10,V=5,I=1)
+	num = sum([mapping[digit] for digit in num])
+	print num
+	score = 0
+	idx = 0
+	while idx < len(dig):
+		if num >= dig[idx]:
+			score += weight[idx]
+			num -= dig[idx]
+		else:
+			idx += 1
+	if score > len(line):
+		print "Ouch", num, score
+	res += len(line) - score
+
+

@@ -1,0 +1,86 @@
+# some diophantines on solvation
+#r = n/r(2)
+#
+#center = n/2,n/2
+#
+#(x-n/2)2 + (y-n/2)^2 = r2
+#
+#x2 + y2 + n2/2 - (x+y)n = n2/2
+#x2 + y2 = (x+y)n
+#
+#n = (x2+y2)/(x+y)
+
+# calcing x from y
+# c = (y-n/2)^2
+#(x-n/2)2 + c = r2
+#x2-nx-n2/4+c=0
+#n + r(2n2 - (2y-n)2)
+#/2
+
+def solve_fast(n):
+	cnt=0
+	lo = int(math.floor((1-2**0.5)/2*n))
+	hi = int(math.floor((1+2**0.5)/2*n))
+	for y in xrange(lo,hi+1):
+		r = 2*n**2 - (2*y-n)**2
+		if r==0:
+			if n%2==0: cnt+=1
+		elif r>0:
+			sq = int(r**0.5)
+			if sq**2==r:
+				xd = n + sq
+				if xd%2==0: cnt+=2
+	return cnt
+
+def solve_slow(n):
+	cnt=0
+	lo = int(math.floor((1-2**0.5)/2*n))
+	hi = int(math.floor((1+2**0.5)/2*n))
+	for x in xrange(lo,hi+1):
+		for y in xrange(lo,hi+1):
+			if x**2+y**2==(x+y)*n:
+				if y!=n/2:
+					cnt+=2
+					break
+				cnt+=1
+	return cnt
+
+def factorize(n):
+	if n<2: return []
+	factors = []
+	i=2
+	while n!=1:
+		if n%i==0:
+			c=1
+			n/=i
+			while n%i==0:
+				c+=1
+				n/=i
+			factors.append((i, c))
+		i+=1
+	return factors
+
+sols = [solve_fast(i)/4 for i in range(5000)]
+set(sols)
+
+[i for i in range(len(sols)) if sols[i]==15]
+
+[(i,factorize(i)) for i in range(len(sols)) if sols[i]==15]
+
+
+
+# calcing limit on x and y
+#y=n/2
+#
+#x2+n2/4=(x+n/2)*n
+#x2-nx-n2/4=0
+#
+#n +- r(2n2)
+#/2
+#
+#n/2 +- n/r2r(2n2)
+#
+#1-r2  1+r2
+#
+#int(math.floor((1-2**0.5)/2*n))
+#int(math.floor((1+2**0.5)/2*n))

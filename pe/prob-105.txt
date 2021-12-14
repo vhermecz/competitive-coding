@@ -1,0 +1,27 @@
+from itertools import *
+from urllib import *
+from time import *
+
+items = [3,5,6,7]
+
+def testset(items):
+	last_max = -1
+	for inum in range(2,len(items)+1):
+		curr_sums = [sum(s) for s in combinations(items, inum)]
+		curr_sums_set = set(curr_sums)
+		if len(curr_sums_set)!=len(curr_sums):
+			return False
+		if last_max >= min(curr_sums):
+			return False
+		last_max = max(curr_sums)
+	return True
+
+sets = [[int(num) for num in line.strip().split(",")] for line in urlopen("http://projecteuler.net/project/sets.txt")]
+t1=time()
+res = sum([sum(s) for s in sets if testset(s)])
+t2=time()
+print res
+print t2-t1
+
+solution = 73702
+time  = 0.047

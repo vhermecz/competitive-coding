@@ -1,0 +1,36 @@
+class Totient:
+    def __init__(self, n):
+        self.totients = [1 for i in range(n)]
+        for i in range(2, n):
+            if self.totients[i] == 1:
+                for j in range(i, n, i):
+                    self.totients[j] *= i - 1
+                    k = j / i
+                    while k % i == 0:
+                        self.totients[j] *= i
+                        k /= i
+    def __call__(self, i):
+        return self.totients[i]
+
+a = Totient(40000001)
+b = [0]*40000001
+b[1]=1
+for c in range(2,1000): b[c]=b[a(c)]+1
+
+for c in range(2,40000001): b[c]=b[a(c)]+1
+
+d = [i for i in range(40000001) if b[i]==25]
+
+def getprimes(limit):
+	res = [True] * limit
+	res[0]=False
+	res[1]=False
+	for p in xrange(limit):
+		if res[p]:
+			for n in xrange(p+p,limit,p):
+				res[n]=False
+	return res
+
+ps = getprimes(40000001)
+
+e = [i for i in d if ps[d]]

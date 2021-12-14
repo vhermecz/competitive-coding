@@ -1,0 +1,22 @@
+from itertools import *
+from time import time
+from math import *
+
+def binomial(n,k): return factorial(n)/factorial(k)/factorial(n-k)
+
+t1=time()
+tot = 0
+for distrib in product(range(4),repeat=10):
+	if sum(distrib)!=18: continue
+	subtot = binomial(17, distrib[0])
+	places = 18-distrib[0]
+	for k in range(1,10):
+		subtot *= binomial(places, distrib[k])
+		places -= distrib[k]
+	tot += subtot
+
+t2=time()
+print t2-t1,tot
+
+# cpy	2.36100006104 227485267000992000
+# pypy	2.10100007057 227485267000992000

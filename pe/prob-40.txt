@@ -1,0 +1,9 @@
+tmp = []
+for i in range(0,200000):
+	tmp.append(str(i))
+
+tmp = "".join(tmp)
+
+print reduce(lambda x,y:x*y,[int(tmp[10**i]) for i in range(0,7)])
+
+solution = 210

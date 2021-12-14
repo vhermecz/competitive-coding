@@ -1,0 +1,39 @@
+import collections
+from time import time
+
+def ispali(n):
+	no = n
+	n2 = 0
+	while n>0:
+		n2 = n2*10+ (n%10)
+		n/=10
+	return n2==no
+
+t1=time()
+sums = collections.defaultdict(int)
+
+i2s = [i**2 for i in range(2,30000)]
+i3s = [i**3 for i in range(2,967)]
+
+for i2 in i2s:
+	for i3 in i3s:
+		v = i2+i3
+		if v >= 5229225 and ispali(v):
+			sums[i2+i3]+=1
+
+ks = sorted(sums.keys())
+cnt = 0
+sol = 0
+for k in ks:
+	if sums[k]==4:
+		cnt+=1
+		sol +=k
+		print k
+		if cnt==5:
+			break
+
+t2=time()
+print t2-t1, sol
+
+1004195061
+120sec

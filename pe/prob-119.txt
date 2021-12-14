@@ -1,0 +1,78 @@
+def digsum(n):
+	r = 0
+	while n>0:
+		r += n%10
+		n /= 10
+	return r
+
+def testnum(n):
+	ds = digsum(n)
+	i = n
+	if ds>1:
+		while i%ds==0:
+			i/=ds
+		if i == 1:
+			return True
+	return False
+
+from time import *
+from math import *
+t1=time()
+for n in xrange(10,10000):
+	if testnum(n): print n
+
+t2=time()
+print t2-t1
+
+# alternate
+t1=time()
+limit = 10**15
+pow_limit = int(log(limit,2))
+nums = set()
+for power in range(3,pow_limit+1):	# 2 has been left out, no sols til 30 with it, gives too much result
+	num_limit = int(limit**(1.0/power)+1)
+	for num in range(2,num_limit+1):
+		nums.add(num**power)
+
+sols = sorted([num for num in nums if num>10 and testnum(num)])
+t2=time()
+print t2-t1
+for i in range(len(sols)): print i, sols[i]
+
+1 81
+2 512
+3 2401
+4 4913
+5 5832
+6 17576
+7 19683
+8 234256
+9 390625
+10 614656
+11 1679616
+12 17210368
+13 34012224
+14 52521875
+15 60466176
+16 205962976
+17 612220032
+18 8303765625
+19 10460353203
+20 24794911296
+21 27512614111
+22 52523350144
+23 68719476736
+24 271818611107
+25 1174711139837
+26 2207984167552
+27 6722988818432
+28 20047612231936
+29 72301961339136
+30 248155780267521
+31 45848500718449031
+32 81920000000000000
+33 150094635296999121
+34 13744803133596058624
+35 19687440434072265625
+36 53861511409489970176
+37 73742412689492826049

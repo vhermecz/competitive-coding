@@ -1,0 +1,30 @@
+def genseq(mul, mod):
+	seen = set()
+	seq = []
+	i = 1
+	while True:
+		seq.append(i)
+		seen.add(i)
+		i*=mul
+		i%=mod
+		if i in seen:
+			return (len(seq)-seq.index(i), seq)
+
+def gcd(a,b):
+	if b==0: return a
+	return gcd(b,a%b)
+
+def lcm(a,b):
+	return a*b/gcd(a,b)
+
+tsum = 0
+for a in range(3,1001):
+	ap1 = genseq(a+1, a**2)
+	am1 = genseq(a-1, a**2)
+	tmax = -1
+	for i in range(lcm(ap1[0], am1[0])):
+		t = (ap1[1][i%ap1[0]] + am1[1][i%am1[0]]) % a**2
+		if t>tmax:
+			tmax=t
+	tsum+=tmax
+

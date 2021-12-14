@@ -1,0 +1,148 @@
+n=2,4,6,8
+
+s = (n-1)*4
+n=2x
+	(2x-1)*4
+	8x-4
+
+odd:
+n=1,3,5,7
+	(n-1)*4
+n=2x+1
+(2x+1-1)*4
+	8x
+
+[ b*(b+1) - a*(a-1) ]/2
+  b2+b - a2 +a
+  b2-a2 + b+a
+  (b+a)*(b-a+1)/2
+
+
+even
+	4	1
+	12  2
+	20	3
+	28  4
+	36  5
+	44	6
+	52	7
+	60	8
+	68	9
+	76
+
+even
+	exact:  8x-4
+	1<a<=b : 4(b+a-1)(b-a+1)
+
+	4(b+a-1)(b-a+1)<=1000000
+	c=a-1 ==> c<b
+
+	4(b+c)(b-c)<=1000000
+	(b+c)(b-c)<= 250000
+	b2-c2 <= 250000
+
+	b2-c2 <= limit/4
+	b2-limit/4 <= c2
+
+	b2>limit/4
+	1-25
+	100-25 <= c2
+
+
+	300
+	c2>=250000-b2
+
+	limit/4+1>=b**2
+	int((limit/4+1)*0.5)+1
+
+limit = 100
+for b in range(2,100):
+	clims = 2
+	if b**2>limit/4:
+		clims = max(clims, int(math.ceil((b**2-limit/4)**0.5)))
+	for c in range(clims,b):
+		print b,c
+		res.add(4*(b+c)*(b-c))
+
+
+res1 = set([])
+res2 = set([])
+limit = 100
+
+for b in xrange(2,limit):
+	for a in xrange(b,1,-1):
+		v = 4*(b+a-1)*(b-a+1)
+		if v>limit:
+			break
+		res1.add(v)
+
+for b in xrange(2,limit):
+	for a in xrange(b,1,-1):
+		v = 4*(b+a-2)*(b-a+1)
+		if v>limit:
+			break
+		res2.add(v)
+
+len(res1)+len(res2)
+
+--
+limit = 1000000
+res1=set([])
+res2=set([])
+for b in xrange(2,limit/4+10):
+	for a in xrange(b-1,0,-1):
+		v = (2*b)**2 - (2*a)**2
+		if v>limit:
+			break
+		res1.add((b,a))
+
+for b in xrange(2,limit/4+10):
+	for a in xrange(b-1,0,-1):
+		v = (2*b-1)**2 - (2*a-1)**2
+		if v>limit:
+			break
+		res2.add((b,a))
+
+len(res1)+len(res2)
+
+
+
+odd
+	1<a<=b1 : 4(b+a-2)(b-a+1)
+
+odd
+	0	1
+	8	2
+	16	3
+
+7*4/2
+
+
+b2 + b - a2 - a
+b2-a2 + b-a
+(b+a)(b-a) + (b-a)
+(b+a+1)(b-a)/2
+8*3/2 = 12
+
+
+(b-a)2 
+
+(a+b)(a-b)/2
+
+
+
+
+
+
+t	n
+8	3		
+16	5
+24	7
+32	9
+n = 2x+1
+t=4*(n-1)=4n-4
+t=4*((2x+1)-1)=8x+4-4
+
+
+
+1000

@@ -1,0 +1,81 @@
+#x2-Dy2=1
+#x2=1+Dy2
+#x2-1=Dy2
+#(x+1)(x-1)=Dy2
+
+# D == 63
+# (x+1)(x-1) == 63*y2
+# 63|x+1 ==>
+x+1=63k
+# (63k)(63k-2) == 63*y2
+# k*(63k+-2) == y2
+# Dk2+-2D-y2
+
+k = [-+D +- r(D2 + Dy2)] /D
+
+D2 + Dy2 = z2
+y = r(z2/D - 1)
+
+(y**2+1)*D = z2
+
+def solveforD(D):
+	Droot = squareroot(D)
+	if not Droot[0]: # not square
+		ypart = reduce(lambda x,y:x*y,[f[0]**((f[1]+1)/2) for f in factorize(D)], 1)
+		for y in xrange(ypart,100000000, ypart):
+			zs = 1 + y**2/D
+			zsroot = squareroot(zs)
+			if zsroot[0]:
+				zsroot = zsroot[1]
+				k1 = zsroot+1
+				k2 = zsroot-1
+				x1 = D*k1-1
+				x2 = D*k2-1
+				return x1,x2,y,D
+
+			
+def squareroot(apositiveint):
+  if apositiveint<2: return (True, apositiveint)
+  x = apositiveint // 2
+  seen = set([x])
+  while x * x != apositiveint:
+    x = (x + (apositiveint // x)) // 2
+    if x in seen: return (False, x)
+    seen.add(x)
+  return (True, x)
+
+from itertools import *
+
+def factorize(n):
+	if n<2: return []
+	factors = []
+	i=2
+	while n!=1:
+		if n%i==0:
+			c=1
+			n/=i
+			while n%i==0:
+				c+=1
+				n/=i
+			factors.append((i, c))
+		i+=1
+	return factors
+
+def dyoph_xdy(x):
+	p = (x+1)*(x-1)
+	fs = factorize(p)
+	yfs = [(f[0], f[1]/2) for f in fs if f[1]>1]
+	yfvs = [ [ f[0]**e for e in range(f[1]+1) ] for f in yfs]
+	ys = [reduce(lambda x,y:x*y, yfv, 1) for yfv in product(*yfvs)]
+	values = [ (p/y**2, y) for y in ys]
+	return values
+
+values = [0]*1001
+for x in range(1,100000):
+	for d,y in dyoph_xdy(x):
+		if d<=1000 and values[d] == 0:
+			values[d] = x
+
+
+	
+		

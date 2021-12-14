@@ -1,0 +1,29 @@
+def miller_rabin_pass(a, n):
+	d = n - 1
+	s = 0
+	while d % 2 == 0:
+		d >>= 1
+		s += 1
+	a_to_power = pow(a, d, n)
+	if a_to_power == 1:
+		return True
+	for i in xrange(s-1):
+		if a_to_power == n - 1:
+			return True
+		a_to_power = (a_to_power * a_to_power) % n
+	return a_to_power == n - 1
+
+def miller_rabin(n):
+	for a in [2,3,5,7,11,13,17,19]:
+	  if not miller_rabin_pass(a, n):
+		return False
+	return True
+
+from time import time
+t1=time()
+cnt=0
+for i in xrange(2,10001):
+	if i%100000==0: print i,time()-t1, cnt
+	if miller_rabin(2*i**2-1): cnt+=1
+
+#50000000 2422.50199986 5437847+2 # current miller_rabin fucks up 

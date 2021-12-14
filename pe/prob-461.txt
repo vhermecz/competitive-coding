@@ -1,0 +1,122 @@
+UNSOLVED
+
+# with pruning <>math.pi+-best
+#>>> solve_2(10)
+#(0.0009889602661132812, 0.00064306953726323, (0, 0, 6, 12))
+#>>> solve_2(20)
+#(0.005281925201416016, 0.00012814149337536662, (4, 7, 13, 19))
+#>>> solve_2(40)
+#(0.02734684944152832, 2.6679173492638597e-06, (5, 13, 32, 35))
+#>>> solve_2(80)
+#(0.27823901176452637, 1.1996086057841637e-06, (11, 18, 59, 78))
+#>>> solve_2(80)
+#(0.25991010665893555, 1.1996086057841637e-06, (11, 18, 59, 78))
+#>>> solve_2(160)
+#(3.8319499492645264, 5.7805239705999156e-08, (17, 56, 93, 166))
+#>>> solve_2(320)
+#(59.67510485649109, 4.452703539215008e-09, (109, 143, 221, 249))
+# with picking last value instead of running through
+# solve_3
+# solve_4 - while instead of for range() does not help
+# pypy 8-9 times faster 40sec for 1280
+
+import math, sys, time, bisect
+def solve(base):
+    vs = [math.e**(i/float(base))-1 for i in range(2*base)]
+    vs = [x for x in vs if x< math.pi]
+    sols = [(vs[a]+vs[b]+vs[c]+vs[d], (a,b,c,d)) for d in range(len(vs)) for c in range(d+1) for b in range(c+1) for a in range(b+1)]
+    sols = sorted(sols)
+    sol_low = max(s for s in sols if s[0]< math.pi)
+    sol_high = min(s for s in sols if s[0]>math.pi)
+    sol_idx = sols.index(sol_low)
+    return len(vs), len(sols), sol_idx, sol_low, sol_high
+
+def solve_2(base):
+    ts=time.time()
+    vs = [math.e**(i/float(base))-1 for i in range(2*base)]
+    best = math.pi
+    best_sol = (0,0,0,0)
+    trial = 0
+    btrial=0
+    for d in range(len(vs)):
+        if vs[d]*4 < math.pi-best: continue
+        if vs[d] > math.pi+best: break
+        for c in range(d+1):
+            if vs[d]+vs[c]*3 < math.pi-best: continue
+            if vs[d]+vs[c] > math.pi+best: break
+            for b in range(c+1):
+                if vs[d]+vs[c]+vs[b]*2 < math.pi-best: continue
+                if vs[d]+vs[c]+vs[b] > math.pi+best: break
+                btrial+=1
+                a_pos = bisect.bisect_left(vs, math.pi-vs[d]-vs[c]-vs[b])
+                for a in range(b+1):
+                    trial += 1
+                    v = vs[d]+vs[c]+vs[b]+vs[a]
+                    if abs(math.pi-v)< best:
+                        best=abs(math.pi-v)
+                        best_sol = (a,b,c,d)
+    td=time.time()-ts
+    return td, trial, btrial, best, best_sol
+
+def solve_3(base):
+    ts=time.time()
+    vs = [math.e**(i/float(base))-1 for i in range(2*base)]
+    best = math.pi
+    best_sol = (0,0,0,0)
+    trial = 0
+    btrial=0
+    for d in range(len(vs)):
+        dtrial = trial
+        if vs[d]*4 < math.pi-best: continue
+        if vs[d] > math.pi+best: break
+        for c in range(d+1):
+            if vs[d]+vs[c]*3 < math.pi-best: continue
+            if vs[d]+vs[c] > math.pi+best: break
+            for b in range(c+1):
+                if vs[d]+vs[c]+vs[b]*2 < math.pi-best: continue
+                if vs[d]+vs[c]+vs[b] > math.pi+best: break
+                btrial+=1
+                a_pos = bisect.bisect_left(vs, math.pi-vs[d]-vs[c]-vs[b])
+                for a in range(max(0,a_pos-1), a_pos+1):
+                    trial += 1
+                    v = vs[d]+vs[c]+vs[b]+vs[a]
+                    if abs(math.pi-v)< best:
+                        best=abs(math.pi-v)
+                        best_sol = (a,b,c,d)
+        print d, trial-dtrial
+    td=time.time()-ts
+    return td, trial, btrial, best, best_sol
+
+
+def solve_4(base):
+    ts=time.time()
+    vs = [math.e**(i/float(base))-1 for i in range(2*base)]
+    best = math.pi
+    best_sol = (0,0,0,0)
+    trial = 0
+    btrial=0
+    d=-1
+    while d< len(vs)-1:
+        d+=1
+        if vs[d]*4 < math.pi-best: continue
+        if vs[d] > math.pi+best: break
+        c=-1
+        while c< d:
+            c+=1
+            if vs[d]+vs[c]*3 < math.pi-best: continue
+            if vs[d]+vs[c] > math.pi+best: break
+            b=-1
+            while b< c:
+                b+=1
+                if vs[d]+vs[c]+vs[b]*2 < math.pi-best: continue
+                if vs[d]+vs[c]+vs[b] > math.pi+best: break
+                btrial+=1
+                a_pos = bisect.bisect_left(vs, math.pi-vs[d]-vs[c]-vs[b])
+                for a in range(max(0,a_pos-1), a_pos+1):
+                    trial += 1
+                    v = vs[d]+vs[c]+vs[b]+vs[a]
+                    if abs(math.pi-v)< best:
+                        best=abs(math.pi-v)
+                        best_sol = (a,b,c,d)
+    td=time.time()-ts
+    return td, trial, btrial, best, best_sol

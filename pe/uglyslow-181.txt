@@ -1,0 +1,41 @@
+from itertools import *
+import sys
+import threading
+from time import time
+
+threading.stack_size(67108864) # 64MB stack
+sys.setrecursionlimit(2 ** 20) # something real big
+                               # you actually hit the 64MB limit first
+                               # going by other answers, could just use 2**32-1
+
+def memoize(f):
+	cache= {}
+	def memf(*x):
+		if x not in cache:
+			cache[x] = f(*x)
+		return cache[x]
+	return memf
+
+def solve(B,W):
+	B, W = sorted([B,W])
+	divisors = list(reversed(sorted(pw*pb for pw,pb in product([2**iw for iw in range(W+1)], [3**ib for ib in range(B+1)]))[1:]))
+	n = divisors[0]
+	@memoize
+	def solve_inner(rem, idx):
+		if rem==1: return 1
+		if idx==len(divisors): return 0
+		return (solve_inner(rem/divisors[idx], idx) if rem%divisors[idx]==0 else 0) + solve_inner(rem, idx+1)
+	return solve_inner(n, 0)
+
+def main():
+	t1=time()
+	res=solve(40,60)
+	t2=time()
+	print t2-t1,res
+
+# only new threads get the redefined stack size
+thread = threading.Thread(target=main)
+thread.start()
+thread.join()
+
+# 272.946999788sec 83735848679360680

@@ -1,0 +1,44 @@
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+
+def primesbetween(N,M):
+	l = M-N
+	sieve = [True] * l
+	for p in primes:
+		for t in xrange(-N%p, l, p):
+			sieve[t]=False
+	return [N+i for i in xrange(0,l) if sieve[i]]
+
+from time import time
+t1=time()
+primes = primesbelow(int(10**5.5)+1)
+maxdnum = [0]*10
+maxdsum = [0]*10
+for k in range(100,1000):
+	for p in primesbetween(k*10**8, (k+1)*10**8):
+		dnum = [0]*10
+		i = p
+		while i>0:
+			dnum[i%10]+=1
+			i/=10
+		for i in range(10):
+			if dnum[i]==maxdnum[i]:
+				maxdsum[i]+=p
+			if dnum[i]>maxdnum[i]:
+				maxdnum[i] = dnum[i]
+				maxdsum[i] = p
+	print k, time()-t1
+
+sum(maxdsum)

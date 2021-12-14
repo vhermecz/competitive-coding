@@ -1,0 +1,104 @@
+from itertools import *
+from time import time
+import math
+import random
+
+def is_prob_prime(possible, k=None):
+	def ipow(a,b,n):
+		#calculates (a**b)%n via binary exponentiation, yielding itermediate
+		#results as Rabin-Miller requires
+		A = a = long(a%n)
+		yield A
+		t = 1L
+		while t <= b:
+			t <<= 1
+		#t = 2**k, and t > b
+		t >>= 2
+		while t:
+			A = (A * A)%n
+			if t & b:
+				A = (A * a) % n
+			yield A
+			t >>= 1
+	def RabinMillerWitness(test, possible):
+		#Using Rabin-Miller witness test, will return True if possible is
+		#definitely not prime (composite), False if it may be prime.    
+		return 1 not in ipow(test, possible-1, possible)
+	smallprimes = (3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97)
+	if possible==2: return True
+	if possible%2==0: return False
+	if possible in smallprimes: return True
+	if k is None: k = int(2*math.log(possible,2))
+    #Will generate an integer of b bits that is probably prime.
+    #Reasonably fast on current hardware for values of up to around 512 bits.
+	for i in smallprimes:
+		if possible%i == 0: return False
+	else:
+		for i in xrange(k):
+			test = random.randrange(2, possible)|1
+			if RabinMillerWitness(test, possible):
+				return False
+	return True
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def contains200(n):
+	while n>=200:
+		if n%1000==200: return True
+		n/=10
+	return False
+
+def isprimeproof(n):
+	lev = 1
+	while lev < n:
+		levless = n%lev + n/lev/10*10*lev
+		for dig in range(10):
+			t = levless + lev * dig
+			if is_prob_prime(t): return False
+		if n%2==0: return True
+		lev*=10
+	return True
+
+t1=time()
+primes = primesbelow(5000000)
+pp2 = [p**2 for p in primes]
+pp3 = [p**3 for p in primes]
+limit = 10**16
+squbes = []
+for i2 in xrange(len(primes)):
+	for i3 in xrange(len(primes)):
+		if i2!=i3:
+			v = pp2[i2]*pp3[i3]
+			if v>limit: break
+			squbes.append(v)
+
+#squbes = [p**2*q**3 for p, q in permutations(primes, 2)]
+squbes = [n for n in squbes if contains200(n)]
+squbes=sorted(squbes)
+#squbes = [n for n in squbes if isprimeproof(n)]
+
+cnt=0
+for n in squbes:
+	if isprimeproof(n):
+		cnt+=1
+		print cnt, n
+		if cnt==200: break
+
+t2=time()
+
+print t2-t1
+
+#cpy	29.1210000515 229161792008
+#pypy	21.7189998627 229161792008

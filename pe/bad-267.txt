@@ -1,0 +1,35 @@
+def fun(f,i):
+	try:
+	    return ((1+2*f)**i)*((1-f)**(1000-i))
+	except OverflowError:
+		return 10**12
+
+f = 0.147
+mini = 1000
+minif = -1
+while f>0.146:
+	a = 1000
+	b = 0
+	while a-b>=10**-9:
+		m = (a+b)/2.0
+		if fun(f,m) < 10**9:
+			b = m
+		else:
+			a = m
+	if a < mini:
+		mini = a
+		minif = f
+	f -= 0.000001
+
+f = 0.203
+
+# 602
+
+from math import factorial
+
+def binomial(n,k):
+	if n >= k:
+		b = factorial(n) / (factorial(k)*factorial(n-k))
+		return b
+
+res = 10**12 * sum([binomial(1000,i) for i in range(432,1001)]) / 2**1000

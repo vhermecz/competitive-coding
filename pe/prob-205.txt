@@ -1,0 +1,23 @@
+pp=[0]*40
+for b in itertools.product(xrange(1,5),repeat=9):
+	pp[sum(b)]+=1
+
+cc=[0]*40
+for b in itertools.product(xrange(1,7),repeat=6):
+	cc[sum(b)]+=1
+
+cwin=pwin=egal=0
+
+for i in range(40):
+	for j in range(40):
+		if i > j:
+			cwin += cc[i]*pp[j]
+		elif i < j:
+			pwin += cc[i]*pp[j]
+		else:
+			egal += cc[i]*pp[j]
+
+print round(1.0*pwin/(pwin+cwin+egal),7)
+
+
+

@@ -1,0 +1,31 @@
+base = 16
+res_base = base
+special_nums = 3
+zero_is_special = True	# finally not supported, always True
+digit_limit = 16
+
+sol = []
+sol.append([0]*(special_nums+1))
+sol.append([base-special_nums, 1] +[0]*(special_nums-1))
+for k in range(2,digit_limit+1):
+	tmp = sol[-1][:]
+	for i in range(special_nums, 0, -1):
+		tmp[i] = tmp[i] * (base-special_nums+i) + tmp[i-1] * i
+	tmp[0] = tmp[0]*(base-special_nums)
+	sol.append(tmp)
+
+fsol = [sol[i-1][-1] * (base-1) + sol[i-1][-2] * (special_nums-1) for i in range(1,digit_limit+1)]
+res = sum(fsol)
+
+res2 = ""
+digits = ([str(i) for i in range(10)] + [chr(i) for i in range(65,91)])[:res_base]
+while res>0:
+	res2 = digits[res%res_base] + res2
+	res/=res_base
+
+print res2
+
+
+
+
+

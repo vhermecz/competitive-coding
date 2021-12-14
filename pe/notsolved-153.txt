@@ -1,0 +1,49 @@
+from math import *
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+def solve_squaresum(limit):
+	sq_limit = int(1+limit**0.5)
+	sqs = [i**2 for i in range(1,50*sq_limit+1)]
+	counter = [0] * (limit+1)
+	for i in range(len(sqs)):
+#		print i, sqs[i]
+		for j in range(i, len(sqs)):
+#			print i, sqs[i], j, sqs[j]
+			sumij = sqs[i]+sqs[j]
+			num = gcd(i+1,j+1)
+			gcd_ = gcd(num, sumij)
+			sumij = sumij/gcd_	
+			added = i+1 if i==j else i+j+2
+			for k in xrange(sumij, limit+1, sumij):
+#				print k, sqs[i], sqs[j]
+				counter[k] += added
+	return sum(counter)*2
+
+class Divsum:
+	def __init__(self, n):
+		self.totients = [1 for i in xrange(n)]
+		for i in xrange(2, n):
+			if self.totients[i] == 1:
+				for j in xrange(i, n, i):
+					s = 0
+					p = 1
+					k = j
+					while k%i==0:
+						s += p
+						p *= i
+						k /= i
+					s += p
+					self.totients[j] *= s
+	def __call__(self, i):
+		return self.totients[i]
+
+def solver(limit):
+	c = Divsum(limit + 1)
+	res = 0
+	res += sum(c.totients)-1
+	res += solve_squaresum(limit)
+	return res
+
+
+

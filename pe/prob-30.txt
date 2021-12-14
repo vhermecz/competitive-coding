@@ -1,0 +1,12 @@
+for i in range(2,1000000):
+	if i==sum([int(dig)**5 for dig in str(i)]):
+		print i
+
+#4150
+#4151
+#54748
+#92727
+#93084
+#194979
+		
+solution = 443839

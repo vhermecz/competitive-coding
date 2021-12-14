@@ -1,0 +1,53 @@
+from time import time
+
+def getlinestart(n): return n*(n-1)/2+1
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def primesievebetween(N,M):
+	l = M-N
+	lim = M**0.5
+	sieve = [True] * l
+	for p in primes:
+		if p>lim: break
+		for t in xrange(-N%p, l, p):
+			if N+t!=p: sieve[t]=False
+	return sieve
+
+def primesbetween(N,M):
+	sieve = primesievebetween(N,M)
+	return [N+i for i in xrange(0,M-N) if sieve[i]]
+
+def getlinetripsum(n):
+	base = getlinestart(n)
+	view = [ [False]*2 + primesievebetween(getlinestart(n+i),getlinestart(n+i+1)) + [False]*(3-i) for i in range(-2,3)  ]
+	cview = [ [ (sum(view[i+k][j+l] for k in range(-1,2) for l in range(-1,2))-1)*view[i][j] for j in range(1,len(view[0])-1)] for i in range(1,4)  ]
+	matches = [base+i-1 for i in range(1,len(cview[0])-1) if (sum(cview[j][i+k] for j in range(3) for k in range(-1,2))-cview[1][i])*(cview[1][i]>0)>=2]
+	return sum(matches)
+
+def Sperf(n):
+	t1=time()
+	res=getlinetripsum(n)
+	t2=time()
+	print t2-t1,n
+
+t1=time()
+primes = primesbelow(10**7)
+solution = getlinetripsum(5678027) + getlinetripsum(7208785)
+t2=time()
+print t2-t1,solution
+
+#cpy	308.421000004 322303240771079935
+#pypy	315.90899992  322303240771079935

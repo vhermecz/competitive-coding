@@ -1,0 +1,16 @@
+s = []
+s.append([1]*200)
+for n in range(200):
+	s.append([0]*200)
+
+s[1][0] = 1
+
+for y in range(2,101):
+	for x in range(y-1, -1, -1):
+		s[y][x] = s[y-x-1][x] + s[y][x+1]
+
+res = [s[i][0]-1 for i in range(200)]
+
+res[100]
+
+solution = 190569291

@@ -1,0 +1,18 @@
+levels = [200,100,50,20,10,5,2,1]
+
+cnt=0
+def solver(level, amountleft, used):
+	if level==7:
+#		used[level]=amountleft
+		return 1
+	else:
+		cnt=0
+		for i in range(0, amountleft/levels[level]+1):
+#			used[level]=i
+			cnt+=solver(level+1, amountleft-i*levels[level], used)
+		return cnt
+
+print solver(0, 200, [0]*8)
+
+
+solution = 73682

@@ -1,0 +1,23 @@
+def f(n):
+	i=n
+	while True:
+		k = i
+		while k>0 and k%10<=2:
+			k/=10
+		if k == 0:
+			break
+		i+=n
+	return i
+
+def flmt(n,lmt):
+	i=n
+	lmt = lmt*n
+	while i<lmt:
+		k = i
+		while k>0 and k%10<=2:
+			k/=10
+		if k == 0:
+			break
+		i+=n
+	if i==lmt: return -1
+	return i

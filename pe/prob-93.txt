@@ -1,0 +1,75 @@
+# 1
+#   o
+#  o d
+# o c
+#a b
+
+# 2
+#   o
+# o   o
+#a b c d
+
+# 3
+# o
+#a o
+# b o
+#  c d
+
+import itertools
+
+def do_op(a,b,op):
+	if op=='-': return a-b
+	elif op=='+': return a+b
+	elif op=='*': return a*b
+	elif b==0: return 2**0.5 # invalid
+	else: return 1.0*a/b
+
+def combinations(nums):
+	res = set()
+	for items in itertools.permutations(nums, 4):
+		for ops in itertools.product(['-', '+', '*', '/'], repeat=3):
+			r1 = do_op(do_op(items[0], items[1], ops[0]), do_op(items[2], items[3], ops[1]), ops[2])
+			r2 = reduce(lambda a, p: do_op(a,p[0],p[1]), zip(items[1:], ops), items[0])
+			for r in [r1,r2]:
+				if int(r)==r and r>0:
+					res.add(int(r))
+	return res
+
+def combinationsdesc(nums):
+	res = set()
+	resdesc = []
+	for items in itertools.permutations(nums, 4):
+		for ops in itertools.product(['-', '+', '*', '/'], repeat=3):
+			r = reduce(lambda a, p: do_op(a,p[0],p[1]), zip(items[1:], ops), items[0])
+			if abs(int(r)-r)<0.0001 and r>0:
+				if not int(r) in res:
+					resdesc.append([int(r), items, ops])
+				res.add(int(r))
+	return resdesc
+
+def numlinear(nums):
+	nums = sorted(nums)
+	i=0
+	while i<len(nums) and nums[i]==i+1:
+		i+=1
+	return i
+
+		
+solmax = -1
+solval = "----"
+
+import time
+t1 = time.time()
+for nums in itertools.permutations(range(10), 4):
+	if nums[0] < nums[1] < nums[2] < nums[3]:
+		combs = numlinear(combinations(nums))
+		if combs > solmax:
+			solmax = combs
+			solval = "".join([str(n) for n in nums])
+
+t2 = time.time()
+print t2-t1
+print solval
+
+
+# solution = 1258

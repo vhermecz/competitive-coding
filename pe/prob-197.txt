@@ -1,0 +1,11 @@
+from math import *
+
+def f(x): return floor(2**(30.403243784-x**2))*10**-9
+
+seq = [-1]
+for i in range(3000):
+	seq.append(f(seq[-1]))
+
+print seq[-1]+seq[-2]
+
+# 1.710637717

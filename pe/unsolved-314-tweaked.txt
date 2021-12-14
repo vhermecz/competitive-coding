@@ -1,0 +1,337 @@
+side=500
+max((side*side-2*x*x)*1.0/(4*(side-2*x+x*2**0.5)) for x in range(0, side/2+1))
+
+side=500
+max((side*side-2*x*x)*1.0/(4*(side-2*x+x*2**0.5)) for x in range(0, side/2+1))
+
+def calcer_spec(side, bite): return (side*side-2*bite*bite)*1.0/(4*(side-2*bite+bite*2**0.5))
+
+best = -1
+besti=0
+i = 15333000000L
+while i<15334000000L:
+	d = i / 100000000000.0
+	v = (1.0-2*d**2)/4/(1-d*(2-2**0.5))
+	if v>best:
+		best = v
+		besti = d
+	i+=1
+
+from time import time
+import random
+
+# 0 - up, 1 - right
+def calcer(perm):
+	area = 0.0
+	perim = 0.0
+	i = 0
+	level = 0
+	while i<len(perm):
+		if i<len(perm)-1 and perm[i]!=perm[i+1]:
+			area += level + 0.5
+			perim += 2**0.5
+			level += 1
+			i+=2
+		elif perm[i]==0:
+			level+=1
+			perim+=1
+			i+=1
+		else:
+			area += level
+			perim+=1
+			i+=1
+	return area, perim, area/perim
+
+def calcer2(perm):
+	area = 0.0
+	perim = 0.0
+	i = 0
+	level = 0
+	dist = 0
+	maxlev = len(perm)/2
+	while True:
+		kind = perm[i]
+		ramp = perm[i+1:].index(1-perm[i])+1
+		i+=ramp+1
+		perim += (1+ramp**2)**0.5
+		if kind==0:
+			area += level + ramp/2.0
+			level += ramp
+			dist += 1
+		else:
+			area += (level+0.5)*ramp
+			level += 1
+			dist += ramp
+		if level == maxlev:
+			left = len(perm)-i
+			area += level*left
+			perim += left
+			break
+		if dist == maxlev:
+			left = len(perm)-i
+			perim+= left
+			break
+	return area, perim, area/perim
+
+calcer2([0,1,0,1,1,1,0,0])
+
+
+def trie():
+	exa = [0]*250 + [1]*250
+	exa = [0]*173 + [1,0]*77 + [1]*173
+	best = -1
+	bestexa = []
+	cnt=0
+	t1=time()
+	while True:
+		if cnt%1000==0: print cnt, best, time()-t1
+		cnt+=1
+		delta = 12
+#		shuffle_part(exa, 250-delta, 250+delta)
+		random.shuffle(exa)
+		v = calcer2(exa)[2]
+		if v>best:
+			best=v
+			bestexa=exa[:]
+
+def trie2():
+	bestexa = []
+	best = -1
+	bestconf = 0
+	for a in range(0,250+1):
+		for b in range(0,a+1):
+			for c in range(0,b+1):
+				for d in range(0, c+1):
+					if 2*a+4*b+2*c+2*d==500:
+						exa = [0]*a + [0,1]*b + [0]*c + [1,0]*d + [1]*c + [1,0]*b + [1]*a
+						v = calcer(exa)[2]
+						if v>best:
+							best=v
+							bestexa = exa
+							bestconf = a,b,c,d
+	print best,bestexa,bestconf
+
+def shuffle_part(arr, idx,idx2):
+	part = arr[idx:idx2]
+	random.shuffle(part)
+	arr[idx:idx2] = part
+
+def calc_tricky(side, hold, shift):
+	if shift>side-hold: return None
+	perim = 2*((side-hold-shift)**2+shift**2)**0.5+2*hold
+	area = (side-shift)*side+shift*hold
+	return 1.0*area/perim
+
+def trie3():
+	best = -1
+	bestconf = 0
+	for hold in range(0, 250):
+		for shift in range(0, side-hold+1):
+			v = calc_tricky(side,hold,shift)
+			if v>best:
+				best=v
+				bestconf=hold,shift
+	print best, bestconf
+
+def calcer4(side, conf):
+	if sum(c[0]+c[1] for c in conf)!=side:
+		print "OUCH"
+		return None
+	perim = sum((c[0]**2+c[1]**2)**0.5 for c in conf)
+	area = 0
+	yshift = 0
+	xshift = 0
+	for c in conf:
+		area += (side-yshift-c[1]/2.0)*c[0]
+		yshift+=c[1]
+		xshift+=c[0]
+	area -= 0.5*xshift**2
+	return area/perim
+
+def trie4():
+	best = -1
+	bestconf = 0
+	e=f=0
+	cnt=0
+	for a in range(0,250+1):
+#		print a
+		for b in range(0,a+1):
+			if a+b>250: break
+			for c in range(0,b+1):
+				if a+b+c>250: break
+				for d in range(0, c+1):
+					if a+b+c+d>250: break
+					for e in range(0, d+1):
+						if a+b+c+d+e>250: break
+						for f in range(0, e+1):
+							if a+b+c+d+e+f==250:
+#								v=calcer4(250, [(a,f),(b,e),(c,d)])
+#					if a+b+c+d==250:
+#						v=calcer4(250, [(a,d),(b,c)])
+								cnt+=1
+#						if v>best:
+#							best=v
+#							bestconf = a,b,c,d,e,f
+	print cnt,best,bestconf
+
+
+calcer_spec(500,77)
+calcer([0]*173 + [1,0]*33 + [0]*11 + [1]*11 + [1,0]*33 + [1]*173)
+
+# 130.87724993 - best w sides 1,sqrt(2)
+# 131.816027649 for (154,0),(61, 35) - from 115143 chances
+# 132.28119229 for (138,0),(40,13),(34,25) - from 13868903 chances
+
+
+# misses some cases compared to trie4
+def genruns(total, pairnum):
+	nlimit = pairnum*2
+	cnt = [0] * (nlimit)
+	pleft = total
+	idx = 1
+	acnt=0
+	while idx>=0:
+		cnt[idx]+=1
+		pleft-=1
+		if cnt[idx]*(nlimit-idx-1)>pleft:
+			pleft+=cnt[idx]
+			idx-=1
+			# too much, fallback
+		elif idx==nlimit-1:
+			# found sol, return, fallback
+			cnt[idx] += pleft
+			pleft=0
+			yield cnt[:]
+			acnt+=1
+			pleft+=cnt[idx]
+			idx-=1
+		else:
+			cnt[idx+1] = cnt[idx]-1
+			pleft-=cnt[idx]-1
+			idx+=1
+	print acnt
+
+def genrunsdesc(total, pairnum, start):
+	nlimit = pairnum*2
+	cnt = [0] * (nlimit)
+	pleft = total-start
+	idx = 1
+	cnt[0]=start
+	cnt[1]=min(cnt[0],pleft-(nlimit-idx-1))
+	pleft-=cnt[1]
+	acnt=0
+	while idx>=0:
+		print idx, cnt
+		cnt[idx]-=1
+		pleft+=1
+		if idx<nlimit-1 and(cnt[idx]==0 or cnt[idx]*(nlimit-idx-1)<pleft or pleft<nlimit-idx-2):
+			pleft+=cnt[idx]
+			idx-=1
+			# too much, fallback
+		elif idx==nlimit-1:
+			# found sol, return, fallback
+			cnt[idx] += pleft
+			pleft=0
+			if cnt[idx]<cnt[idx-1]: yield cnt[:]
+			acnt+=1
+			pleft+=cnt[idx]
+			idx-=1
+		else:
+			cnt[idx+1] = min(cnt[idx],pleft-(nlimit-idx-1))
+			pleft-=cnt[idx+1]
+			idx+=1
+	print acnt
+
+
+
+def calcer4spec(side, conf):
+	lconf = len(conf)
+	area = 0
+	yshift = 0
+	xshift = 0
+	perim=0
+	for i in range(0, lconf/2):
+		perim+= (conf[-1-i]**2+conf[i]**2)**0.5
+		area += (side-yshift-conf[i]/2.0)*conf[-1-i]
+		yshift+=conf[i]
+		xshift+=conf[-1-i]
+	area -= 0.5*xshift**2
+	return area/perim
+
+def solver(total, lopn, hipn):
+	t1=time()
+	best=-1
+	bestconf=None
+	cheat = total/2-13 # tweak: hand picked for best ever, 20 would be better for seach, worse for perf (saves a lot work, reserve a bit for the end))
+	for pairnum in range(lopn,hipn+1):
+		print "Starting to work with", pairnum, "points.", time()-t1
+		nlimit = pairnum*2
+		cnt = [0] * (nlimit)
+		pleft = total - cheat
+		idx = 1
+		while idx>0:
+			cnt[idx]+=1
+			pleft-=1
+			if cnt[idx]*(nlimit-idx-1)>pleft:
+				pleft+=cnt[idx]
+				idx-=1
+				# too much, fallback
+			elif idx==nlimit-1:
+				# found sol, return, fallback
+				cnt[idx] += pleft + cheat
+				pleft=0
+				saved = cnt[idx]
+				maxlast = cnt[idx]
+				reallast = cnt[idx] # dist from diag
+				while reallast<=maxlast:	# tweak, let's us draw stuff, where not the all 1/8 is fill [reallast..maxlast] should tell the interval, [0..0] is the default
+					cnt[idx] = reallast
+					# calc4solver inlined
+					area = 0
+					yshift = 0
+					xshift = 0
+					perim=0
+					i=0
+					while i<pairnum:
+						perim+= (cnt[-1-i]**2+cnt[i]**2)**0.5
+						area += (total-yshift-cnt[i]/2.0)*cnt[-1-i]
+						yshift+=cnt[i]
+						xshift+=cnt[-1-i]
+						i+=1
+					miss = (total - xshift - yshift)/2.0
+					perim+= miss*(2**0.5)#(miss**2+miss**2)**0.5
+					area += (total-yshift-miss/2.0)*miss
+					xshift+= miss
+					area -= 0.5*xshift**2
+					v = area/perim
+	#				v = calcer4spec(total, cnt)
+					if v>best:
+						print pairnum, v, time()-t1, cnt
+						best=v
+						bestconf = cnt[:]
+					reallast+=1
+				pleft+=saved
+				pleft-=cheat
+				idx-=1
+			else:
+#	tweak for blocking "flat" parts
+#				if idx>16 and cnt[idx]==cnt[idx-1] and cnt[idx-1]==cnt[idx-2] and cnt[idx-2]==cnt[idx-3] and cnt[idx-3]==cnt[idx-4] and cnt[idx-4]==cnt[idx-5]  and cnt[idx-5]==cnt[idx-6] and cnt[idx-6]==cnt[idx-7] and cnt[idx-7]==cnt[idx-8] and cnt[idx-8]==cnt[idx-9] and cnt[idx-9]==cnt[idx-10] and cnt[idx-10]==cnt[idx-11] and cnt[idx-11]==cnt[idx-12] and cnt[idx-12]==cnt[idx-13] and cnt[idx-13]==cnt[idx-14] and cnt[idx-14]==cnt[idx-15] and cnt[idx-15]==cnt[idx-16] and cnt[idx-16]==cnt[idx-17]:
+#				if idx>5 and cnt[idx]==cnt[idx-1] and cnt[idx-1]==cnt[idx-2] and cnt[idx-2]==cnt[idx-3] and cnt[idx-3]==cnt[idx-4] and cnt[idx-4]==cnt[idx-5] and cnt[idx-5]==cnt[idx-6]:
+#					# too flat, fallback
+#					cnt[idx]+=1
+#					pleft-=1
+				cnt[idx+1] = max(cnt[idx]-2,0)	# tweak to allow descend
+				pleft-=cnt[idx+1]
+				idx+=1
+	t2=time()
+	print t2-t1
+	return best, bestconf
+
+t1=time()
+tmp=list(genruns(125, 4))
+#trie4()
+t2=time()
+print t2-t1
+
+
+# 0.11599993705		0.144
+# 21.1180000305		20.5690000057

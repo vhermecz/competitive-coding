@@ -1,0 +1,48 @@
+A = "1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
+B = "8214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196"
+#A = "1415926535"
+#B = "8979323846"
+
+def whichterm(A,B,n):
+	a = len(A)
+	b = len(B)
+	if n<=a: return 1
+	cnt=2
+	while n>b:
+		a,b=b,a+b
+		cnt+=1
+	return cnt
+
+def termlen(A,B,term_idx):
+	a = len(A)
+	b = len(B)
+	if term_idx==1: return a
+	if term_idx==2: return b
+	cnt=2
+	while term_idx>cnt:
+		a,b=b,a+b
+		cnt+=1
+	return b
+
+def getdigit(A,B,pos):
+	st = [whichterm(A,B,pos)]
+	while True:
+		term_idx = st.pop()
+		term_len = termlen(A,B,term_idx)
+		if pos > term_len:
+			pos -= term_len
+		else:
+			if term_idx==1: return A[pos-1]
+			elif term_idx==2: return B[pos-1]
+			else:
+				st.append(term_idx-1)
+				st.append(term_idx-2)
+
+def getdigit_slow(A,B,pos):
+	if pos<=len(A): return A[pos-1]
+	while len(B)<pos: A,B=B,A+B
+	return B[pos-1]
+
+sol = sum(10**n*int(getdigit(A,B,(127+19*n)*7**n)) for n in range(18))
+
+sol = 850481152593119296

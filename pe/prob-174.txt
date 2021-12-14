@@ -1,0 +1,22 @@
+from time import time
+import sys
+
+def solve(limit, nmin, nmax):
+	t1=time()
+	ts = [0] * (limit+1)
+	for neg in xrange(1, sys.maxint):
+		sneg = neg**2
+		for pos in xrange(neg+2, sys.maxint, 2):
+			t = pos**2 - sneg
+			if t > limit: break
+			ts[t]+=1
+		if pos==neg+2: break
+	res = sum(ts.count(i) for i in range(nmin,nmax+1))
+	t2=time()
+	print t2-t1
+	return res
+
+solve(10**6,1,10)
+#pypy	9.45
+#cpy	2.54
+#sol = 209566

@@ -1,0 +1,42 @@
+mod1 = 10**5
+
+def powmod(b, e, m):
+	r = 1
+	c = b
+	while e!=0:
+		if e%2:
+			r = (r*c)%m
+		c = (c**2)%m
+		e/=2
+	return r
+
+def modfact(f, t):
+	return modfactskip(f,t,set())
+
+def modfactn(n):
+	return modfactskip(1,n,set())
+
+def modfactskip(f, t, skip):
+	c2 = 0
+	v = 1
+	for i in range(f,t+1):
+		if i in skip: continue
+		while i%2==0:
+			i/=2
+			c2+=1
+		while i%5==0:
+			i/=5
+			c2-=1
+		v = (v * i) % mod1
+	v2 = powmod(2, c2, mod1)
+	return int(v*v2)%mod1
+
+from itertools import *
+
+def powerset(iterable):
+    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+
+range(3125,10**5+1,3125)

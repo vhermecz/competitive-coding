@@ -1,0 +1,30 @@
+import time
+def modpow(base, exp, mod):
+	if exp==0: return 1
+	base = base % mod
+	if base<2:
+		return base
+	basestep = base
+	res = 1
+	while exp!=0:
+		if exp%2==1:
+			res *= basestep
+			res %= mod
+		exp/=2
+		basestep*=basestep
+		basestep%=mod
+	return res
+
+def modhypexp(base, exp, mod):
+	if exp==1:
+		return base%mod
+	res = base
+	for k in range(2, exp+1):
+		res = modpow(base,res,mod)
+	return res
+
+t1=time.time()
+print modhypexp(1777,1855,10**8)
+t2=time.time()
+print t2-t1
+#95962097

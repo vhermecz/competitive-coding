@@ -1,0 +1,4 @@
+def tri(n): return n*(n+1)/2
+
+limit = 1000-1
+res = 3*tri(limit/3)+5*tri(limit/5)-15*tri(limit/15)

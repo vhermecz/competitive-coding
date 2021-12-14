@@ -1,0 +1,11 @@
+size = 1001
+curr = 1
+sum = curr
+for step in range(2,size,2):
+	for j in range(0,4):
+		curr+=step
+		sum+=curr
+
+print sum
+
+solution = 669171001

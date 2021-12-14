@@ -1,0 +1,28 @@
+
+def is_bouncy(num):
+	sorted(str(num))
+	inc = int("".join(sorted(str(num))))
+	if num == inc: return False
+	desc = int("".join(sorted(str(num), reverse=True)))
+	if num == desc: return False
+	return True
+
+import time
+t1=time.time()
+
+cnt = 0
+n = 1
+pct = 99
+while 100*cnt<pct*n:
+	n+=1
+	if is_bouncy(n):
+		cnt+=1
+
+t2=time.time()
+
+print t2-t1
+print n
+
+
+
+

@@ -1,0 +1,47 @@
+def fact_prime(p, n):
+	f = [0] * (n+1)
+	b = p
+	while b<n:
+		for i in xrange(b, n+1, b):
+			f[i] +=1
+		b *= p
+	for i in xrange(0,n):
+		f[i+1] += f[i]
+	return f
+
+n = 200000
+
+f2 = fact_prime(2,n)
+f5 = fact_prime(5,n)
+
+from math import *
+
+def calcer(n):
+	cnt = 0
+	limita = int(ceil(n / 3.0))
+	f2l = f2[n] - 12
+	f5l = f5[n] - 12
+	for a in xrange(limita, n+1):
+		woa = n-a
+		for b in xrange(int(ceil((woa)/2.0)), min(woa, a)+1):
+			c = woa-b
+			if f5l - f5[a] - f5[b] - f5[c] >= 0 and f2l - f2[a] - f2[b] - f2[c] >= 0:
+				if c==a:
+					cnt +=1
+				elif a==b or b==c:
+					cnt +=3
+				else:
+					cnt +=6
+	return cnt
+
+def timeit(fn, n):
+	t1=time()
+	r = fn(n)
+	t2=time()
+	print r, t2-t1
+
+
+# c <= b <= a
+
+solution = 479742450
+time = 44 sec

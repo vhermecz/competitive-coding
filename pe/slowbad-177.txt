@@ -1,0 +1,36 @@
+from time import time
+t1=time()
+cnt=0
+for cab in xrange(1,90):
+	cache = set()
+	for abd in xrange(cab, 180-cab):
+		apb = 180-cab-abd
+		for cad in xrange(cab, 180-cab):
+#			cad+bda+apd=180
+#			apd = 180-apb
+			bda = apb-cad
+			if bda<cab: continue
+			if bda==cab and cad<abd: continue
+			for bdc in xrange(cab, 180-bda):
+#				bdc+acd+cpd=180
+#				cpd=apb
+				acd = 180-apb-bdc
+				if acd<cab: continue
+				if acd==cab and bdc<abd: continue
+				for acb in xrange(cab, 180-acd):
+					#dbc+acb+cpb=180
+					#cpb=180-apb
+					dbc = apb-acb
+					if dbc<cab: continue
+					if dbc==cab and acb<abd: continue
+					sides = (cab,abd,dbc,acb,acd,bdc,bda,cad)
+					if sides.count(cab)>1:
+						cache.add(sides)
+					else:
+						cnt+=1
+	cnt += len(cache)
+	del cache
+	gc.collect()
+	print "cab=",cab, time()-t1
+
+

@@ -1,0 +1,24 @@
+def factdivcnt(n, d):
+	r = 0
+	while n>0:
+		n/=d
+		r+=n
+	return r
+
+def sample(n):
+	tot = 0
+	for i in range(n):
+		nn7 = factdivcnt(i,7)
+		v = ""
+		for j in range(0,i+1):
+			dn7 = factdivcnt(j,7) + factdivcnt(i-j,7)
+			notdivisible = nn7==dn7
+			v += "01"[notdivisible]
+		tot += v.count("1")
+		print i+1, v, v.count("1"), tot
+
+#def nondiv7binom(n):
+#	tri = n/7*(n/7+1)/2*28
+#	for v in range(n/7*7+1, n+1):
+#		tri += (v%7)*(v/7+1)
+#	return tri

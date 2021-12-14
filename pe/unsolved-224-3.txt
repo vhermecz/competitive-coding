@@ -1,0 +1,79 @@
+#A = x2+y2-z2
+#B = 2xz
+#C = 2yz
+#D = x2+y2+z2
+
+#a2+b2+1=c2
+#a+b+c<=limit
+#a+b+c+1<=limit+1
+#A+B+C+D<=limit+1
+#2x2+2y2+2z(x+y)<=limit+1
+#x2+y2+z(x+y)<=(limit+1)/2
+
+def squareroot(apositiveint):
+  if apositiveint<2: return (True, apositiveint)
+  x = apositiveint // 2
+  seen = set([x])
+  while x * x != apositiveint:
+    x = (x + (apositiveint // x)) // 2
+    if x in seen: return (False, x)
+    seen.add(x)
+  return (True, x)
+
+def finaltest(x,y,z,div,limit,sols):
+	a = (x**2+y**2-z**2)/div
+	if a!=1: return False
+	b = 2*x*z/div
+	c = 2*y*z/div
+	d = (x**2+y**2+z**2)/div
+	if b**2+c**2+1!=d**2:
+		print "Baaaaaaaaad algo", b, c, d
+		return False
+	if a+b+c+d<=limit+1 and b!=c:
+#		print b,c,d
+		sols.add(tuple(sorted([b,c,d])))
+		return True
+	return False
+
+def solve(limit):
+	cnt=0
+	cnt2=0
+	sols = set([])
+	blimit = limit # limit is not good because of divisions in case 2,3,4
+	for x in xrange(1,blimit):
+		if x**2>(blimit+1)/2: break
+		for y in xrange(1,blimit):
+			if x**2+y**2>(blimit+1)/2: break
+			cnt2+=1
+			# case 1: x2+y2-z2==1
+			zsq = x**2+y**2-1
+			z = squareroot(zsq)
+			if z[0]:
+				z = z[1]
+				if finaltest(x,y,z,1,limit,sols): cnt+=1
+			# case 2: x2+y2-z2==2
+			zsq = x**2+y**2-2
+			z = squareroot(zsq)
+			if z[0]:
+				z = z[1]
+				if finaltest(x,y,z,2,limit,sols): cnt+=1
+			# case 3: x2+y2-z2==z => x2+y2==z(z+1)
+			ssq = 1 + 4*(x**2+y**2)
+			sz = squareroot(ssq)
+			if sz[0] and sz[1]%2==1:
+				z1 = (sz[1]-1)/2
+				z2 = (sz[1]+1)/2
+				if finaltest(x,y,z1,z1,limit,sols): cnt+=1
+				if finaltest(x,y,z2,z2,limit,sols): cnt+=1
+			# case 4: x2+y2-z2==2z
+			ssq = 1 + x**2+y**2
+			sz = squareroot(ssq)
+			if sz[0]:
+				z1 = sz[1]-1
+				z2 = sz[1]+1
+				if finaltest(x,y,z1,2*z1,limit,sols): cnt+=1
+				if finaltest(x,y,z2,2*z2,limit,sols): cnt+=1
+	return (cnt, cnt2, len(sols))
+
+
+# divisions in case 2,3,4 screw up initial limit...

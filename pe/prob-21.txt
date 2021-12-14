@@ -1,0 +1,16 @@
+data = [0]*10001
+for i in range(1,10001):
+	sum = 0
+	for j in range(1,i):
+		if i%j==0:
+			sum+=j
+	data[i]=sum
+
+sum=0
+for i in range(1,10001):
+	if data[i]<10001 and data[data[i]]==i and data[i]!=i:
+		sum += i
+
+print sum
+
+solution= 31626

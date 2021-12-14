@@ -1,0 +1,103 @@
+#n = d*q+r
+#
+#n/7 = 1 3
+#
+#r<d
+#
+#1.	r,q,d	m=q/r=d/q
+#	d=q**2/r
+#	n = q**3/r+r
+#
+#2.	r,d,q	m=q/d=d/r
+#	q=d**2/r
+#	n = d**3/r+r
+#
+#3.	q,r,d	m=r/q=d/r
+#	d=r**2/q
+#	n = r**2+r
+#	==> not perfect sqr
+
+r*x**2 = q**3+r**2
+
+import itertools
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+primes = primesbelow(10**6)
+
+def divisors(n):
+	primdivs = []
+	for i in primes:
+		if n==1: break
+		if n%1==0:
+			part = [1]
+			v = i
+			while n%i==0:
+				part.append(v)
+				n/=i
+				v*=i
+			primdivs.append(part)
+		i+=1
+	divs = []
+	for comb in itertools.product(*primdivs):
+		divs.append(reduce(lambda x,y:x*y, comb))
+	return divs
+
+def squareroot(apositiveint):
+	root = int(apositiveint**0.5)
+	return (root**2==apositiveint, root)
+
+limit = 10**12
+from time import time
+t1=time()
+
+#sol = 0
+#for q in xrange(2,10**6):
+#	if q%1000==0:print q, time()-t1
+#	for r in divisors(q):
+#		n = q**3/r+r
+#		rn = squareroot(n)
+#		if rn[0]:
+#			if n<limit:
+#				sol+=n
+#			print q, r, n, rn[1],time()-t1
+#
+#print sol
+#
+#n = d**3/r+r
+#	d = k*r
+#==>
+#n = k**3*r**2+r`
+
+sol=0
+for k in xrange(1, 10**4):
+	tmp = k**3
+	for r in range(1,10**6):
+		n = tmp*r**2 + r
+		if n > limit: break
+		rn = squareroot(n)
+		if rn[0]:
+			sol+=n
+			print q, r, n, rn[1],time()-t1
+
+# faster still bad
+
+#9 3 0.0
+#10404 102 0.0
+#16900 130 0.0
+#12006225 3465 0.326999902725
+#256160025 16005 1.60700011253
+#13855173264 117708 198.828999996
+q=159319
+#123383587600

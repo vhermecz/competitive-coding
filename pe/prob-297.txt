@@ -1,0 +1,40 @@
+fib = [1,1]
+for i in range(82):
+	fib.append(fib[-1]+fib[-2])
+
+fib = sorted(set(fib))
+fibdesc = sorted(set(fib),reverse=True)
+
+from time import time
+
+def memoize(f):
+	cache= {}
+	def memf(*x):
+		if x not in cache:
+			cache[x] = f(*x)
+		return cache[x]
+	return memf
+
+@memoize
+def cumz(n):
+	if n<=0: return 0
+	res = 0
+	lastf=1
+	for f in fib:
+		num = min(f,n+1)-lastf
+		res += num+cumz(num-1)
+		if f>n: break
+		lastf=f
+	return res
+
+def z(n):
+	cnt = 0
+	idx = 0
+	while n!=0:
+		if fibdesc[idx]<=n:
+			n-=fibdesc[idx]
+			cnt+=1
+		idx+=1
+	return cnt
+
+cumz(10**17-1)

@@ -1,0 +1,59 @@
+#		a*b
+#base	2*(a+b)
+#lay1	base
+#lay2	base + 1*4
+#lay3	base + 2*4
+#lay4	base + 3*4
+#
+#2d_lay(a,b,n) = 2*(a+b) + (n-1)*4
+#
+#
+#lay1	2*base + 0		2*base + 0
+#lay2	2*lay1 + 4		4*base + 0*2 + 4				4			4
+#lay3	2*lay2 + 8		8*base + 0*4 + 4*2 + 8			2*8			16
+#lay4	2*lay3 + 12		16*base + 0*8 + 4*4 + 8*2		4*16		64
+#
+#2d		layn	= (a+b)*2^n	+ 4^(n-1)
+#
+#
+#		a*b*c
+#base	2*(a*b+a*c+b*c)
+#lay1	base + 0
+#lay2	base + 0 + 4*(a+b+c)*(n-1) + 8*((n-1)*(n-2)/2)
+#
+#def layer_3d(a,b,c,n): return 2*(a*b+a*c+b*c) + 4*(a+b+c)*(n-1) + 4*(n-1)*(n-2)
+#
+#(n-1)*(n-2)/2
+#
+#lay2	1
+#lay3	3
+#lay4	6
+#lay5	10
+
+from time import time
+
+def layer_3d(a,b,c,n): return 2*(a*b+a*c+b*c) + 4*(a+b+c)*(n-1) + 4*(n-1)*(n-2)
+
+t1=time()
+limit = 80000
+C = [0]*limit
+for a in xrange(1,limit):
+#	if layer_3d(a,1,1,1)>=limit: break
+	for b in range(1,a+1):
+#		if layer_3d(a,b,1,1)>=limit: break
+		for c in range(1,b+1):
+			n = 1
+			while True:
+				w = layer_3d(a,b,c,n)
+				if w >= limit: break
+				C[w]+=1
+				n+=1
+			if n==1: break
+		if n==1 and c==1: break
+	if n==1 and c==1 and b==1:break
+
+t2=time()
+print t2-t1,C.index(1000)
+# 0.71, 18522
+
+#4000 => 79176 10.908

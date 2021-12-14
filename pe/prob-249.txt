@@ -1,0 +1,27 @@
+def isprime(x):
+	if x < 2: return False
+	if x == 2 : return True
+	if not x%2: return False
+	sq = int(x**0.5)
+	for i in range(3,sq+1):
+		if x%i==0: return False
+	return True
+
+pa = [x for x in range(2,5000) if isprime(x)]
+ps = [x for x in range(2,sum(pa)) if isprime(x)]
+pss = set(ps)
+import time from time
+t1 = time()
+res = [1] + [0]*sum(pa)
+bigmod = 10**16
+total = 0
+for p in pa:
+	total += p
+	for i in xrange(total, p-1, -1):
+		res[i] = (res[i] + res[i-p]) % bigmod
+
+print sum([res[i] for i in range(len(res)) if i in pss]) % bigmod
+t2 = time()
+print t2-t1
+
+

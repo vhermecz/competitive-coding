@@ -1,0 +1,63 @@
+def solver_im():
+	v2 = 1
+	v3,v5,v7=0,0,0
+	it = 0
+	n = 1
+	while True:
+		print it,v2,v3,v5,v7
+		gstart = False
+		it += v2 + v7 + 1
+		v3 = v5 = v2
+		v2 = v7 = 0
+		v5+=1
+#		n = v5
+		####
+		n = n + 1
+		v5 = n
+		div = v5-1
+		while div>0:
+			it += (2*div+1)*(n//div) + n**2
+			v3 = n%div
+			v7 = div - v3 - 1
+			if v3>0:
+				it += (2*n)+2
+				it -= (div - 1 - n%div)*2
+				div -= 1
+				continue
+			break
+			
+		while True:
+			print "in-start", v2, v3, v5, v7
+			it += 2*v3+1
+			v7 += v3
+			v3 = 0
+			print "in-init ", v2, v3, v5, v7
+			while True:
+				it += 1
+				v7 -= 1
+				print "in2-step", v2, v3, v5, v7
+				if v5>0:
+					it += 1
+					v5 -= 1
+					v2 += 1
+					v3 += 1
+					print "in2-v5  ", v2, v3, v5, v7
+					if v7==0:
+						it += 1
+						break
+				elif v3>0:
+					it += 2*v2+2
+					v3 -= 1
+					v5 += v2
+					v2 = 0
+					v7 += 1
+					print "in2-v3  ", v2, v3, v5, v7
+					#goto s11
+					break
+				else:
+					it += 1
+					gstart = True
+					print "in2-brk ", v2, v3, v5, v7
+					break
+			if gstart: break
+		

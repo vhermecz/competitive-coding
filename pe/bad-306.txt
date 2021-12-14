@@ -1,0 +1,33 @@
+
+
+
+fwincache = dict()
+def fwin(n):
+	if n<2: return False
+	if n==2: return True
+#	if n<6: return 1<n<5 
+	if not fwincache.has_key(n):
+		r = False
+		for i in range((n-2)/2+1):
+			if not(fwin(i) ^ fwin(n-2-i)) and fwin(n-2-i)!=floose(n-2-i) and fwin(i)!=floose(i):
+				print n, i, n-2-i
+				r = True
+				break
+		fwincache[n]=r
+	return fwincache[n]
+
+floosecache = dict()
+def floose(n):
+	if n<2: return True
+	if n==3: return False
+	if not floosecache.has_key(n):
+		r = False
+		for i in range((n-2)/2+1):
+			if (fwin(i) ^ fwin(n-2-i)) and fwin(n-2-i)!=floose(n-2-i) and fwin(i)!=floose(i):
+				r = True
+				break
+		floosecache[n]=r
+	return floosecache[n]
+
+w = [fwin(i) for i in range(1,51)]
+l = [floose(i) for i in range(1,51)]

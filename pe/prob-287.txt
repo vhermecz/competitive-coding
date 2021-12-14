@@ -1,0 +1,66 @@
+#(x-2**(N-1))**2 + (y-2**(N-1))**2 <= A**2	blk
+#
+#A = 2**(N-1)
+#
+#(x-A)**2 + (y-A)**2 <= A**2
+#(x-A)**2 + (y-A)**2 - A**2 <= 0
+#x**2 - 2Ax + (y-A)**2 <=0
+#
+#-b+-sq(b2-4ac)
+#/2a
+#
+#A +- sq(A**2 - (y-A)**2 )
+#
+#3.5     6.5
+#  4  5  6
+
+N = 24
+A = 2**(N-1)
+F = 2*A
+
+import time
+
+def testspreadbox():
+	for y in range(F):
+		x2 = spreadbox[y]**2
+		x2p1 = x2 = (spreadbox[y]+1)**2
+		s = (A**2 - (y-A)**2)
+		if not (x2 <= s < x2p1):
+			print y
+
+def isblack_slow(x,y):
+	return (x-A)**2 + (y-A)**2 <= A**2
+
+def isblack(x,y):
+	sp = spreadbox[y]
+	return A-sp <= x <= A+sp
+
+def getspread(y):
+	return int((A**2 - (y-A)**2)**0.5)
+
+t1 = time.time()
+spreadbox = [0]*F
+for y in range(F):
+	spreadbox[y] = getspread(y)
+
+t2 = time.time()
+print t2-t1
+
+def needssplit(x,y,size):
+	if size == F: return True
+	if size == 1: return False
+	return (isblack(x,y) + isblack(x,y+size-1) + isblack(x+size-1,y) + isblack(x+size-1,y+size-1))%4
+
+def compress(x,y,size):
+	if not needssplit(x,y,size): return 2
+	nsize = size/2
+	return 1 + compress(x,y, nsize) + compress(x+nsize,y, nsize) + compress(x,y+nsize, nsize) + compress(x+nsize,y+nsize, nsize)
+
+t1 = time.time()
+print compress(0,0,F)
+t2 = time.time()
+print t2-t1
+
+#solution 156567840 bad
+#solution 313135496
+

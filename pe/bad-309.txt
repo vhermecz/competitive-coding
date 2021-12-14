@@ -1,0 +1,113 @@
+#r(y2-w2)
+#r(x2-w2)
+#w = w*h/r(x2-w2) + w*h/r(y2-w2)
+#1 = h/r(x2-w2) + h/r(y2-w2)
+#1/h = 1/r(x2-w2) + 1/r(y2-w2)
+#r(x2-w2)*r(y2-w2)= h* [r(y2-w2) + r(x2-w2)]
+#hx*hy = h*(hx+hy)
+
+def root(a):
+	rem = 1
+	root = 1
+	t = 2
+	while a!=1:
+		cnt = 0
+		while a%t==0:
+			a/=t
+			cnt+=1
+			if cnt%2==0:
+				root*=t
+		if cnt%2==1:
+			rem*=t
+		t+=1
+	return (root,rem)
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from time import time
+from itertools import *
+
+def genpts(limit):
+	m_limit = int(limit**0.5)
+	pts = []
+	for m in range(2, m_limit+1):
+		for n in range(1,m):
+				if (m-n)%2==1 and gcd(m,n)==1:
+						a = m**2 - n**2
+						b = 2*m*n
+						c = m**2 + n**2
+						p = 2*m**2 + 2*m*n
+						pts.append((a,b,c))
+	return pts
+
+limit = 10**6
+t1=time()
+
+cases = []
+for i in range(limit):
+	cases.append(set())
+
+for a,b,c in genpts(limit):
+	for i in range(1, limit/c+1):
+		if a*i<limit: cases[a*i].add(b*i)
+		if b*i<limit: cases[b*i].add(a*i)
+
+cnt=0
+sol = []
+for i in range(limit):
+	if i%10000==0: print i,cnt
+	for h1, h2 in combinations(sorted(cases[i]), 2):
+		mh = h1*h2
+		sh = h1+h2
+		if mh%sh==0:
+			sx = (i**2+h1**2)
+			sy = (i**2+h2**2)
+			if 0<sx<sy<limit**2:
+				h=mh/sh
+				sol.append((root(sx)[0], root(sy)[0], h)) #w=i
+				cnt+=1
+#			if 0<x<y<limit:
+#				cnt+=1
+#			print i, x,y,mh/sh
+
+t2=time()
+print t2-t1, cnt
+
+# 37sec 210125 - bad - missed some pythagorean primitives (m>717)
+# 74sec 210139 - added missing triplets
+
+# missing irrational-related solutions
+
+for y in range(1,limit):
+	if y%50==0:print y
+	for x in range(1,y):
+		for w in range(1,x):
+			hx = (x**2-w**2)**0.5
+			hy = (y**2-w**2)**0.5
+			h = (hx*hy)/(hx+hy)
+			if h%1<0.000001:
+				hx = root(x**2-w**2)
+				hy = root(y**2-w**2)
+				if hx[1]==hy[1] and hx[1]>1:
+					print y,x,w,y,h, hx[1]==1 and hy[1]==1, hx[1]==hy[1]
+
+
+			1/hx+1/hy=1/h
+			h = (hx*hy)/(hx+hy)
+
+a*rx + b*ry
+r(a**2*x+b**2*y+2*a*b*rx*ry)
+
+a*b*rx*ry / r(a**2*x+b**2*y+2*rx*ry)
+
+w=38 
+x=122
+y=178
+
+hx = (122**2-38**2)**0.5 #= 8r210
+hy = (178**2-38**2)**0.5 #= 12r210
+
+h = hx*hy/(hx+hy)
+
+
+

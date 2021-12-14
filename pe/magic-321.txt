@@ -1,0 +1,32 @@
+def step(n): return n*(n+2)
+
+def istri(x):
+	sr = 1+8*x
+	r = int(sr**0.5)
+	return r**2==sr
+
+def gettri(x):
+	sr = 1+8*x
+	r = int(sr**0.5)
+	return (r+1)/2
+
+
+sol = []
+i=1
+while len(sol)<14:
+	if istri(step(i)):
+		print i, gettri(step(i))
+		sol.append(i)
+	i+=1
+
+
+sol1 = [0]
+sol1p = [1]
+for i in range(50):
+	delta = sum(sol1p[len(sol1p)-1-j]*(-1)**j for j in range(len(sol1p)))
+	if len(sol1)>1 and (sol1[-1]-sol1[-2])%2==0:
+		delta = delta*2-1
+	sol1.append(sol1[-1]+delta)
+	sol1p.append(gettri(step(sol1[-1])))
+
+sol = sum(sol1[:41])

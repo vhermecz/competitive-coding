@@ -1,0 +1,52 @@
+import time
+import math
+
+def isprime(n):
+	if n <= sprimes_limit: return n in sprimes
+	if not n%2: return False
+	l = int(n**0.5)
+	for p in primes:
+		if p>l: break
+		if not n%p: return False
+	return True
+
+def solve(limit):
+	candidates = []
+	for p in primes:
+		pi = (p, 10**len(str(p)))
+		ncandidates = []
+		ncandidates.append([pi])
+		for c in candidates:
+			good = True
+			for ce in c:
+				if not isprime(ce[0]*pi[1] + pi[0]) or not isprime(pi[0]*ce[1] + ce[0]):
+					good = False
+					break
+			if good:
+				nc = list(c)
+				nc.append(pi)
+				if len(nc) == limit:
+					return [sum([n[0] for n in nc]), nc]
+				ncandidates.append(nc)
+		candidates.extend(ncandidates)
+
+t1 = time.time()
+sprimes_limit = 2
+sprimes = set([2])
+primes = [2]
+for i in range(3,100000000):
+	if isprime(i):
+		primes.append(i)
+
+sprimes = set(primes)
+sprimes_limit = primes[-1]
+t2 = time.time()
+print "primegen:", t2-t1
+
+t1 = time.time()
+sol = solve(5)
+t2 = time.time()
+print "solving", t2-t1
+
+# primes 10**7	43sec	74sec
+# primes <10**8	574sec	16sec	(primes to 75000000)

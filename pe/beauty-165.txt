@@ -1,0 +1,57 @@
+from time import time
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+def frac(a,b):
+	g = gcd(a,b)
+	return (a/g, b/g)
+
+def gennums(n):
+	si = 290797
+	t = []
+	for i in range(n):
+		si = (si**2)%50515093
+		t.append(int(si%500))
+	return t
+
+def genevents(lines):
+	events = []
+	for i in range(len(lines)):
+		line = lines[i]
+		ymin, ymax = sorted([line[0][1], line[1][1]])
+		events.append( (ymin, 0, i) )
+		events.append( (ymax, 1, i) )
+	return sorted(events) #(y, isend, linenum)
+
+def getrueix(line1, line2):
+	d = (line2[1][1]-line2[0][1])*(line1[1][0]-line1[0][0]) - (line2[1][0]-line2[0][0])*(line1[1][1]-line1[0][1])
+	ua = ((line2[1][0]-line2[0][0])*(line1[0][1]-line2[0][1]) - (line2[1][1]-line2[0][1])*(line1[0][0]-line2[0][0]))
+	ub = ((line1[1][0]-line1[0][0])*(line1[0][1]-line2[0][1]) - (line1[1][1]-line1[0][1])*(line1[0][0]-line2[0][0]))
+	if d<0:	d,ua,ub = -d,-ua,-ub
+	if (0<ub<d) and (0<ua<d):
+		x = frac(d*line1[0][0] + ua * (line1[1][0]-line1[0][0]), d)
+		y = frac(d*line1[0][1] + ua * (line1[1][1]-line1[0][1]), d)
+		return (x,y)
+	return False
+
+def getdisttouches(lines):
+	events = genevents(lines)
+	buff = set()
+	res = []
+	for event in events:
+		if event[1]==0:
+			for cand in buff:
+				tmp = getrueix(lines[cand],lines[event[2]])
+				if isinstance(tmp, tuple):
+					res.append(tmp)
+			buff.add(event[2])
+		else:
+			buff.remove(event[2])
+	return set(res)
+
+t1=time()
+numbers = gennums(20000)
+lines = [((numbers[4*i],numbers[4*i+1]),(numbers[4*i+2],numbers[4*i+3])) for i in range(5000)]
+solution = len(getdisttouches(lines))
+t2=time()
+print t2-t1, solution

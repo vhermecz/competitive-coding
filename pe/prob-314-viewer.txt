@@ -1,0 +1,41 @@
+from Tkinter import *
+
+def display(conf):
+	size = sum(conf)
+	viewsize = size*2+64
+	master = Tk()
+	w = Canvas(master, width=viewsize, height=viewsize)
+	w.pack()
+	x=0
+	y=0
+	for i in range(0,len(conf)/2+1):
+		nx = x + conf[i]
+		ny = y + conf[-1-i]
+		w.create_oval(32+x-2,32+size-y-2,32+x+2,32+size-y+2)
+		w.create_line(32+x,32+size-y,32+nx,32+size-ny)
+		w.create_line(32+x,32+size+y,32+nx,32+size+ny)
+		w.create_line(32+2*size-x,32+size-y,32+2*size-nx,32+size-ny)
+		w.create_line(32+2*size-x,32+size+y,32+2*size-nx,32+size+ny)
+		w.create_line(32+size-y,32+2*size-x,32+size-ny,32+2*size-nx)
+		w.create_line(32+size+y,32+2*size-x,32+size+ny,32+2*size-nx)
+		w.create_line(32+size-y,32+x,32+size-ny,32+nx)
+		w.create_line(32+size+y,32+x,32+size+ny,32+nx)
+		x=nx
+		y=ny
+	#ps = w.postscript(file="c:/tmp/test.ps")
+	mainloop()
+	return ps
+
+def decipher_bela(conf):
+	conf = conf[:]
+	conf = list(reversed(conf))
+	x=0
+	y=0
+	res = [0] * (len(conf)*2)
+	for i in range(len(conf)):
+		dot = conf[i]
+		res[i] = dot[1]-x
+		res[-1-i] = 250-dot[0]-y
+		x=dot[1]
+		y=250-dot[0]
+	return res

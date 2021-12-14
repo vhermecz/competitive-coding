@@ -1,0 +1,21 @@
+from time import time
+from collections import *
+from itertools import *
+
+middles = defaultdict(set)
+t1=time()
+limit = 1000
+for a in range(1,limit):
+	for b in range(1,a):
+		if a%2==b%2:
+			mid = (a**2+b**2)/2
+			dif = a**2 - mid
+			middles[mid].add(dif)
+
+for x in sorted(middles.keys()):
+	if len(middles[x])>=2:
+		for z,y in combinations(sorted(middles[x]),2):
+			if z in middles[y]:
+				print x+y+z,x,y,z,time()-t1
+
+#1006193 434657 420968 150568 1.17sec

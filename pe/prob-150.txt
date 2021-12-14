@@ -1,0 +1,37 @@
+from time import time
+def genbase(line):
+	t=0
+	sk=[]
+	for k in range(line*(line+1)/2):
+		t = (615949*t + 797807) % 2**20
+		sk.append(t−2**19)
+	return sk
+
+def gettriheight(tri):
+	return (int((len(tri)*8+1)**0.5)-1)/2
+
+def getindex(row,col):
+	return (row+1)*(row)/2+col
+
+def reducetri(unit, last, llast):
+	lasth = gettriheight(last)
+	res = [0] * (lasth*(lasth-1)/2)
+	for row in range(lasth-1):
+		for col in range(row+1):
+			res[getindex(row,col)] = last[getindex(row+1,col)] + last[getindex(row+1,col+1)] - llast[getindex(row+2,col+1)] + unit[getindex(row,col)]
+	return res
+
+t1=time()
+probh = 1000
+last = unit = genbase(probh)
+llast = [0]*((probh+1)*(probh+2)/2)
+sol = 0
+while len(last)>1:
+	print gettriheight(last)
+	llast, last = last, reducetri(unit, last, llast)
+	sol = min(sol, min(last))
+
+t2=time()
+print t2-t1,sol
+# pypy	175.067000151 -271248680
+# cpy	383.049999952 -271248680

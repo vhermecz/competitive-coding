@@ -1,0 +1,28 @@
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from time import time
+
+def genpts(limit):
+	m_limit = int((limit*0.5)**0.5)
+	pts = []
+	for m in xrange(2, m_limit+1):
+		for n in xrange(1,m):
+			p = 2*m**2 + 2*m*n
+			if p>=limit: break
+			if (m-n)%2==1 and gcd(m,n)==1:
+				a = m**2 - n**2
+				b = 2*m*n
+				c = m**2 + n**2
+				yield tuple([p] + sorted([a,b,c]))
+
+limit = 10**8
+t1=time()
+res = 0
+for p,a,b,c in genpts(10**8):
+	if c%(b-a)==0:
+		res += limit/p
+
+t2=time()
+
+print t2-t1,res
+

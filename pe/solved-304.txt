@@ -1,0 +1,98 @@
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+
+def primesbetween(N,M):
+	l = M-N
+	sieve = [True] * l
+	for p in primes:
+		for t in xrange(-N%p, l, p):
+			sieve[t]=False
+	return [N+i for i in xrange(0,l) if sieve[i]]
+
+# slow
+def nextprime(n):
+	while True:
+		n+=1
+		fail = False
+		for p in primes:
+			if p>=n: break
+			if n%p==0:
+				fail=True
+				break
+		if not fail:
+			return n
+
+def getprimes(n, num):
+	r = []
+	for i in range(num):
+		n = nextprime(n)
+		r.append(n)
+	return r
+
+vmod = 1234567891011
+
+def fibo_prev(st):
+	return (st[1]-st[0], st[0], st[2]-1)
+
+def fibo_next(st):
+	return (st[1], st[0]+st[1], st[2]+1)
+
+def fibo_n(n):
+	st = (1, 0, 0)
+	while st[2]!=n:
+		st = fibo_next(st)
+	return st
+
+def fibo_add(st1, st2):
+	st1n = fibo_next(st1)
+	st2p = fibo_prev(st2)
+	st = (st2p[1]*st1n[1] + st2p[0]*st1n[0], st2[1]*st1n[1] + st2[0]*st1n[0], st1n[2]+st2[2]-1 )
+	return st
+
+def fibo_mod(st, vmod):
+	return (st[0]%vmod, st[1]%vmod, st[2])
+
+
+def fibo_fast(n, vmod):
+	b = fibo_n(1)
+	r = fibo_n(0)
+	while n>0:
+		if n%2==1:
+			r = fibo_mod(fibo_add(r, b), vmod)
+		n/=2
+		b = fibo_mod(fibo_add(b,b), vmod)
+	return r
+
+def fibo_value(st):
+	return st[1]
+
+from time import time
+primes = primesbelow(10**7)
+a=primesbetween(10**14,10**14+3235450)
+total = 0
+cnt = 0
+t1=time()
+for n in a:
+	cnt +=1
+	if cnt%1000==0: print cnt, time()-t1
+	total = (total + fibo_value(fibo_fast(n, vmod))) % vmod
+
+t2=time()
+print t2-t1,total
+
+
+# cpython 40sec, 283988410192
+# pypy 20sec, 283988410192
+# dumb impl, cacling every fibo value from scratch

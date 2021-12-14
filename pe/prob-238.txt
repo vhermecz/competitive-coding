@@ -1,0 +1,49 @@
+from time import time
+t1=time()
+s0 = 14025256
+s = [s0]
+while True:
+	sn = int(s[-1]**2 % 20300713)
+	if s0==sn: break
+	s.append(sn)
+
+sstr = "".join(str(n) for n in s)
+ns = [int(d) for d in sstr]
+
+cumns = [0]
+for n in ns:
+	cumns.append(cumns[-1]+n)
+
+cumns = cumns[1:]
+del s
+del sstr
+del ns
+
+p = [0] * cumns[-1]
+
+l_max = len(cumns)
+v_max = cumns[-1]
+saved_end_idx = 0
+for k in xrange(1,cumns[-1]):
+	if k%10000==0: print k
+	start_idx = -1
+	while cumns[saved_end_idx] < k: saved_end_idx+=1
+	end_idx = saved_end_idx
+	while True:
+		v = (cumns[end_idx%l_max] - cumns[start_idx%l_max]) % v_max
+		if v==k:
+			p[k-1] = start_idx+1
+			break
+		elif v<k and v!=0:
+			end_idx+=1
+		else:
+			start_idx+=1
+
+p[-1]=1
+
+target = 10**15
+total = target/l_max*sum(p)+sum(p[i] for i in range(target%l_max))
+
+t2=time()
+print t2-t1
+

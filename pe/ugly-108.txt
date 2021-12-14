@@ -1,0 +1,123 @@
+#n = x*y/(x+y)
+
+#if p=gcd(x,y), x=p*a, y=p*b => p2*a*b/p(a+b) => p*(a*b)/(a+b) )
+
+#a*x/(a+x) = c
+#a*x = c(a+x)
+#a*x = c*a + c*x
+#(a-c)*x = c*a
+#x = c*a/(a-c)
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from time import time
+import itertools
+
+class Divnum:
+	def __init__(self, n):
+		self.totients = [1 for i in xrange(n)]
+		for i in xrange(2, n):
+			if self.totients[i] == 1:
+				for j in xrange(i, n, i):
+					s = 1
+					k = j
+					while k%i==0:
+						s += 1
+						k /= i
+					self.totients[j] *= s
+	def __call__(self, i):
+		return self.totients[i]
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def divisors(n):
+	primdivs = []
+	for i in primes:
+		if n==1: break
+		if n%1==0:
+			part = [1]
+			v = i
+			while n%i==0:
+				part.append(v)
+				n/=i
+				v*=i
+			primdivs.append(part)
+		i+=1
+	divs = []
+	for comb in itertools.product(*primdivs):
+		divs.append(reduce(lambda x,y:x*y, comb))
+	return divs
+
+def generate(limit):
+	t1=time()
+	cs = [0]*limit
+	for a in range(1,limit):
+		for b in range(1,a+1):
+			if gcd(a,b)==1:
+				n=a*b
+				d=a+b
+				p=int(gcd(n,d))
+				c=n/p
+#				m=d//p
+				if c>=limit: break
+				cs[c]+=1
+#				print a,b,m,c,a*m,b*m
+#				if c < a or c<b: print "OUCH", a,b,c
+	t2=time()
+	print t2-t1
+	return cs
+
+def generate_pairs(limit):
+	t1=time()
+	cs = []
+	for i in range(limit): cs.append([])
+	for a in range(1,limit):
+		for b in range(1,a+1):
+			if gcd(a,b)==1:
+				n=a*b
+				d=a+b
+				p=int(gcd(n,d))
+				c=n/p
+				m=d//p
+				if c>=limit: break
+				cs[c].append( (a*m,b*m) )
+	t2=time()
+	print t2-t1
+	return cs
+
+t1=time()
+limit = 10**6
+primes = primesbelow(limit)
+limit = 10**6
+c2 = generate(limit)
+cmax = [0]*limit
+for i in range(1,limit): cmax[i] = max(cmax[i-1],c2[i])
+dn = Divnum(limit)
+
+for i in xrange(2,limit):
+	s = 0
+	if dn(i)*cmax[i] < 1000: continue
+	for d in divisors(i):
+		s += c2[d]
+	if i%500==0: print i, s
+	if s>1000:
+		print i
+		break
+
+t2=time()
+print t2-t1
+
+# solution = 180180
+# time = 63.37 (c2 generation is 56.3)

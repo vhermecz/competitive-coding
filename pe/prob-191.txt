@@ -1,0 +1,21 @@
+def tribonacci(n):
+	a,b,c = 1,0,0
+	n-=1
+	while n>0:
+		a,b,c = a+b+c,a,b
+		n-=1
+	return a
+
+def goodao(n): return tribonacci(n+2)
+
+def solve(n):
+	t1=time()
+	s = 0
+	for i in range(0,n):
+		s += goodao(i)*goodao(n-i-1)
+	s+=goodao(n)
+	t2=time()
+	print t2-t1
+	return s
+
+from time import time

@@ -1,0 +1,145 @@
+# totally bad
+
+mod = 100000
+
+def c2a5(n):
+	i = n
+	c2 = 0
+	while i!=0:
+		c2 += i/2
+		i/=2
+	i = n	
+	while i!=0:
+		c2 -= i/5
+		i/=5
+	return c2
+
+def timeit(n):
+	t1=time()
+	tmp = [last5factft(1+i*10**5,(i+1)*10**5) for i in range(n)]
+	t2=time()
+	print t2-t1
+
+# repeat 78125 (all i*4+3 fails)
+for i in range(0,1000):
+	vs = [last5factft2(j) for j in range(i, 1000000, 78125)]
+	print vs
+
+
+def last5factft(a,n):
+	v = 1
+	c2 = 0
+	c5 = 0
+	for i in range(a,n):
+		while i%2==0:
+			i/=2
+			c2+=1
+		while i%5==0:
+			i/=5
+			c5+=1
+		v = (v * i) % mod
+#	for i in range(c2):
+#		v = (v * 2) % mod
+	return v,c2,c5
+
+def last5factft2(s):
+	return last5factft(1+s*10**5,(s+1)*10**5)
+
+def last5fact(n):
+	v = 1
+	c2 = 0
+	for i in range(1,n+1):
+		while i%2==0:
+			i/=2
+			c2+=1
+		while i%5==0:
+			i/=5
+			c2-=1
+		v = (v * i) % mod
+	print v,c2
+	for i in range(c2):
+		v = (v * 2) % mod
+	return v
+
+def powmod(mul, mod, pow):
+	ret = 1
+	base = mul
+	while pow > 0:
+		if pow%2 == 1:
+			ret*=base
+			ret%=mod
+		base *= base
+		base %= mod
+		pow/=2
+	return ret
+
+def dumb(n):
+	v = 1
+	for i in xrange(1,n+1):
+		v *= i
+		print i, v
+		while v%10==0:
+			v/=10
+			print "div", v
+		v %= mod
+		print v
+	return v
+
+def solve(n):
+	high = last5fact(mod)
+	low = last5fact(n%mod)
+	hhigh = powmod(high, mod, n/mod)
+	return (hhigh*low)%mod
+
+def last5factno2_5_no3125(n):
+	v = 1
+	for i in range(1,n+1):
+		if i%5==0: continue
+		while i%2==0:
+			i/=2
+		while i%5==0:
+			i/=5
+		v = (v * i) % mod
+	return v
+
+def last5fact3125_no2_5(n):
+	v = 1
+	for i in range(5,n+1, 5):
+		while i%2==0:
+			i/=2
+		while i%5==0:
+			i/=5
+		v = (v * i) % mod
+	return v
+
+def solve2(n):
+	high = last5factno2_5_no3125(mod)
+	low = last5factno2_5_no3125(n%mod)
+	trick = last5fact3125_no2_5(n)
+	hhigh = powmod(high, mod, n/mod)
+	v2 = powmod(2, mod, c2a5(n))
+	return (hhigh*low*v2*trick)%mod
+
+# other bad
+v = 1
+c2 = 0
+for i in range(1,mod+1):
+	while i%2==0:
+		i/=2
+	while i%5==0:
+		i/=5
+	v = (v * i) % mod
+
+v = powmod(v, mod, (10**12)/mod)
+
+v2 = powmod(2, mod, c2a5(10**12))
+
+print (v*v2)%mod
+
+# test
+tmp = [last5factft2(i) for i in range(1000)]
+for i in range(1,10**7,100):
+	v = last5factft2(i)
+	if tmp.count(v)>0:
+		print i, tmp.index(v)
+

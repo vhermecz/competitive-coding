@@ -1,0 +1,23 @@
+#714285=5×142857
+#td*s+bds = (10*bds+td)*n
+#s,td,n => bds
+
+#10*bds*n-bds = td*s-n*td
+#(10*n-1)*bds = td*(s-n)
+
+tot = 0
+for s in range(1,100):
+	rs = 10**s
+	for td in range(1,10):
+		for n in range(1,10):
+			nom = td*(rs-n)
+			denom = 10*n-1
+			if nom%denom==0:
+				bds = nom/denom
+				cand = bds*10+td
+				rcand = bds + td*rs
+				if cand>rs:
+					tot += cand
+
+print tot%10**5
+#59206

@@ -1,0 +1,11 @@
+tot = 600851475143
+div = 2
+while tot != 1:
+	if tot % div == 0:
+		tot = tot / div
+	else:
+		div+=1
+
+print div
+
+solution: 6857

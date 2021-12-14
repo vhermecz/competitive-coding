@@ -1,0 +1,57 @@
+import itertools
+import time
+def divisorsdesc(n):
+	primdivs = []
+	i = 2
+	while n > 1:
+		if n%1==0:
+			part = [1]
+			v = i
+			while n%i==0:
+				part.append(v)
+				n/=i
+				v*=i
+			primdivs.append(part)
+		i+=1
+	divs = []
+	for comb in itertools.product(*primdivs):
+		divs.append(reduce(lambda x,y:x*y, comb))
+	divs.sort()
+	divs.reverse()
+	return divs[1:-1]
+
+def prods(n):
+	divs = divisorsdesc(n)
+	def part(res, n, tmp, idx):
+		if n == 1:
+			res.append(tmp[:])
+			return
+		if idx == len(divs):
+			return
+		if n%divs[idx]==0:
+			tmp.append(divs[idx])
+			part(res, n/divs[idx], tmp, idx)
+			tmp.pop()
+		part(res, n, tmp, idx+1)
+	res = []
+	part(res,n,[],0)
+	return res
+
+
+def solve(sollimit):
+	sol = [0]*(sollimit+1)
+	n = 4
+	missing = sollimit-2+1
+	while missing>0:
+		for prod in prods(n):
+			k = n - sum(prod) + len(prod)
+			if k<=sollimit and sol[k]==0:
+				sol[k] = n
+				missing-=1
+		n+=1
+	return sum(set(sol))
+
+t1 = time.time()
+print solve(12000)
+t2=time.time()
+print t2-t1

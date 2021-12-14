@@ -1,0 +1,101 @@
+# solution
+#  sum= 1070379110497
+#  blue= 756872327473
+#  red=  313506783024
+#  time=~100min
+
+s_b = 1+2*b*(b-1)
+
+s_s = a*a
+
+a -> a+1
+	(a+1)**2 - a**2 = 2a+1
+
+b -> b+1
+	1+2*(b+1)*(b) - 1+2*b*(b-1) = 4b
+---
+def s_b(b):
+	return 1+2*b*(b-1)
+
+def s_a(a):
+	return a*a
+
+import time
+t1=time.time()
+b_0=10**12
+#b_0=1
+a_0=int(s_b(b_0)**0.5)
+delta = s_b(b_0) - s_a(a_0)
+a_i = a_0
+b_i = b_0
+while True:
+	while delta>0:
+		print "a",
+		delta -= 2*a_i+1
+		a_i+=1
+	while delta<0:
+		print "b",
+		delta += 4*b_i
+		b_i+=1
+	if delta==0:
+		if (a_i-1)%2==0:
+#			print time.time()-t1, a_i, b_i, s_b(b_i), s_a(a_i)
+			blue = (a_i+1)/2
+			sum = b_i
+			print "blue=", blue, "red=", sum-blue, "time=", time.time()-t1
+		delta += 4*b_i
+		b_i+=1
+
+---
+12   25
+
+12 11
+25 24
+
+12.0/25 * 11.0/24
+
+15 6
+85 35
+a * (a-1) = 0.5*b*(b-1)
+C = 0.5*b*(b-1)
+a2 - a - C
+
+(-1 + sqrt(1 + 2*b*(b-1))) /2
+
+1 + 2*b*(b-1) == x2  ,x in N
+
+b * 2**0.5
+
+--
+def is_square(apositiveint):
+  x = apositiveint // 2
+  seen = set([x])
+  while x * x != apositiveint:
+    x = (x + (apositiveint // x)) // 2
+    if x in seen: return False
+    seen.add(x)
+  return True
+
+b = 10**12
+
+while True:
+	if is_square(1+2*b*(b-1)):
+		S = (1+2*b*(b-1))**0.5
+		if S%2==1:
+			print (S-1)/2, b
+	b+=1
+
+
+
+2*b*(b-1) - 2*b*(b+1) = 
+2b**2 - 2b - 2b**2 - 2b = 
+4b
+
+public int GCD(int a, int b)
+{   if (b==0) return a;
+   return GCD(b,a%b);
+}
+
+10 100
+100 10
+10 0

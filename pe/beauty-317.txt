@@ -1,0 +1,7 @@
+def solve_it(height, vblow, g):
+   shift = vblow**2/g
+   return (height+shift/2)**2*shift*math.pi
+
+solve_it(100,20,9.81)
+
+# took 5 hours to write, OMG LMAO LC^=LC

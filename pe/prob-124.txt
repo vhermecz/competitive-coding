@@ -1,0 +1,15 @@
+def rad(n):
+	r = 1
+	for p in primes:
+		if n%p==0:
+			r*=p
+			while n%p==0:
+				n/=p
+			if n==1:
+				return r
+
+rads = [(rad(n),n) for n in range(1,100001)]
+rads = sorted(rads)
+rads[9999]
+
+solution=21417

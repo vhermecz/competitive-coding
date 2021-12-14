@@ -1,0 +1,20 @@
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+from time import time
+
+t1 = time()
+n=1
+m=4
+cnt=1
+sm = 0
+while cnt<13:
+	a = m**2 - n**2
+	b = 2*m*n
+	c = m**2 + n**2
+	pts = sorted([a,b,c])
+	print cnt, pts, time()-t1
+	m,n = 4*m+n, m
+	sm += pts[2]
+	cnt+=1
+
+print sm

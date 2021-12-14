@@ -1,0 +1,38 @@
+#xn + yn = xy
+#(x + y)n = xy
+#x = yn/(y-n)
+
+# n = x*y*z
+# solutions are of the form:
+#     1           1         1
+# --------- + --------- = -----
+# x*z*(x+y)   y*z*(x+y)   x*y*z
+#
+# So we pick any z from n, all combinations of x*y=n/z provides one solution ==> divnum(n/z)
+# !!! Some solutions are duplicates, thus z must be square free to avoid duplications
+# That brings us to having: (a1 + a1-1)*(a2 + a2-1)*(a3 + a3-1)...+1/2 as the solution
+
+def solve(n):
+	ds = radivs(n)
+	res = 1
+	for d in ds:
+		if d==n: added+=1
+		else: added= len(divisors(n/d))
+		res+=added
+	return res/2
+
+def combiner(f): return (sum(reduce(lambda a,b: a*(b[0]-b[1]), zip(f,modder), 1) for modder in itertools.product(range(2),repeat=len(f)))+1)/2
+
+def combiner_wforum(f): return (reduce(lambda a,b: a*(2*b-1), f, 1)+1)/2
+
+def solve2(n): return combiner([f[1]+1 for f in factorize(n)])
+	
+def guess(f): return (reduce(lambda a,b:a*(b[0]**(b[1]-1)), zip(primes[:len(f)],sorted(f,reverse=True)), 1), combiner_wforum(f))
+
+def autoguess(limit):
+	for g in sorted(guess(reduce(lambda a,b:a+[b[0]]*b[1], zip([2,3,4], prod), [])) for prod in product(range(10), range(4), range(3))):
+		if g[1]>limit: return g[0]
+	return None
+
+autoguess(4000000)
+

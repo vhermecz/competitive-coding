@@ -1,0 +1,15 @@
+20x20 grid
+
+two operations
+	go right	(r)
+	go down		(d)
+
+40 steps, 20r, 20d
+
+select 20 from 40
+
+40*39*38
+40!/20!/20!
+math.factorial(40)/math.factorial(20)/math.factorial(20)
+
+solution: 137846528820

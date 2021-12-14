@@ -1,0 +1,30 @@
+from time import time
+
+def solve(limit):
+	t1 = time()
+	cnt=1
+#	cs = set()
+	for c in range(3,limit,2):
+		for b in range(2,c,2):
+			if b+c>=limit: break
+			for a in range(2,b,2):
+				if a+b+c>=limit: break
+				if a**2+b**2==c**2-1:
+					print a,b,c
+#					cs.add(c)
+					cnt+=1
+	t2 = time()
+	print t2-t1
+#	return (cnt,cs)
+	return cnt
+
+
+# a,b even c odd
+# proof:
+#	a=2n	b=2m	c=2j+1	4n2 + 4m2 = 4j2+4j  ok
+#	a=2n+1	b=2m+1	c=2j	4n2 + 4n + 1 + 4m2 + 4m + 1 = 4j2 - 1 => 4(y-x) = 3  fail
+#	a=2n	b=2m+1	c=2j+1	4n2 + 4m2 + 4m + 1 = 4j2 - 1 => 4(y-x) = 2  fail
+
+
+
+

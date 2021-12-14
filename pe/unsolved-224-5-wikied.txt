@@ -1,0 +1,41 @@
+def getpairs(value):
+	if value==0: yield(0,0)
+	if value<1: return
+	a = 0
+	b = int(value**0.5)+1
+	delta = a**2+b**2-value
+	while a<b:
+		if delta==0:
+			yield (a,b)
+			yield (b,a)
+			delta += 2*a + 1
+			a+=1
+		elif delta<0:
+			delta += 2*a + 1
+			a+=1
+		elif delta>0:
+			delta -= 2*b - 1
+			b-=1
+
+from time import time
+def solve(limit):
+	t1=time()
+	slimit = int(limit**0.5)+1
+	sols = set()
+	for m in range(-slimit, slimit):
+		for n in range(-slimit, slimit):
+			for p,q in getpairs(m**2+n**2-1):
+				a = m**2 + n**2 - p**2 - q**2
+				b = 2*(m*q + n*p)
+				c = 2*(n*q - m*p)
+				d = m**2 + n**2 + p**2 + q**2
+				if b>0 and c>0 and d>0 and b!=c and b+c+d<=limit:
+					sols.add( tuple(sorted([b,c,d])))
+	t2 = time()
+	return t2-t1, sols
+
+# 60**2+132**2-145**2+1 missing from result solve(1000)
+1
+60
+132
+145

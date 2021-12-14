@@ -1,0 +1,123 @@
+import time
+def modpow(base, exp, mod):
+	if exp==0: return 1
+	base = base % mod
+	if base<2:
+		return base
+	basestep = base
+	res = 1
+	while exp!=0:
+		if exp%2==1:
+			res *= basestep
+			res %= mod
+		exp/=2
+		basestep*=basestep
+		basestep%=mod
+	return res
+
+t1=time.time()
+limit = 250250
+mod = 250
+cnt = [0] * mod
+for i in xrange(1,limit+1):
+	cnt[modpow(i,i,mod)]+=1
+
+t2=time.time()
+print t2-t1
+
+
+from math import factorial
+
+def binomial(n,k):
+	if n >= k:
+		b = factorial(n) / (factorial(k)*factorial(n-k))
+		return b
+
+def gcd(a,b):
+	if b==0: return a
+	return gcd(b,a%b)
+
+def lcm(a,b):
+	return a*b/gcd(a,b)
+
+def lincong0(a,b,m):
+	if a==b: return 1
+	return (b+m*lincong0(m%a,-b%a,a))/a
+
+def lincong(a,b,m):
+	g = gcd(a,m)
+	if b%g==0:
+		delta = 250/g
+		return range(lincong0(a,b,m),m,delta)
+	else:
+		return []
+
+def lincongwdelta(a,b,m):
+	g = gcd(a,m)
+	if b%g==0:
+		delta = 250/g
+		return (lincong0(a,b,m)%delta, delta)
+	else:
+		return None
+
+def genbinomcache(values, mod):
+	values = set(values)
+	t = max(values)
+	res = dict()
+	s = [1] + [0]*(t)
+	for i in xrange(1,t+1):
+		for j in xrange(i,0,-1):
+			s[j] = (s[j] + s[j-1])% mod
+		if (i) in values:
+			res[i] = s[:i+1]
+	return res
+
+bigmod = 10**16
+binomcache = genbinomcache(set(cnt), bigmod)
+
+def fastbinom(a,b):
+	if a>0: return binomcache[a][b]
+
+dp = []
+for n in range(250): dp.append([0]*250)
+
+# dim1 - highest mod250 items included
+# dim2 - mod remainder
+
+for i in range(1,250):
+	print i
+	tmp = [0]*250
+	if cnt[i]!=0:
+		for j in range(0,250):
+			sol = lincongwdelta(i,j,250)
+			if sol!=None:
+				start,delta=sol
+				tmp2 = 0
+				for k in range(start, cnt[i]+1, delta):
+					tmp2 += fastbinom(cnt[i], k)
+				tmp[j] = tmp2
+	else:
+		tmp[0]=1
+	for j in range(0,250):
+		if cnt[i]!=0:
+			tmp2 = tmp[j]
+		for k in range(0,250):
+			tmp2 += tmp[k] * dp[i-1][(j-k)%250]
+		dp[i][j] = tmp2 % bigmod
+
+print (dp[249][0] * (2**cnt[0])) % bigmod
+
+# dev
+def fastbinom2(t, mod):
+	s = [1] + [0]*(t)
+	for i in xrange(1,t+1):
+		for j in xrange(i,0,-1):
+			s[j] = (s[j] + s[j-1])% mod
+	return s
+
+def fastbinom(t,mod):
+	s = [1]
+	while t>0:
+		t-=1
+		s = [1] + [ (s[i]+s[i+1])%mod for i in range(len(s)-1)] + [1]
+	return s

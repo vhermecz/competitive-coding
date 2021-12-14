@@ -1,0 +1,12 @@
+def f(ts, fs):
+	s = [0]*ts + [1]*(fs-ts+1)
+	for i in range(2*ts, fs+1):
+		s[i] = s[i-ts]
+		for j in range(ts):
+			s[i]+= s[i-ts-j]
+	return sum(s)
+
+def solve(n):
+	return f(2,n)+f(3,n)+f(4,n)
+
+solution = solve(50)

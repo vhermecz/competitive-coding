@@ -1,0 +1,19 @@
+n = 1
+while True:
+	tri = n*(n+1)/2
+	tester = 2
+	tmp = tri
+	divnum = 1
+	while tmp!=1:
+		cnt = 1
+		while tmp%tester==0:
+			cnt+=1
+			tmp/=tester
+		tester+=1
+		divnum*=cnt
+	if divnum>500:
+		print n, tri
+		break
+	n+=1
+
+solution: 76576500

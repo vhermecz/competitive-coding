@@ -1,0 +1,15 @@
+from time import time
+t1=time()
+limit = 10**7#5*10**7
+sols = [0]*limit
+for a in xrange(1,limit):
+	for d in xrange((a+3)/4, a):
+		n = (4*d-a)*a
+		if n>=limit: break
+		sols[n]+=1
+
+t2=time()
+print t2-t1,sols.count(1)
+
+# slow solution...
+# for 10**7 it tooks 94.6459999084 566456

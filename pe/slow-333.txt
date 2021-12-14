@@ -1,0 +1,40 @@
+from math import log, ceil
+import base
+
+def print_matrix(p2_max, p3_max):
+	for p2 in range(p2_max):
+		for p3 in range(p3_max):
+			v = 2**p2 * 3**p3
+			if v>10**6:
+					v = -1
+			print ("%8d" % v),
+		print
+
+def generator(p):
+	p2_max = int(ceil(log(p) / log(2)))
+	p3_max = int(ceil(log(p) / log(3)))
+	pmtrix = [ [ 2**p2 * 3**p3 for p3 in range(p3_max)] for p2 in range(p2_max) ]
+	def itemgen(limit, v, p2, p3, s):
+		v += pmtrix[p2][p3] # 2**p2 * 3**p3
+		if v>=limit: return False
+		s[v] += 1
+		for d2 in range(1, p2+1):
+			for p_3 in range(p3+1, p3_max):
+				itemgen(limit, v, p2-d2, p_3, s)
+	s = [0] * p
+	for p2 in range(0,p2_max):
+		for p3 in range(0, p3_max):
+			itemgen(p, 0, p2, p3, s)
+	return s
+
+from time import time
+t1=time()
+s = generator(1000000)
+t2=time()
+print t2-t1
+
+primes = base.primesbelow(1000000)
+print sum(p for p in primes if s[p]==1)
+
+# 3053105
+# time: 94sec

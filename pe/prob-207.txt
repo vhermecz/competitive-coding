@@ -1,0 +1,10 @@
+perfect_k = set([4**i-2**i for i in range(1,30)])
+
+cnt_perfect = 0
+for i in xrange(2,1000000):
+	k = i**2-i
+	if k in perfect_k:
+		cnt_perfect+=1
+	if 12345*cnt_perfect < i-1:
+		print i, k
+		break

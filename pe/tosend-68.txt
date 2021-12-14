@@ -1,0 +1,12 @@
+sol = set()
+for i in itertools.permutations(range(1,11),10):
+	s = i[0]+i[2]+i[4]
+	if s == i[1] + i[4]+i[7] and s == i[2] + i[3] + i[5] and s == i[3] + i[6] + i[9] and s == i[6] + i[7] + i[8]:
+		d = [i[0] , i[2] , i[4] , i[1] , i[4] , i[7] , i[8] , i[7] , i[6] , i[9] , i[6] , i[3] , i[5] , i[3] , i[2]]
+		dmi = d.index(min(d[::3]))
+		d = reduce(lambda a,b:a+b , [d[(dmi+3*a)%15:(dmi+3*a)%15+3] for a in range(5)])
+		sol.add("".join([str(n) for n in d]))
+
+print max([s for s in sol if len(s)==16])
+
+solution = 6531031914842725

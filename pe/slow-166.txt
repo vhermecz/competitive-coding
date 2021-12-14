@@ -1,0 +1,46 @@
+from time import time
+
+def solve(st, total, idx):
+	if idx==4: total = sum(st[0:4])
+	# vert lines
+	if (idx==5 or idx==9) and st[0]+st[4]+st[8]+st[12]>total: return 0
+	if idx == 13 and st[0]+st[4]+st[8]+st[12]!=total: return 0
+	if (idx==6 or idx==10) and st[1]+st[5]+st[9]+st[13]>total: return 0
+	if idx == 14 and st[1]+st[5]+st[9]+st[13]!=total: return 0
+	if (idx==7 or idx==11) and st[2]+st[6]+st[10]+st[14]>total: return 0
+	if idx == 15 and st[2]+st[6]+st[10]+st[14]!=total: return 0
+	if (idx==8 or idx==12) and st[3]+st[7]+st[11]+st[15]>total: return 0
+	if idx == 16 and st[3]+st[7]+st[11]+st[15]!=total: return 0
+	# horiz lines
+	if (5 <= idx <= 7) and sum(st[4:8])>total:return 0
+	if (idx == 8) and sum(st[4:8])!=total:return 0
+	if (9 <= idx <= 11) and sum(st[8:12])>total:return 0
+	if (idx == 12) and sum(st[8:12])!=total:return 0
+	if (13 <= idx <= 15) and sum(st[12:16])>total:return 0
+	if (idx == 16) and sum(st[12:16])!=total:return 0
+	# main diag
+	if (idx==6 or idx==11) and st[0]+st[5]+st[10]+st[15]>total: return 0
+	if idx == 16 and st[0]+st[5]+st[10]+st[15]!=total: return 0
+	# cross diag
+	if (idx==7 or idx==10) and st[3]+st[6]+st[9]+st[12]>total: return 0
+	if (idx==13) and st[3]+st[6]+st[9]+st[12]!=total: return 0
+	#solution
+#	if idx==4: print st[0:4]
+	if (idx==16):
+#		print total
+#		for i in range(4):
+#			print st[4*i:4*i+4]
+		return 1
+	else:
+		# iterate
+		cnt = 0
+		for cand in range(0,10):
+			st[idx] = cand
+			cnt += solve(st,total, idx+1)
+		st[idx] = 0
+		return cnt
+
+t1=time()
+sol = solve([0]*16, 0, 0)
+t2=time()
+print t2-t1, sol

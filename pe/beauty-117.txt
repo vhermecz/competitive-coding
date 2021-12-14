@@ -1,0 +1,8 @@
+# rephrasing: how many ways to produce n from the sum of 1,2,3,4 (repeated, order is important)
+
+cache = dict()
+def solve(n):
+	if n==0: return 1
+	if not cache.has_key(n):
+		cache[n] = sum([solve(n-i) for i in range(1,min(n+1,5))])
+	return cache[n]

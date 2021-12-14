@@ -1,0 +1,59 @@
+# solver
+
+prob = [0] * 81;
+
+def solver(prob):
+	solutions = []
+	missing = sum([cell == 0 for cell in prob])
+	def next_step(prob):
+		vbest = 50
+		best = (0,0,set())
+		for r in range(9):
+			for c in range(9):
+				if prob[r*9+c]==0:
+					values = set(range(1,10))
+					br = (r/3)*3
+					bc = (c/3)*3
+					for i in range(9):
+						values.discard(prob[r*9+i])
+						values.discard(prob[i*9+c])
+						values.discard(prob[(br + i/3)*9 + bc + (i%3)])
+					vcnt = len(values)
+#					if vcnt == 1:
+#						return (r,c,values)
+					if vcnt < vbest:
+						vbest = vcnt
+						best = (r,c,values)
+		return best
+	def inner_solver(prob, missing):
+		if missing == 0:
+			solutions.append(list(prob))
+		r, c, vs = next_step(prob)
+		for v in vs:
+			prob[r*9+c] = v
+			inner_solver(prob, missing-1)
+		if (len(vs)):
+			prob[r*9+c] = 0
+	inner_solver(prob, missing)
+	return solutions
+
+def print_grid(prob):
+	for i in range(81):
+		print prob[i],
+		if i%9==8:
+			print
+
+import urllib
+import time
+
+lines = [l.strip() for l in urllib.urlopen("http://projecteuler.net/project/sudoku.txt")]
+problems = [reduce(lambda a,b:a+b, [map(int, line) for line in lines[(10*i+1):(10*(i+1))]]) for i in range(len(lines)/10)]
+
+sol = 0
+for prob in problems:
+	t1 = time.time()
+	sols = solver(prob)
+	t2 = time.time()
+	score = sols[0][0]*100 + sols[0][1]*10 + sols[0][2]
+	print problems.index(prob), score, len(sols), t2-t1
+	sol += score

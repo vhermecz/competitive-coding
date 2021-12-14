@@ -1,0 +1,200 @@
+from itertools import *
+from collections import *
+
+def u(a, n):
+	a = a[:]
+	n-=2
+	while n>0:
+		cand = [i+j for i,j in combinations(a,2) if i+j > a[-1]]
+		scand = set(cand)
+		for i in sorted(scand):
+			if cand.count(i)==1:
+				a.append(i)
+				break
+		n-=1
+	return a
+
+def u2(a, n):
+	a = a[:]
+	n-=2
+	while n>0:
+		cand = a[-1]+1
+		found = 0
+		while found==0:
+			r = len(a)-1
+			l = 0
+			m = 0
+			while True:
+				s = a[l]+a[r]
+				if s<cand:
+					l+=1
+				if s>cand:
+					r-=1
+				if s==cand:
+					m+=1
+					l+=1
+					r-=1
+				if r<=l:
+					if m==1:
+						found = cand
+					break
+			cand+=1
+		a.append(found)
+		n-=1
+	return a
+
+from heapq import *
+
+def u3(a, n):
+	d = defaultdict(lambda:[0])
+	for i,j in combinations(a,2):
+		if i+j > a[-1]:
+			d[i+j][0] += 1
+	h = []
+	for k,v in d.iteritems():
+		heappush(h, (k, v))
+	n-=2
+	while n>0:
+		while True:
+			item = heappop(h)
+			del d[item[0]]
+			if item[1][0]==1:
+				break
+		cand = item[0]
+		for i in a:
+			counter = d[cand+i]
+			counter[0]+=1
+			if (counter[0]==1):
+				heappush(h, (cand+i, counter))
+		a.append(cand)
+		n-=1
+	return a
+
+from time import *
+
+def timeit(f, a, n):
+	t1=time()
+	r = f(a,n)
+	t2=time()
+	print t2-t1
+	return r
+
+#b = [a[i]-a[i-1] for i in range(1,len(a))]
+#c = (b[:32] + b[32:64]*(len(b)/32))[:len(b)]
+
+def u4(a, n):
+	tmp = u2(a,n)
+	diff = [tmp[i]-tmp[i-1] for i in range(1,len(tmp))]
+	m = max(diff)
+	i1 = diff.index(m)
+	print m, i1
+	i2 = diff[i1+1:].index(m)
+	return m,i1,i2+1
+
+def u5(a, b, n):
+	if n==1: return a
+	if n==2: return b
+	t = 2*b+a
+	cnt=0
+	even=1
+	delay = 10**9
+	dif1 = 0
+	a = [a,b]
+	n -= 2
+	while n>=0:
+#		if len(a)%1000==0:
+#			print len(a), a[-1]
+		if delay>0:
+			cand = a[-1]+1
+			found = 0
+			while found==0:
+				if even==2 and cand%2==0:
+					cand+=1
+				r = len(a)-1
+				l = 0
+				m = 0
+				while True:
+					s = a[l]+a[r]
+					if s<cand:
+						l+=1
+					if s>cand:
+						r-=1
+					if s==cand:
+						m+=1
+						l+=1
+						r-=1
+					if r<=l:
+						if m==1:
+							found = cand
+						break
+				cand+=1
+			delay-=1
+			if found%2==0:
+				delay = t/2
+		else:
+			cand = a[-1]+2-t
+			i = -1
+			while a[i]>cand:
+				i -= 1
+			if cand==a[i]:
+				found = a[i+1]+t
+			else:
+				found = a[-1] + 2
+		diff = found-a[-1]
+		if diff==t:
+			if dif1==0:
+				dif1 = len(a)
+			else:
+				times = n/(len(a)-dif1)
+				n %= len(a)-dif1
+				diff = (a[-1] - a[dif1-1])*times
+#				print (len(a)-dif1), times, diff, dif1,len(a)
+				for i in range(dif1, len(a)):
+					a[i] += diff
+				found += diff
+				dif1=0
+		a.append(found)
+		n-=1
+	return a[-1]
+#		if diff==t:
+#			cnt+=1
+#			if cnt==1:
+#				return t, len(a)
+
+total = 0
+for i in range(2,11):
+	print i
+	total += u5(2,2*i+1, 10**11-1)
+
+print total
+
+>>>> u4([2,5], 200)
+(12, 33, 32)
+>>>> u4([2,7], 2000)
+(16, 27, 26)
+>>>> u4([2,9], 4000)
+(20, 445, 444)
+>>>> u4([2,11], 10000)
+(24, 1629, 1628)
+>>>> u4([2,13], 16000)
+(28, 5907, 5906)
+>>>> u4([2,15], 5000)
+(32, 81, 80)
+
+---
+
+>>>> u5(2,5)
+(12, 35)
+>>>> u5(2,7)
+(16, 29)
+>>>> u5(2,9)
+(20, 447)
+>>>> u5(2,11)
+(24, 1631)
+>>>> u5(2,13)
+(28, 5909)
+>>>> u5(2,15)
+(32, 83)
+>>>> u5(2,17)
+
+#A100729: 32, 26, 444, 1628, 5906, 80, 126960, 380882, 2097152

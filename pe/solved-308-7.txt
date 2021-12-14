@@ -1,0 +1,39 @@
+package vava;
+
+public class P308 {
+	public static long solver_im(int m) {
+		int v7 = 0;
+		long it = 0;
+		int n = 1;
+		int div=0;
+		m+=1;
+		while(true) {
+			if (v7==0) {
+				if (--m==0) {
+					return it;
+				}
+			}
+			it += n + v7 + 1;
+			n++;
+			div = n-1;
+			while(true) {
+				it += (2*div+2)*(1+n/div) + n*2;
+				v7 = div - n%div - 1;
+				if (n%div==0) {
+					it+=1;
+					break;
+				}
+				it += (2*n)+2;
+				it -= (div - n%div)*2; // cheat
+				div -= 1;
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		long nanoTime = System.nanoTime();
+		System.out.println(solver_im(10001));
+		long nanoTime2 = System.nanoTime();
+		System.out.println((nanoTime2-nanoTime)/1000000000.0);
+	}
+}

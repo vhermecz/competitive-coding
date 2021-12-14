@@ -1,0 +1,42 @@
+from time import time
+
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+def pytrip_all(hypolimit):
+	m_limit = int(hypolimit**0.5)
+	for m in xrange(2, m_limit+1):
+		for n in xrange(1,m):
+			if (m-n)%2==1 and gcd(m,n)==1:
+				a = m**2 - n**2
+				b = 2*m*n
+				c = m**2 + n**2
+				a,b,c = sorted([a,b,c])
+				i=1
+				while i*c<=hypolimit:
+					yield tuple([a*i,b*i,c*i])
+					i+=1
+
+def pytrip_perf(hypolimit):
+	m_limit = int(hypolimit**0.5)
+	for n,m,c in pytrip_all(m_limit):
+		if m < m_limit:
+			if (m-n)%2==1 and gcd(m,n)==1:
+				a = m**2 - n**2
+				b = 2*m*n
+				c = m**2 + n**2
+				if c<=hypolimit: yield tuple(sorted([a,b,c]))
+
+def solve(hypolimit):
+	t1=time()
+	cnt=0
+	for a,b,c in pytrip_perf(hypolimit):
+		area = a*b/2
+		if area%6!=0 or area%28!=0:
+			print a,b,c
+			cnt+=1
+	print time()-t1
+	return cnt
+
+sol = solve(10**16)
+
+# sol is 0

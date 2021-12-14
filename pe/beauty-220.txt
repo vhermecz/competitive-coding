@@ -1,0 +1,63 @@
+_a, _b, _R, _L, _F = range(5)
+
+def memoize(f):
+	cache= {}
+	def memf(*x):
+		if x not in cache:
+			cache[x] = f(*x)
+		return cache[x]
+	return memf
+
+def expand(item):
+	type = item[0]
+	level = item[1]
+	if level==0: return []
+	if type==_a:
+		return [(_a, level-1), _R, (_b, level-1), _F, _R]
+	else:
+		return [_L, _F, (_a, level-1), _L, (_b, level-1)]
+
+def _D(level):
+	return [_F, (_a, level)]
+
+@memoize
+def nstep(item):
+	if item==_R: return 0
+	elif item==_L: return 0
+	elif item==_F: return 1
+	else: return sum(nstep(sitem) for sitem in expand(item))
+
+def applymove(state, delta):
+	newdir = (state[2]+delta[2])%4
+	if state[2]==0:
+		return state[0]+delta[0], state[1]+delta[1], newdir
+	elif state[2]==2:
+		return state[0]-delta[0], state[1]-delta[1], newdir
+	elif state[2]==1:
+		return state[0]-delta[1], state[1]+delta[0], newdir
+	elif state[2]==3:
+		return state[0]+delta[1], state[1]-delta[0], newdir
+
+@memoize
+def deltamove(item):
+	if item==_R: return (0,0,1)
+	elif item==_L: return (0,0,-1%4)
+	elif item==_F: return (1,0,0)
+	else: return reduce(applymove, [deltamove(sitem) for sitem in expand(item)], (0,0,0))
+
+def solve(level, steps):
+	st = _D(level)
+	state = (0,0,0)
+	while len(st):
+		item = st.pop()
+		if nstep(item)>steps:
+			st.extend(reversed(expand(item)))
+		else:
+			steps -= nstep(item)
+			state = applymove(state, deltamove(item))
+		if steps==0: break
+	return (steps==0, state)
+
+state = solve(50,10**12)[1]
+
+print "%d,%d" % (state[1], state[0])

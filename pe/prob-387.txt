@@ -1,0 +1,58 @@
+# time = 338.317000151
+# solution = 696067597313468
+import base
+from time import time
+
+primes = base.primesbelow(10**8)
+sprimes = set(primes)
+
+def is_prime(x):
+	if x<=primes[-1]:
+		return x in sprimes
+	for p in primes:
+		if x%p==0:
+			return False
+	return True
+
+def digsum(num):
+	dsum = 0
+	while num > 0:
+		dsum += num%10
+		num /= 10
+	return dsum
+
+def digitextend(item):
+	for digit in range(10):
+		yield item * 10 + digit
+
+def harsadgen_step(baseset):
+	res = list()
+	for item in baseset:
+		for nnum in digitextend(item):
+			dsum = digsum(nnum)
+			if nnum % dsum == 0:
+				res.append(nnum)
+	return res
+
+def harsadgen(tlen):
+	clen = 1
+	hs = range(1, 10)
+	while clen <= tlen:
+		for h in hs:
+			yield h
+		hs = harsadgen_step(hs)
+		clen += 1
+
+def solutions(len):
+	for hcand in harsadgen(len-1):
+		dived = hcand / digsum(hcand)
+		if is_prime(dived):
+			for hext in digitextend(hcand):
+				if is_prime(hext):
+					print hext
+					yield hext
+
+t1 = time()
+print sum(solutions(14))
+t2 = time()
+print t2-t1

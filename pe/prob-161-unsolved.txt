@@ -1,0 +1,153 @@
+from time import time
+
+# TODO check for vertx at halfway, halvens the result, but has much bigger impact on speed
+def	solve(w, h, nonrepeat=False, halfway=False):
+	if w==1 and nonrepeat:
+		return int(h==3)
+	cnt = [0]
+	sols = []
+	def step(future, horizont,vertx,lev,st):
+		indent = " " * lev
+		#print
+		#print indent,"state:", future,horizont
+		if max(horizont)>future:
+			#print indent,"fail"
+			return # fail
+		min_horizont = min(horizont)
+		if min_horizont>0:
+			horizont = [e-min_horizont for e in horizont]
+			future -= min_horizont
+			#print indent,"reduc:",future,horizont
+		if future==0:
+			#print indent,"found"
+			# filter horizontally combined ones
+			if nonrepeat and max(vertx)>0:
+				return
+#			if cnt[0]%100000==0: print cnt[0]
+			cnt[0]+=1
+#			sols.append(st)
+			return
+		if nonrepeat and halfway and future<=(h+1)/2 and max(vertx)>0:
+			# no verx til halfway, crap
+			return
+		if nonrepeat and future<h and max(horizont)==0:
+			# don't allow vertically combined solutions
+			return
+		pos = horizont.index(0)
+		left = pos
+		right = len(horizont)-pos-1
+		#A
+		if right>=2 and horizont[pos:pos+3]==[0,0,0]:
+			h2 = horizont[:]
+			h2[pos]+=1
+			h2[pos+1]+=1
+			h2[pos+2]+=1
+			vx2 = vertx[:]
+			vx2[pos]=0
+			vx2[pos+1]=0
+			#print indent,"A"
+			step(future,h2,vx2,lev+2,st+" A")
+		#B
+		h2 = horizont[:]
+		h2[pos]+=3
+		#print indent,"B"
+		step(future,h2,vertx,lev+2,st+" B")
+		#C
+		if right>=1 and horizont[pos+1]==0:
+			h2 = horizont[:]
+			h2[pos]+=2
+			h2[pos+1]+=1
+			vx2 = vertx[:]
+			vx2[pos]=0
+			#print indent,"C"
+			step(future,h2,vx2,lev+2,st+" C")
+		#D
+		if right>=1 and horizont[pos+1]==0:
+			h2 = horizont[:]
+			h2[pos]+=1
+			h2[pos+1]+=2
+			vx2 = vertx[:]
+			vx2[pos]=0
+			#print indent,"D"
+			step(future,h2,vx2,lev+2,st+" D")
+		#E
+		if right>=1 and horizont[pos+1]==1:
+			h2 = horizont[:]
+			h2[pos]+=2
+			h2[pos+1]+=1
+			vx2 = vertx[:]
+			vx2[pos]=0
+			#print indent,"E"
+			step(future,h2,vx2,lev+2,st+" E")
+		#F
+		if left>=1 and horizont[pos-1]==1:
+			h2 = horizont[:]
+			h2[pos]+=2
+			h2[pos-1]+=1
+			vx2 = vertx[:]
+			vx2[pos-1]=0
+			#print indent,"F"
+			step(future,h2,vx2,lev+2,st+" F")
+		#EA
+		if right>=3 and horizont[pos:pos+4]==[0,0,0,0]:
+			h2 = horizont[:]
+			h2[pos]+=2
+			h2[pos+1]+=2
+			h2[pos+2]+=1
+			h2[pos+3]+=1
+			vx2 = vertx[:]
+			vx2[pos]=0
+			vx2[pos+1]=0
+			vx2[pos+2]=0
+			#print indent,"EA"
+			step(future,h2,vx2,lev+2,st+" EA")
+		#ED
+		if right>=2 and horizont[pos:pos+3]==[0,0,0]:
+			h2 = horizont[:]
+			h2[pos]+=2
+			h2[pos+1]+=2
+			h2[pos+2]+=2
+			vx2 = vertx[:]
+			vx2[pos]=0
+			vx2[pos+1]=0
+			#print indent,"ED"
+			step(future,h2,vx2,lev+2,st+" ED")
+	w,h = sorted([w,h])
+	horizont = [0]*w
+	vertx = [1]*(w-1)
+	future = h
+	t1 = time()
+	step(future, horizont,vertx,0,"")
+	t2 = time()
+#	print sols
+	print t2-t1
+	if nonrepeat and halfway:
+		return (cnt[0], "imprecise")
+	else:
+		return cnt[0]
+
+#items
+#	AAA	B	CC	DD	E	 F
+#		B	C	 D	EE	FF
+#		B
+#
+#extra items
+#	EAAA	EDD
+#	EE		EED
+#
+#state
+#	future
+#	horizont
+#
+#search for min idx
+#
+#solve(1,21) = 1
+#solve(2,21) = 7953
+#solve(2,42) = 80198051
+
+solve(i,12)		horiz filtered	both filtered	halfway
+1:1				0				0
+2:153			2				2
+3:58234			4				0
+4:1895145		300378			283444			249988 :o
+5:>3*10**6

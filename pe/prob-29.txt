@@ -1,0 +1,9 @@
+limit = 100
+numbers = set()
+for a in range(2,limit+1):
+	for b in range(2,limit+1):
+		numbers.add(a**b)
+
+print len(numbers)
+
+solution = 9183

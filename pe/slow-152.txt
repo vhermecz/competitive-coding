@@ -1,0 +1,39 @@
+def gcd(a,b): return a if b==0 else gcd(b,a%b)
+
+def frac(a,b=1):
+	g = gcd(a,b)
+	return (a/g, b/g)
+
+def fadd(a,b):
+	return frac(b[1]*a[0]+a[1]*b[0], a[1]*b[1])
+
+def fgt(a,b):
+	return a[0]*b[1] > a[1]*b[0]
+
+sumcache = dict()
+def getsumupto(n,m):
+	if n==m: return frac(1,n**2)
+	if not sumcache.has_key((n,m)):
+		sumcache[(n,m)] = fadd(frac(1,n**2), getsumupto(n+1,m))
+	return sumcache[(n,m)]
+
+cnt = 0
+def solve(c, s, l):
+	global cnt
+	cnt+=1
+	if cnt%100000==0: print cnt
+	if s==(1,2): return 1
+	if fgt(s,(1,2)): return 0
+	if c>l: return 0
+	left = getsumupto(c,l)
+	if 2*(left[1]*s[0]+s[1]*left[0]) < s[1]*left[1]: return 0	# almost doubles the speed
+#	if fgt((1,2), fadd(s,getsumupto(c,l))): return 0
+	return solve(c+1, s, l) + solve(c+1, fadd(s,frac(1,c**2)), l)
+
+from time import time
+cnt=0
+t1=time()
+solve(1,frac(0), 26)
+t2=time()
+print cnt, t2-t1
+

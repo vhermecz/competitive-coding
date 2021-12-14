@@ -1,0 +1,16 @@
+import urllib 
+
+tris = [[int(i) for i in l.strip().split(",")] for l in urllib.urlopen("http://projecteuler.net/project/triangles.txt")]
+
+sgn = lambda x : cmp(x,0)
+
+def vect_prod_z_sgn(a,b):
+	return sgn(a[0]*b[1] - a[1]*b[0])
+
+cnt=0
+for tri in tris:
+	sgn1 = vect_prod_z_sgn(tri[0:2], tri[2:4])
+	if sgn1 == vect_prod_z_sgn(tri[2:4], tri[4:6]) and sgn1 == vect_prod_z_sgn(tri[4:6], tri[0:2]):
+		cnt+=1
+
+print cnt

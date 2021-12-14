@@ -1,0 +1,134 @@
+# Kinda clever but buggy like hell
+# http://www.math.umbc.edu/~campbell/Computers/Python/numbthy.py
+import math
+from itertools import *
+
+def Hslow(n):
+	cnt=0
+	for x in range(1,n+1):
+		for y in range(0,n-x+1):
+			if gcd(x,y)>1:
+				cnt+=1
+#				print x,y
+	return cnt*6
+
+def powerset(iterable):
+    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+class Radfact:
+	def __init__(self, n):
+		self.totients = []
+		for i in xrange(n): self.totients.append([])
+		for i in xrange(2, n):
+			if len(self.totients[i]) == 0:
+				for j in xrange(i,n,i):
+					self.totients[j].append(i)
+	def __call__(self, i):
+		return self.totients[i]
+
+def radsbetween(N,M):
+	l = M-N
+	sieve = []
+	for i in xrange(l): sieve.append([])
+	for p in primes:
+		if p>=M:break
+		for t in xrange(-N%p, l, p):
+			sieve[t].append(p)
+	for i in xrange(l):
+		if len(sieve[t])==0:
+			sieve[t].append(i+N)
+	return sieve
+
+def getnonrel(v, hi):
+	ps = radize(v)#radfact[v]
+	cnt = 0
+	for pows in powerset(ps):
+		if len(pows)==0: continue
+		powv = reduce(lambda a,b:a*b, pows, 1)
+		cnt += hi/powv*[-1,1][len(pows)%2]
+	return cnt
+
+	def primesbelow(N):
+		# http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+		#""" Input N>=6, Returns a list of primes, 2 <= p < N """
+		correction = N % 6 > 1
+		N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+		sieve = [True] * (N // 3)
+		sieve[0] = False
+		for i in range(int(N ** .5) // 3 + 1):
+			if sieve[i]:
+				k = (3 * i + 1) | 1
+				sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+				sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+		return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def H2(n):
+	cnt=n-1
+	for y in range(2, n):
+		x_min=1
+		x_max=n-y
+		cnt += getnonrel(y, x_max)
+	return cnt*6
+
+from time import time
+
+def H(n):
+	t1=time()
+	cnt=n-1
+	radframe=100000
+	rads = [[]]+radsbetween(1,min(n,radframe))
+	radstart=0
+	for y in range(2, n):
+		if y%radframe==0:
+			rads = radsbetween(y,min(n,y+radframe))
+			radstart=y
+		x_min=1
+		x_max=n-y
+		v=y
+		hi=x_max
+		ps = rads[v-radstart]#radfact[v]
+		for pows in powerset(ps):
+			if len(pows)==0: continue
+			powv = reduce(lambda a,b:a*b, pows, 1)
+			cnt += hi/powv*[-1,1][len(pows)%2]
+	t2=time()
+	print t2-t1
+	return cnt*6
+
+def Hfast(n):
+#	rlimit = int(n**0.5)
+	t1=time()
+	primes = primesbelow(n)
+	cnt=n-1
+	st = [(1,0,1)]
+	maxstlen = 1
+	while len(st):
+		maxstlen = max(maxstlen,len(st))
+		pprod, pidx, psgn = st.pop()
+		if pidx<len(primes):
+			cpprod = pprod*primes[pidx]
+			if cpprod<=n:
+				v = (n/cpprod-1)*psgn
+				cnt+= v*(abs(v)+1)/2
+				st.append((pprod, pidx+1, psgn))
+				st.append((pprod*primes[pidx], pidx+1, psgn*-1))
+	t2=time()
+	print maxstlen, t2-t1
+	return cnt*6
+
+#hány olyan x,y:
+#	gcd(x,y)==1
+#	x+y<=n
+
+#radfact = Radfact(10**8).totients
+primes = primesbelow(10**6)
+
+def radize(n):
+	fs = factors(n)
+	if type(fs)==str: return radize2(n)
+	return set(fs)
+
+def radize(n): return set(factrors(n))
+

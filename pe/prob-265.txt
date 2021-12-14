@@ -1,0 +1,51 @@
+def toradix(n,radix=2):
+	s=""
+	while n>0:
+		s = "0123456789ABCDEF"[n%radix]+s
+		n/=radix
+	return s
+
+from time import time
+
+def solve_slow(N):
+	t1=time()
+	sol = []
+	for i in range(2**(2**N-N-1)+1,2**(2**N-N),2):
+		s = "0"*N + toradix(i) + "0"*N
+		if len(set(int(s[j:j+N],2) for j in range(2**N)))==2**N: sol.append(i)
+	t2=time()
+	print t2-t1
+	return sum(sol)
+
+def solve(N):
+	t1=time()
+	sol = []
+	def recur(st, mask, res, lvl):
+		if lvl==2**N-N:
+			fail = 0
+			for i in range(N-1):
+				st = (st*2)&(2**N-1)
+				if mask & 2**st:
+					fail=1
+			if not fail:
+				sol.append(res)
+		st = (st*2)&(2**N-1)
+		if not mask & 2**st:
+			recur(st, mask | 2**st, 2*res, lvl+1)
+		if not mask & 2**(st+1):
+			recur(st+1, mask | 2**(st+1), 2*res+1, lvl+1)
+	recur(0, 1, 0, 0)
+	t2=time()
+	print t2-t1
+	return sum(sol)
+
+solve(5)
+
+# slow
+# pypy 209110240768 912.733999968
+# cpyt 209110240768 1132.17399979
+
+# fast
+# pypy 209110240768 0.255000114441
+# cpyt 209110240768 0.131000041962
+

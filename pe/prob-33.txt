@@ -1,0 +1,23 @@
+a/b = c/d
+a*d = b*c
+
+for a in range(10,100):
+	for b in range(a+1,100):
+		common = set(str(a)) & set(str(b))
+		for cand in common:
+			a1s = str(a).strip(cand)
+			b1s = str(b).strip(cand)
+			if len(a1s)>0 and len(b1s)>0 and a!=b and cand!='0':
+				a1 = int(a1s)
+				b1 = int(b1s)
+				if a*b1==a1*b:
+					print a,b,a1,b1
+
+#16 64 1 4
+#19 95 1 5
+#26 65 2 5
+#49 98 4 8
+
+# ==> 8/800
+
+solution = 100

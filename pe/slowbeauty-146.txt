@@ -1,0 +1,95 @@
+import math
+from time import time
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+def is_prob_prime(possible, k=None):
+	def ipow(a,b,n):
+		#calculates (a**b)%n via binary exponentiation, yielding itermediate
+		#results as Rabin-Miller requires
+		A = a = long(a%n)
+		yield A
+		t = 1L
+		while t <= b:
+			t <<= 1
+		#t = 2**k, and t > b
+		t >>= 2
+		while t:
+			A = (A * A)%n
+			if t & b:
+				A = (A * a) % n
+			yield A
+			t >>= 1
+	def RabinMillerWitness(test, possible):
+		#Using Rabin-Miller witness test, will return True if possible is
+		#definitely not prime (composite), False if it may be prime.    
+		return 1 not in ipow(test, possible-1, possible)
+	smallprimes = (3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97)
+	if possible==2: return True
+	if possible%2==0: return False
+	if possible in smallprimes: return True
+#	if k is None: k = int(2*math.log(possible,2))
+    #Will generate an integer of b bits that is probably prime.
+    #Reasonably fast on current hardware for values of up to around 512 bits.
+	for i in smallprimes:
+		if possible%i == 0: return False
+	else:
+#		for i in xrange(k):
+#			test = random.randrange(2, possible)|1
+		for test in smallprimes[:7]:
+			if RabinMillerWitness(test, possible):
+				return False
+	return True
+
+def isprime(n):
+	limit = int(n**0.5)+1
+	for p in primes:
+		if p>limit: return True
+		if n%p==0: return False
+
+t1=time()
+primes = primesbelow(150000000)
+shift = [1,3,7,9,13,27]
+#tester = shift#primes[:100]#[5,11,17,19,23,29,31,37,41,43]
+#tester = [1,3,-5,7,9,-11,13,-15,-17,-19,-21,-23,-25,27]
+#counter = [0]*len(tester)
+cnt = 0
+cand = []
+for i in xrange(10,150000001,10):
+#	if i%100000==0: print i, time()-t1
+	if i%3==0 or i%7==0 or i%13==0: continue
+	base = i**2
+	if 0 in [(base+s)%7 for s in shift]: continue
+	if 0 in [(base+s)%13 for s in shift]: continue
+	if 0 in [(base+s)%11 for s in shift]: continue
+	if 0 in [(base+s)%17 for s in shift]: continue
+	if not is_prob_prime(base+13): continue
+	if not is_prob_prime(base+27): continue
+	if not is_prob_prime(base+3): continue
+	if not is_prob_prime(base+1): continue
+	if not is_prob_prime(base+7): continue
+	if not is_prob_prime(base+9): continue
+	if is_prob_prime(base+21): continue
+	cand.append(i)
+#	for i in range(len(counter)):
+#		isp = is_prob_prime(base+abs(tester[i]))
+#		if not isp and tester[i]>0 or isp and tester[i]<0: counter[i]+=1
+	cnt+=1
+
+solution = sum(cand)
+t2=time()
+print t2-t1,solution
+
+# 149.133000135 676333270

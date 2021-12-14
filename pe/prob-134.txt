@@ -1,0 +1,50 @@
+from math import *
+
+def smallest(p2,p1):
+	r = 0
+	n = 0
+	mod = 10**int(ceil(log(p1,10)))
+	while r!=p1:
+		r=(r+p2)%mod
+		n+=1
+	return n*p2
+
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+primes = primesbelow(2*10**6)
+from time import *
+
+t1=time()
+
+sol=[]
+cnt = 0
+for i in range(2, len(primes)):
+	p1 = primes[i]
+	p2 = primes[i+1]
+	if p1 > 10**6: break
+	sol.append(smallest(p2,p1))
+	cnt+=1
+	if cnt%1000==0: print cnt, p1, time()-t1
+
+t2=time()
+
+print t2-t1,sum(sol)
+
+# python 12.5 times slover than java
+# for 6 digit primes:	total time
+#	java	~6 msec			391sec
+#   python	~70msec			1381sec (1/3)
+solution = 18613426663617118
+time = 391 sec

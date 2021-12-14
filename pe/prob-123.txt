@@ -1,0 +1,66 @@
+def primesbelow(N):
+    # http://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+    #""" Input N>=6, Returns a list of primes, 2 <= p < N """
+    correction = N % 6 > 1
+    N = {0:N, 1:N-1, 2:N+4, 3:N+3, 4:N+2, 5:N+1}[N%6]
+    sieve = [True] * (N // 3)
+    sieve[0] = False
+    for i in range(int(N ** .5) // 3 + 1):
+        if sieve[i]:
+            k = (3 * i + 1) | 1
+            sieve[k*k // 3::2*k] = [False] * ((N//6 - (k*k)//6 - 1)//k + 1)
+            sieve[(k*k + 4*k - 2*k*(i%2)) // 3::2*k] = [False] * ((N // 6 - (k*k + 4*k - 2*k*(i%2))//6 - 1) // k + 1)
+    return [2, 3] + [(3 * i + 1) | 1 for i in range(1, N//3 - correction) if sieve[i]]
+
+primes = primesbelow(10**7)
+
+def powmod(mul, mod, pow):
+	ret = 1
+	base = mul
+	while pow > 0:
+		if pow%2 == 1:
+			ret*=base
+			ret%=mod
+		base *= base
+		base %= mod
+		pow/=2
+	return ret
+
+
+def genseq(mul, mod):
+	seen = set()
+	seq = []
+	i = 1
+	while True:
+		seq.append(i)
+		seen.add(i)
+		i*=mul
+		i%=mod
+		if i in seen:
+			return (len(seq)-seq.index(i), seq)
+
+def gcd(a,b):
+	if b==0: return a
+	return gcd(b,a%b)
+
+def lcm(a,b):
+	return a*b/gcd(a,b)
+
+import time
+t1 = time.time()
+i = 1
+while True:
+	a = primes[i-1]
+#	ap1 = genseq(a+1, a**2)
+#	am1 = genseq(a-1, a**2)
+#	v1 = ap1[1][i%ap1[0]]
+#	v2 = am1[1][i%am1[0]]
+	v1 = powmod(a+1, a**2, i)
+	v2 = powmod(a-1, a**2, i)
+	v = (v1+v2) % (a**2)
+	if v > 10**10:
+		break
+	i+=1
+
+t2 = time.time()
+print t2-t1

@@ -1,0 +1,125 @@
+import collections
+
+def step(pos, dir):
+	if dir==0: return (pos[0]+1,pos[1])
+	elif dir==1: return (pos[0],pos[1]-1)
+	elif dir==2: return (pos[0]-1,pos[1])
+	else: return (pos[0],pos[1]+1)
+
+def numblack(maze):
+	cnt = 0
+	for k in maze.keys():
+		if maze[k]:
+			cnt+=1
+	return cnt
+
+def mazerect(maze):
+	xmin=xmax=ymin=ymax=0
+	for x,y in maze.keys():
+		xmin = min(xmin, x)
+		xmax = max(xmax, x)
+		ymin = min(ymin, y)
+		ymax = max(ymax, y)
+	return ((xmin,ymin ), (xmax, ymax))
+
+def drawmaze(st, bool=False):
+	maze = st[0]
+	mval = max(maze.values())
+	width = 1
+	while mval>0:
+		mval/=10
+		width+=1
+	wstr = "%" + str(width) + "d"
+	rect = mazerect(maze)
+	for y in range(rect[0][1], rect[1][1]+1):
+		line = ""
+		for x in range(rect[0][0], rect[1][0]+1):
+			v=0
+			if maze.has_key((x,y)):
+				v=maze[(x,y)]
+			if not bool:
+				line += wstr % v
+			else:
+				v = (v%2)*2
+				line += "  ()"[v:v+2]
+		print line
+
+def drawmaze_ow(st):
+	maze = st[0]
+	rect = mazerect(maze)
+	w = rect[1][0]-rect[0][0]+1
+	h = rect[1][1]-rect[0][1]+1
+	owmaze=collections.defaultdict(int)
+	for y in range(rect[0][1], rect[1][1]+1):
+		for x in range(rect[0][0], rect[1][0]+1):
+			v=0
+			if maze.has_key((x,y)):
+				v=maze[(x,y)]
+			if v>0:
+				owmaze[( (x-rect[0][0])*60/w, (y-rect[0][1])*60/h )]=1
+	print mazerect(owmaze)
+	drawmaze( (owmaze,), True )
+
+
+facts = set([reduce(lambda x,y:x*y, range(1,i), 1) for i in range(2,14)])
+
+def newsim():
+	maze = collections.defaultdict(int)
+	pos = (0,0)	# x,y
+	dir = 0
+	return (maze, pos, dir, 0, 0)
+
+def simulate(st, steps):
+	maze = st[0].copy()
+	pos = st[1]
+	dir = st[2]
+	cnt = st[3]
+	nbs = []
+	target=  cnt + steps
+	nb = st[4]
+	lastpos = pos[1]
+	lastcnt = cnt
+	lastnb = nb
+	#nbs = []
+	while cnt<target:
+		nbs.append(nb)
+		color = maze[pos]
+		color +=1
+		maze[pos] = color
+		color %= 2
+		nb += color*2-1
+		dir = (dir + color*2-1)%4
+		pos = step(pos, dir)
+		cnt +=1
+#		if pos[1]==lastpos+2:
+#			print pos[1], cnt, cnt-lastcnt, nb-lastnb
+#			lastpos = pos[1]
+#			lastcnt = cnt
+#			lastnb = nb
+#		if pos[0]==0:
+#			print cnt, pos
+	return (maze,pos,dir,cnt,nb), nbs
+
+#st = newsim()
+#for i in range(10):
+#	st=simulate(st,1)
+
+st2 = newsim()
+st2,nbs = simulate(st2,1000000)
+
+# found by try
+iterstart = 10095
+iterlen = 104
+iterinc = 12
+
+nbsiter = nbs[iterstart-1:iterstart+iterlen-1]
+nbsiter = [nbsiter[i]-nbsiter[0] for i in range(len(nbsiter))]
+
+target = 10**18
+for target in range(iterstart, 1000000):
+	nbtarget = nbs[iterstart-1] + (target-iterstart)/iterlen*iterinc + nbsiter[(target-iterstart)%iterlen]
+	if nbs[target-1]!=nbtarget:
+		print target
+
+target = 10**18+1
+nbtarget = nbs[iterstart-1] + (target-iterstart)/iterlen*iterinc + nbsiter[(target-iterstart)%iterlen]

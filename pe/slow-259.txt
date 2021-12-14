@@ -1,0 +1,54 @@
+from itertools import *
+from time import time
+
+def interleave(a,b): return [ y for x in map(None,a,b) for y in x if y]
+
+def solve(n):
+	t1=time()
+	nums = range(1,n+1)
+	sols = set()
+	mycnt = 1
+	allcnt = 2**(len(nums)-1)
+	for snapper in reversed(list(product(range(2), repeat=len(nums)-1))):
+		mycnt+=1
+		rnums = nums[:]
+		rrnums = []
+		for i in range(len(snapper)):
+			if snapper[i]:
+				rnums[i+1] += rnums[i]*10
+			else:
+				rrnums.append(rnums[i])
+		rrnums.append(rnums[-1])
+		rnums = rrnums
+		print mycnt, "/", allcnt, rnums
+		realops = [lambda a,b:a+b, lambda a,b:a-b, lambda a,b:a*b, lambda a,b:1.0*a/b if b!=0 else 3j]
+		for rops in product(realops, repeat=len(rnums)-1):
+			for order in permutations(range(len(rops))):
+				cnums = rnums[:]
+				order = list(order)
+				ops = list(rops)
+				while len(order):
+					idx = order.pop()
+					op = ops[idx]
+					ops[idx:idx+1]=[]
+					order = [o if o<idx else o-1 for o in order]
+					cnums[idx:idx+2] = [op(cnums[idx],cnums[idx+1])]
+				cand = cnums[0]
+				if type(cand)!=complex and cand>0 and abs(int(cand)-cand)<0.0000000001: sols.add(int(cand))
+	t2=time()
+	print t2-t1
+	return sum(sols)
+
+for i in range(1,10):
+	sol = solve(i)
+	print i, sol
+
+#1 0.0 1
+#2 0.0 17
+#3 0.0 255
+#4 0.0230000019073 4179
+#5 0.266999959946 74689
+#6 0.430999994278 1486063
+#7 7.74499988556 32528546
+#8 256.605000019 47287796869458543
+#9 est:9216

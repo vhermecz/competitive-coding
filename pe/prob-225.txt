@@ -1,0 +1,31 @@
+def tribodivs(m):
+#	seen = set([(1,1,1)])
+	a,b,c=1,1,1
+	while True:
+		a,b,c=b,c,a+b+c
+		a%=m
+		b%=m
+		c%=m
+		if c==0:
+			return True
+#		st = (a,b,c)
+#		if st in seen:
+		if a==1 and b==1 and c==1:	# original solution used seen, i've read this method in the forum
+			return False
+#		seen.add(st)
+
+from time import time
+
+cnt = 0
+i=3
+t1=time()
+while True:
+	if not tribodivs(i):
+		cnt+=1
+		print cnt, i, time()-t1
+	i+=2
+
+# cpython 7.2 2009	w enchancment from forum 2.8
+# pypy   10.5 2009	w enchancment from forum 1.07
+# pypy 1min 1686 3 modulos
+# pypy 1min 1874 1 modulo

@@ -1,0 +1,33 @@
+from math import factorial
+from time import time
+
+def calc_factmap(limit):
+	lut = [factorial(i) for i in range(10)]
+	res = [0]*limit
+	for i in range(limit):
+		r = 0
+		n=i
+		while n!=0:
+			r += lut[n%10]
+			n/=10
+		res[i]=r
+	return res
+
+t1 = time()
+factmap = calc_factmap(2550000)
+cnt=0
+for n in range(2,1000000):
+	f = set()
+	i=n
+	while not i in f:
+		f.add(i)
+		i = factmap[i]
+	if len(f)==60:
+		cnt+=1
+
+t2=time()
+print t2-t1
+print cnt
+
+solution = 402
+time = 30.4

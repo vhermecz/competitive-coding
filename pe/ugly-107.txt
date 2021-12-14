@@ -1,0 +1,59 @@
+from urllib import *
+
+def load():
+	mtrix = []
+	for l in urlopen("http://projecteuler.net/project/network.txt"):
+		row = []
+		for w in l.strip().split(','):
+			w = int(w.replace("-","0"))
+			row.append(w)
+		mtrix.append(row)
+	return mtrix
+
+def score(mtrix):
+	vnum = len(mtrix)
+	return sum([sum([mtrix[j][k] for j in range(vnum)]) for k in range(vnum)])/2
+
+def node_deg(mtrix):
+	vnum = len(mtrix)
+	return [sum([1 for j in range(vnum) if mtrix[j][k]]) for k in range(vnum)]
+
+def medges(mtrix):
+	edges = []
+	for i in range(vnum):
+		for j in range(0,i):
+			if mtrix[i][j]>0:
+				edges.append( (mtrix[i][j], i, j)  )
+	return edges
+
+def compnum(mtrix):
+	vnum = len(mtrix)
+	visited = [0]*vnum
+	compnum = 0
+	while 0 in visited:
+		compnum+=1
+		state = [visited.index(0)]
+		while len(state):
+			node = state.pop()
+			if visited[node]: continue
+			visited[node] = 1
+			for k in range(vnum):
+				if k!=node and mtrix[node][k]>0 and visited[k]==0:
+					state.append(k)
+	return compnum
+
+
+def simplify(mtrix):
+	vnum = len(mtrix)
+	removed = 0
+	edges = medges(mtrix)
+	if len(edges)==vnum-1: return removed
+	edges = list(reversed(sorted(edges)))
+	for w,i,j in edges:
+		mtrix[i][j] = mtrix[j][i] = 0
+		if compnum(mtrix)>1:
+			mtrix[i][j] = mtrix[j][i] = w
+		else:
+			removed += w
+	return removed
+

@@ -1,0 +1,65 @@
+#[1,inf]
+#
+#y=1/x
+#
+#generalized way:
+#	x in [a,b]
+#	c = a-1/b
+#	ix = (c + (c**2+4)**0.5)/2
+#	x-c = 1/x
+#	x2-cx=1
+#
+#	x=[c +- r(c2 + 4)]/2
+#
+#
+#for c being 1
+#
+#[1 + r(5)]/2
+#
+#
+#f(a)=1/b
+#
+#a-c = 1/b
+#a-1/b =c
+
+from time import time
+import itertools
+
+def getix(a,b):
+	c = a-1/b
+	return (c + (c**2+4)**0.5)/2
+
+def split(a,b):
+	ix = getix(a,b)
+	return (a,ix), (ix,b)
+
+def getsmallestfornn(n):
+	smallest = 1e666
+	for path in set(itertools.permutations([0,1]*n,2*n)):
+		a=1
+		b=1e666
+		for step in path:
+			a,b = split(a,b)[step]
+		a,b = split(a,b)[0]
+		size = b-a
+		smallest = min(smallest, size)
+	return smallest
+
+def getnumgreater(size):
+	st = [(1,1e666)]
+	cnt = 0
+	while len(st):
+		box = st.pop()
+		children = split(*box)
+		if children[0][1]-children[0][0]>size:
+			cnt+=1
+			st.extend(children)
+	return cnt
+
+t1=time()
+sol = getnumgreater(getsmallestfornn(3))+1
+t2=time()
+
+print t2-t1,sol
+#cpy	3.69400000572 782252
+#pypy	2.27899980545 782252

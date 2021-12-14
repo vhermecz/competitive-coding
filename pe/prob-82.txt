@@ -1,0 +1,44 @@
+import urllib
+from heapq import *
+
+weights = [[int(i) for i in l.strip().split(",")] for l in urllib.urlopen("http://projecteuler.net/project/matrix.txt")]
+
+rownum = len(weights)
+colnum = len(weights[0])
+
+result = [[-1] * colnum for i in range(rownum)]
+directions = 7 # 1-up, 2-right, 4-down, 8-left
+
+targets = set([(i,colnum-1) for i in range(rownum)])
+stepheap = []
+
+for i in range(rownum):
+	heappush(stepheap, (weights[i][0], i, 0))
+
+# task 83
+targets = set([(rownum-1, colnum-1)])
+stepheap = [(weights[0][0],0,0)]
+directions = 15
+
+while True:
+	value, r, c = heappop(stepheap)
+	if result[r][c] == -1:
+		if (r,c) in targets:
+			break
+		result[r][c] = value
+		if directions & 1 and r>0:
+			heappush(stepheap, (value + weights[r-1][c], r-1,c) )
+		if directions & 2 and c<colnum-1:
+			heappush(stepheap, (value + weights[r][c+1], r,c+1) )
+		if directions & 4 and r<rownum-1:
+			heappush(stepheap, (value + weights[r+1][c], r+1,c) )
+		if directions & 8 and c>0:
+			heappush(stepheap, (value + weights[r][c-1], r,c-1) )
+	
+
+print value,r,c
+
+# solution = 260324 22 79
+
+# solution for prob 83
+# solution = 425185 79 79

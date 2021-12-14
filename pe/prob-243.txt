@@ -1,0 +1,36 @@
+class Totient:
+    def __init__(self, n):
+        self.totients = [1 for i in xrange(n)]
+        for i in xrange(2, n):
+            if self.totients[i] == 1:
+                for j in xrange(i, n, i):
+                    self.totients[j] *= i - 1
+                    k = j / i
+                    while k % i == 0:
+                        self.totients[j] *= i
+                        k /= i
+    def __call__(self, i):
+        return self.totients[i]
+
+from time import time
+
+def totientsunder(n):
+	a = Totient(n)
+	return a.totients
+
+limit = 100000000
+tots = totientsunder(limit)
+
+minim = 1.0
+for n in xrange(50000000,limit):
+#	tots[n] / n-1 < 15499/94744
+	rat = 1.0*tots[n]/(n-1)
+	if rat<minim:
+		print n, rat
+		minim=rat
+	if 94744*tots[n] < 15499*( n-1 ):
+		print n
+		break
+
+# sol is over 100000000
+# sol is 892371480 = 2^3*3*5*7*11*13*17*19*23

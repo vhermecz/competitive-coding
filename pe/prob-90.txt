@@ -1,0 +1,29 @@
+import itertools
+
+dices = itertools.combinations(range(10), 6)
+dices = [set(dice) for dice in dices]
+for dice in dices:
+	if 6 in dice:
+		dice.add(9)
+	if 9 in dice:
+		dice.add(6)
+
+
+values = [[0,1], [0,4], [0,9], [1,6], [2,5], [3,6], [4,9], [6,4], [8,1]]
+cnt = 0
+
+for a in range(len(dices)):
+	for b in range(a,len(dices)):
+		da = dices[a]
+		db = dices[b]
+		valid = True
+		for value in values:
+			if not ((value[0] in da and value[1] in db) or (value[1] in da and value[0] in db)):
+				valid = False
+				break
+		if valid:
+			cnt +=1
+
+print cnt
+
+# solution = 1217
