@@ -1,5 +1,5 @@
 require 'set'
-require 'algorithms'
+require 'algorithms'  # https://stackoverflow.com/a/4204444/1442987
 
 #INPUT='test'
 INPUT='input'
@@ -23,25 +23,22 @@ NBS = [
 ]
 
 # grow
-ndata = ($h*5).times.map{[0] * $w * 5}
+GROW = 5
+ndata = ($h*GROW).times.map{[0] * $w * GROW}
 
-p ndata
-
-5.times do |tx|
-	5.times do |ty|
+GROW.times do |tx|
+	GROW.times do |ty|
 		$w.times do |x|
 			$h.times do |y|
-				p [tx,ty,x,y]
 				ndata[ty*$h+y][tx*$w+x] = ($data[y][x] + ty + tx - 1) % 9 + 1
 			end
 		end
 	end
 end
 
-p ndata
 $data = ndata
-$w = 5*$w
-$h = 5*$h
+$w = GROW*$w
+$h = GROW*$h
 
 # solve
 
