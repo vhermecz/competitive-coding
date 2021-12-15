@@ -24,24 +24,15 @@ NBS = [
 
 # grow
 GROW = 5
-ndata = ($h*GROW).times.map{[0] * $w * GROW}
-
-GROW.times do |tx|
-	GROW.times do |ty|
-		$w.times do |x|
-			$h.times do |y|
-				ndata[ty*$h+y][tx*$w+x] = ($data[y][x] + ty + tx - 1) % 9 + 1
-			end
-		end
+$data = ($h*GROW).times.map do |y|
+	($w*GROW).times.map do |x|
+		($data[y%$h][x%$h] + y/$h + x/$w - 1) % 9 + 1
 	end
 end
-
-$data = ndata
-$w = GROW*$w
-$h = GROW*$h
+$w *= GROW
+$h *= GROW
 
 # solve
-
 visited = Hash.new
 expand = Containers::MinHeap.new
 expand.push [0, [0, 0]]
