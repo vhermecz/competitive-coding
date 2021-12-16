@@ -74,3 +74,14 @@ p process($data)
 
 # 00:31:44    421 - 847
 # 00:37:48    357 - 333794664059
+
+# timelog
+# 01:00 6am
+# 01:40 40s searching for test input
+# 07:15 5m35s reading
+# 20:20 13m5s figure out tokenization (Enumerable, hex-to-binary, extending Array class,  binary-to-dec)
+# 28:53 8m33s got it implemented
+#   error: sum of version, not count of packets
+# 32:45 3m52s got star1
+# 33:45 1m reading
+# 38:48 5m3s got star
