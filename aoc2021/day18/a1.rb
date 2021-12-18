@@ -12,67 +12,51 @@ class SnailfishNumber
 		if tree.kind_of? Integer
 			@type = :value
 			@value = tree
-			@left = nil
-			@right = nil
 		else
+			raise RuntimeError unless tree.length == 2
 			@type = :node
-			@value = nil
 			@left = SnailfishNumber.new(tree[0], parent=self)
 			@right = SnailfishNumber.new(tree[1], parent=self)
 		end
 	end
 	def eject
-		if @type == :value
-			return @value
-		else
-			return [@left.eject, @right.eject]
-		end
+		return @value if @type == :value
+		[@left.eject, @right.eject]
 	end
 	def find_first(proc, depth=0)
-		#p ["ff", depth, self.to_s]
-		return self if proc.call(self, depth)
-		if @type == :node
-			m = @left.find_first(proc, depth+1)
-			return m if !m.nil?
-			return @right.find_first(proc, depth+1)
-		end
-		nil
+		proc.call(self, depth) && self || 
+		  @left&.find_first(proc, depth+1) ||
+		  @right&.find_first(proc, depth+1)
 	end
 	def is_simple_pair
-		@type == :node && @left.type == :value && @right.type == :value
+		@type == :node &&
+		  @left.type == :value &&
+		  @right.type == :value
 	end
 	def next_right
 		curr = self
-		while !curr.parent.nil? && curr.parent.right == curr
-			curr = curr.parent
-		end
+		curr = curr.parent while !curr.parent.nil? && curr.parent.right == curr
 		return nil if curr.parent.nil?
 		curr = curr.parent.right
-		while !curr.left.nil?
-			curr = curr.left
-		end
+		curr = curr.left while !curr.left.nil?
 		curr
 	end
 	def next_left
 		curr = self
-		while !curr.parent.nil? && curr.parent.left == curr
-			curr = curr.parent
-		end
+		curr = curr.parent while !curr.parent.nil? && curr.parent.left == curr
 		return nil if curr.parent.nil?
 		curr = curr.parent.left
-		while !curr.right.nil?
-			curr = curr.right
-		end
+		curr = curr.right while !curr.right.nil?
 		curr
 	end
 	def explode
-		raise RuntimeError if @type != :node
-		raise RuntimeError if !is_simple_pair
+		raise RuntimeError unless @type == :node
+		raise RuntimeError unless is_simple_pair
 		nr = next_right
-		raise RuntimeError if !nr.nil? && nr.type != :value
+		raise RuntimeError unless nr.nil? || nr.type == :value
 		nr.value += @right.value if !nr.nil?
 		nl = next_left
-		raise RuntimeError if !nl.nil? && nl.type != :value
+		raise RuntimeError unless nl.nil? || nl.type == :value
 		nl.value += @left.value if !nl.nil?
 		@type = :value
 		@value = 0
@@ -89,27 +73,24 @@ class SnailfishNumber
 	end
 	def reduce
 		while true
-			#p ["itr", self.to_s]
 			exp = find_first(->(node, depth) { depth == 4 && node.is_simple_pair })
 			if !exp.nil?
-				#p "exp"
 				exp.explode
 				next
 			end
 			spl = find_first(->(node, depth) { node.type == :value && node.value >= 10 })
 			if !spl.nil?
-				#p "spl"
 				spl.split
 				next
 			end
 			break
 		end
+		self
 	end
 	def magnitude
 		return @value if @type == :value
 		@left.magnitude*3 + @right.magnitude*2
 	end
-
 	def to_s
 		eject.to_s.gsub(" ", "")
 	end
@@ -117,9 +98,7 @@ class SnailfishNumber
 		self.new(eval(str))
 	end
 	def self.add(num1, num2)
-		n = self.parse("[#{num1.to_s},#{num2.to_s}]")
-		n.reduce
-		n
+		self.parse("[#{num1.to_s},#{num2.to_s}]").reduce
 	end
 end
 
@@ -127,7 +106,6 @@ data = data.map{|v|SnailfishNumber.parse(v)}
 num = data[0]
 data[1..].each do |n|
 	num = SnailfishNumber.add(num, n)
-	num = SnailfishNumber.parse(num.to_s)
 end
 p num.magnitude
 
@@ -135,5 +113,20 @@ max_m = 0
 data.permutation(2).each do |a,b|
 	max_m = [max_m, SnailfishNumber.add(a, b).magnitude].max
 end
-
 p max_m
+
+# no reading (was 10 minutes)
+# @38:19 - split does not add parent is the only error
+# @1:17:30 - finally got it
+#  best of a bug, ate almost 40 minutes :P lol
+# @1:20:50 done
+
+# Errors:
+#   Keyword arg syntax
+#     def a(depth=4)
+#       a(depth=depth+1)
+#       # NOTE: This is not keyword arg syntax, this is increasing a local
+#     end
+#   Forgot to add parent in split and never valiated that it works fine.
+#     After all, it is so simple
+#     Cost me 40 minutes

@@ -1,7 +1,7 @@
 require 'set'
 
-INPUT='test'
-#INPUT='input'
+#INPUT='test'
+INPUT='input'
 
 data = File.open( INPUT ).map(&:strip)
 
@@ -22,7 +22,6 @@ def find_num_pos(num, offset=0)
 end
 
 def find_explode(tree, start, depth)
-	#p [tree, depth]
 	if tree.kind_of?(Array) && tree.length == 2 && tree[0].kind_of?(Integer) && tree[1].kind_of?(Integer) && depth == 4
 		return [start, tree.to_s.gsub(" ", "").length]
 	end
@@ -43,7 +42,6 @@ def explode(num)
 	target_pos, target_length = find_explode(eval(num), 0, 0)
 	if !target_pos.nil?
 		target = num[target_pos, target_length]
-#		p target
 		lnum, rnum = eval(target)
 		# find pos
 		lposes = find_num_pos(num[0..(target_pos-1)])
@@ -54,8 +52,6 @@ def explode(num)
 		end
 		rposes = find_num_pos(num[(target_pos+target.length)..], offset=target_pos+target.length)
 		if !rposes.empty?
-#			p num
-#			p rposes
 			nrnum = (num[*rposes.first].to_i + rnum).to_s
 			num[*rposes.first] = nrnum
 		end
@@ -65,24 +61,20 @@ def explode(num)
 end
 
 def reduce(num)
-	#p [" reducing", num]
 	while true
 		res = explode(num)
 		if res != num
 			num = res
-			#p [" exploded", num]
 			next
 		end
 		res = split(num)
 		if res != num
 			num = res
-			#p [" split", num]
 			next
 		end
 		return num
 	end
 end
-
 
 def add(num1, num2)
 	reduce("[#{num1},#{num2}]")
@@ -98,12 +90,8 @@ end
 
 num = data[0]
 data[1..].each do |nnum|
-	#p ["adding1", num]
-	#p ["adding2", nnum]
 	num = add(num, nnum)
-	#p ["got", num]
 end
-p num
 p magnitude(eval(num))
 
 max_mag = -1
