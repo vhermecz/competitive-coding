@@ -3,23 +3,10 @@ require 'set'
 #INPUT='test'
 INPUT='input'
 
-# read_input
 def read_input
-	data = []
-	File.open( INPUT ) do |f|
-		while true do
-			f.gets
-			scanner = []
-			while true do
-				row = f.gets&.strip
-				if row.nil?
-					data << scanner
-					return data
-				end
-				break if row.empty?
-				scanner << row.split(",").map(&:to_i)
-			end
-			data << scanner
+	File.read(INPUT).split("\n\n").map do |scanner|
+		scanner.split("\n")[1..].map do |row|
+			row.split(",").map(&:to_i)
 		end
 	end
 end
@@ -28,7 +15,6 @@ def sgn(x)
 	x<=>0
 end
 
-# rotations
 def rot90(orient, rotax)
 	[-orient[(rotax+2)%3], orient[(rotax+1)%3], orient[rotax]]
 end
@@ -44,37 +30,21 @@ def genax
 end
 
 def transform_points(points, tf)
-	r0 = tf[0].abs-1
-	s0 = sgn(tf[0])
-	r1 = tf[1].abs-1
-	s1 = sgn(tf[1])
-	r2 = tf[2].abs-1
-	s2 = sgn(tf[2])
-	points.map do |p|
-		[p[r0]*s0, p[r1]*s1, p[r2]*s2]
-	end
+	points.map{|p|tf.map{|i|p[i.abs-1]*sgn(i)}}
 end
 
 def translate_points(points, tl)
-	points.map{|p|[p[0]+tl[0], p[1]+tl[1], p[2]+tl[2]]}
+	points.map{|p|p.zip(tl).map{|i,j|i+j}}
 end
 
 def find_patch(coll, datasets, rotations)
 	datasets.length.times do |dataset_idx|
 		rotations.each do |tf|
 			dataset = transform_points(datasets[dataset_idx], tf)
-			coll.each do |p1|
-				dataset.each do |p2|
-					tl = [p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]]
-					neu_tl = translate_points(dataset, tl)
-					return [dataset_idx, tf, tl] if (coll & neu_tl).length >= 12
-				end
+			tls = coll.to_a.product(dataset).map{|p1,p2|[p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]]}
+			tls.tally.each do |tl, v|
+				return [dataset_idx, tf, tl] if v>=12
 			end
-			# tls = coll.to_a.product(dataset).map{|p1,p2|[p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]]}
-			# tls.each do |tl|
-			# 	neu_tl = translate_points(dataset, tl)
-			# 	return [dataset_idx, tf, tl] if (coll & neu_tl).length >= 12
-			# end
 		end
 	end
 	nil
@@ -120,4 +90,8 @@ p maxman
 # 1:45:30 star1 down
 # 1:49:35 star2 down
 
-# Reverse order runtime is 7m46s (vs 13m59s)
+# Initial naive solution is 13m59s
+# Reverse order runtime is 7m46s
+# Tranclatecount runtime is 50s
+#   Avoid the translate+find12
+#   If we find the same translation between 12+ points, we are already good
