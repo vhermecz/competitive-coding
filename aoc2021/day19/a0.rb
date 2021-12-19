@@ -34,22 +34,13 @@ def rot90(orient, rotax)
 end
 
 def genax
-	base = [[1,2,3]].to_set
-	7.times.each do |ax|
-		base.merge(base.map do |v|
-			3.times.map do
-				rot90(v, ax%3)
-			end
-		end.flatten(1))
+	base = Set[[1,2,3]]
+	4.times do |ax|
+		base = base.map do |axes|
+			3.times.inject([axes]){|acc|acc << rot90(acc.last, ax%3)}
+		end.flatten(1).to_set
 	end
 	base
-end
-
-#rotate p by tf
-def tf_base(p, tf)
-	3.times.map do |ax|
-		p[tf[ax].abs-1]*sgn(tf[ax])
-	end
 end
 
 def transform_points(points, tf)
@@ -69,7 +60,6 @@ def translate_points(points, tl)
 end
 
 def find_patch(coll, datasets, rotations)
-	coll_set = coll.to_set
 	datasets.length.times do |dataset_idx|
 		rotations.each do |tf|
 			dataset = transform_points(datasets[dataset_idx], tf)
@@ -77,11 +67,14 @@ def find_patch(coll, datasets, rotations)
 				dataset.each do |p2|
 					tl = [p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]]
 					neu_tl = translate_points(dataset, tl)
-					if (coll_set & neu_tl).length >= 12
-						return [dataset_idx, tf, tl]
-					end
+					return [dataset_idx, tf, tl] if (coll & neu_tl).length >= 12
 				end
 			end
+			# tls = coll.to_a.product(dataset).map{|p1,p2|[p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]]}
+			# tls.each do |tl|
+			# 	neu_tl = translate_points(dataset, tl)
+			# 	return [dataset_idx, tf, tl] if (coll & neu_tl).length >= 12
+			# end
 		end
 	end
 	nil
@@ -89,21 +82,17 @@ end
 
 rotations = genax
 datasets = read_input
-coll = datasets.pop
-datasets.reverse!
-cnt = 0
+coll = datasets.delete_at(0).to_set
 spos = [[0,0,0]]
 while !datasets.empty?
-	p [cnt, coll.length, datasets.length]
+	p [datasets.length, coll.length]
 	idx, tf, tl = find_patch(coll, datasets, rotations)
 	spos << tl
 	dataset = transform_points(datasets[idx], tf)
 	dataset = translate_points(dataset, tl)
-	coll = (coll.to_set | dataset).to_a
+	coll |= dataset
 	datasets.delete_at(idx)
-	cnt += 1
 end
-
 p coll.length
 
 maxman = spos.combination(2).map do |p1,p2|
@@ -130,3 +119,5 @@ p maxman
 # 1:30:25 autoreloader just eats result :P
 # 1:45:30 star1 down
 # 1:49:35 star2 down
+
+# Reverse order runtime is 7m46s (vs 13m59s)
