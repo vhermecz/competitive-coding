@@ -72,3 +72,12 @@ end
 # Mistakes:
 # - first implementation missed varying default color
 # - d[y][x] rescue v  (this does not raise if x is out of bounds)
+
+# Timeline
+# 0:00-3:46 prep, reading
+# 5:43 reader ready
+# 11:00 first iter ready (missing grow)
+# 16:20 grow ready
+# but the default background noise aka image.out is still out there...
+# 32:49 win1
+# 36:35 win2
