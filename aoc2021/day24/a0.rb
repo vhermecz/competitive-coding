@@ -1,5 +1,3 @@
-require 'set'
-
 INPUT='input'
 
 # read_input
@@ -10,16 +8,26 @@ data = File.read(INPUT).split("\n").map do |row|
 	end
 end
 
+def extract_code_fingerprint(code)
+	14.times.map do |i|
+		d=code[i*18,18].flatten
+		d[13]=d[16]=d[-7]="P"
+		d.join("")
+	end.uniq.join ","
+end
+
+CODE_FINGERPRINT = "inpwmulx0addxzmodx26divzPaddxPeqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddyPmulyxaddzy"
+
 def extract_params(code)
 	raise "Unexpected code length" unless code.length == 14*18
-	# TODO: Add assertion on instructions
+	raise "Unexpected code" unless extract_code_fingerprint(code) == CODE_FINGERPRINT
 	14.times.map{|idx|[4,5,15].map{|v|code[18*idx+v].last}}
 end
 
-def extract_constraints(params)
+def extract_constraints(code)
 	constraints = []
 	z = []
-	params.each_with_index do |(p1,p2,p3), idx|
+	extract_params(code).each_with_index do |(p1,p2,p3), idx|
 		if p1 == 1
 			z << [idx, p3]
 		else
@@ -30,27 +38,18 @@ def extract_constraints(params)
 	constraints
 end
 
-def valid_pairs(offset)
-	if offset >= 0
-		((offset+1)..9).map{|i|[i-offset,i]}
-	else
-		((1-offset)..9).map{|i|[i,i+offset]}
-	end
-end
-
-def solve(constraints, max:true)
+def solve(code, max:true)
 	res = [0]*14
-	constraints.each do |(pos2, pos1, offset)|
-		pairs = valid_pairs(offset)  # TODO: could be reduced
-		val1, val2 = max ? pairs.last : pairs.first
+	extract_constraints(code).each do |(pos2, pos1, offset)|
+		val1 = max ? 9-[0,offset].max : 1-[0,offset].min
 		res[pos1]=val1
-		res[pos2]=val2
+		res[pos2]=val1 + offset
 	end
 	res.reduce{|acc,v|10*acc+v}
 end
 
-p solve(extract_constraints(extract_params(data)),max:true)
-p solve(extract_constraints(extract_params(data)),max:false)
+p solve(data, max:true)
+p solve(data, max:false)
 
 # 02:09:31    622 - 91699394894995
 # 02:13:33    565 - 51147191161261
@@ -74,3 +73,4 @@ p solve(extract_constraints(extract_params(data)),max:false)
 # 129m - star1down
 # 133m - star2down
 # 228m - cleanup done
+# 249m - cleanup done rlly
