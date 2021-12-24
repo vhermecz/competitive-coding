@@ -1,0 +1,153 @@
+"inpwmulx0addxzmodx26divz 1addx 13eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 3mulyxaddzy"
+"inpwmulx0addxzmodx26divz 1addx 11eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy12mulyxaddzy"
+"inpwmulx0addxzmodx26divz 1addx 15eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 9mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx -6eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy12mulyxaddzy"
+"inpwmulx0addxzmodx26divz 1addx 15eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 2mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx -8eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 1mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx -4eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 1mulyxaddzy"
+"inpwmulx0addxzmodx26divz 1addx 15eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy13mulyxaddzy"
+"inpwmulx0addxzmodx26divz 1addx 10eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 1mulyxaddzy"
+"inpwmulx0addxzmodx26divz 1addx 11eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 6mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx-11eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 2mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx  0eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy11mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx -8eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy10mulyxaddzy"
+"inpwmulx0addxzmodx26divz26addx -7eqlxweqlx0muly0addy25mulyxaddy1mulzymuly0addywaddy 3mulyxaddzy"
+
+SEGMENT
+	inp w    PARAM0 VAR
+	mul x 0
+	add x z
+	mod x 26
+	div z PARAM1
+	add x PARAM2
+	eql x w
+	eql x 0
+	mul y 0
+	add y 25
+	mul y x
+	add y 1
+	mul z y
+	mul y 0
+	add y w
+	add y PARAM3
+	mul y x
+	add z y
+
+ITER
+	w = input.pop
+	x *= 0
+	x += z
+	x %= 26
+	z /= param1
+	x += param2
+	x = (x!=w)?1:0
+	y *= 0
+	y += 25
+	y *= x
+	y += 1
+	z *= y
+	y *= 0
+	y += w
+	y += param3
+	y *= x
+	z += y
+
+ITER
+
+PARAMS = [
+	[ 1, 13, 3],
+	[ 1, 11,12],
+	[ 1, 15, 9],
+	[26, -6,12],
+	[ 1, 15, 2],
+	[26, -8, 1],
+	[26, -4, 1],
+	[ 1, 15,13],
+	[ 1, 10, 1],
+	[ 1, 11, 6],
+	[26,-11, 2],
+	[26,  0,11],
+	[26, -8,10],
+	[26, -7, 3],
+]
+
+def run2(input)
+	params = PARAMS.map{&:dup}.reverse
+	z = 0
+	input.each do |w|
+		param1, param2, param3 = params.pop
+		z /= param1    # SHOULD TAKE z%26 first
+		if w != z%26 + param2
+			z *= 26
+			z += w + param3
+		end
+	end
+	z
+end
+
+ERROR
+
+SEGMENT
+	w=PARAM0
+	z/=PARAM1
+	if (z%26+PARAM2)!=w
+		z *= 26
+		z += w+PARAM3
+	end
+
+def run3(input)
+	params = PARAMS.map{&:dup}.reverse
+	z = []
+	input.each do |w|
+		param1, param2, param3 = params.pop
+		if w != (z.pop||0) + param2  # BUG: pop is not always
+			z.push(w + param3)  # ASSUMES value in 0..25
+		end
+	end
+	z
+end
+
+def run3(input)
+	params = PARAMS.map(&:dup).reverse
+	z = []
+	input.reverse.each do |w|
+		param1, param2, param3 = params.pop
+		v = z[-1]||0
+		z.pop if param1 == 26
+		if w != v + param2
+			z << w + param3  # ASSUMES value in 0..25
+		end
+	end
+	z
+end
+
+
+PARAMS = [
+	[ 1, 13, 3],  [D1+3]
+	[ 1, 11,12],  [D1+3, D2+12]
+	[ 1, 15, 9],  [D1+3, D2+12, D3+9]
+	[26, -6,12],  [D1+3, D2+12] D4==D3+3
+	[ 1, 15, 2],  [D1+3, D2+12, D5+2]
+	[26, -8, 1],  [D1+3, D2+12] D6==D5-6
+	[26, -4, 1],  [D1+3] D7==D2+8
+	[ 1, 15,13],  [D1+3, D8+13]
+	[ 1, 10, 1],  [D1+3, D8+13, D9+1]
+	[ 1, 11, 6],  [D1+3, D8+13, D9+1, D10+6]
+	[26,-11, 2],  [D1+3, D8+13, D9+1] D11==D10-5
+	[26,  0,11],  D12==D9+1
+	[26, -8,10],  D13==D8+5
+	[26, -7, 3],  D14==D1-4
+]
+
+RULES
+	D4==D3+3
+	D6==D5-6
+	D7==D2+8
+	D11==D10-5
+	D12==D9+1
+	D13==D8+5
+	D14==D1-4
+
+ 1  2  3  4  5  6  7  8  9  a  b  c  d  e
+[9, 1, 6, 9, 9, 3, 9, 4, 8, 9, 4, 9, 9, 5]
+[5, 1, 1, 4, 7, 1, 9, 1, 1, 6, 1, 2, 6, 1]
