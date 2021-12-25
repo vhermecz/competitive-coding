@@ -12,9 +12,9 @@ def move maze
 	h = maze.length
 	w = maze.first.length
 	moved = false
+	# horiz
 	omaze = maze
 	maze = maze.map(&:dup)
-	# horiz
 	h.times.each do |r|
 		w.times.each do |c|
 			if omaze[r][(c+1)%w]=='.' && omaze[r][c] ==">"
@@ -24,9 +24,9 @@ def move maze
 			end
 		end
 	end
+	#vertical
 	omaze = maze
 	maze = maze.map(&:dup)
-	#vertical
 	w.times.each do |c|
 		h.times.each do |r|
 			if omaze[(r+1)%h][c]=='.' && omaze[r][c] == "v"
@@ -57,3 +57,12 @@ end
 p solve(data)
 
 # 00:25:02   1149 - 560
+
+# timelog
+# 00:30 - start reading
+# 03:21 - start coding (initial code '\n' vs "\n" bug)
+# 06:05 - parser done (instead of in 20seconds :P lol)
+# 15:25 - first sol
+#  - forgot checking if there is a cucumber to move (fixed@20:18)
+#  - interpreted moving-at-once instead of checking-at-once (fixed@24:45)
+# 25:02 - done
