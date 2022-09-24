@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  dev:
+    build: .
+    command: bash -c "pip install -r requirements.txt && sleep 9999d"
+    volumes:
+      - .:/app
+    environment:
+      - API_TOKEN=

@@ -1,0 +1,22 @@
+snapsoft
+14:40 sanity check
+
+15:02 docker env created for ruby
+15:06 found last years code in python @git:qpa21
+
+15:20 task2 start
+[1, 1, 2, 3, 3, 3, 2, 10]
+[1, 1, 2, 3, 1, 2, 1, 2]
+15:36 donez
+
+15:38 task3 start
+16:02 donez, repurposing last years task3
+
+16:03 task4 start
+-reading, ideation
+16:10 task4 coding
+16:29 task4 done
+
+16:30 task5 start
+16:33 task5 coding
+16:43 task5 done

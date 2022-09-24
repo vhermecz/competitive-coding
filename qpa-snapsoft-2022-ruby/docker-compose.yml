@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    command: bash -c "bundle && sleep 999d"
+    user: 1000:1000
+    volumes:
+      - .:/app
+    environment:
+      API_TOKEN: N788XihhJvL4Z2szTJblxRtktzQmKtnwmZa6aKXA6EfRQCUzxE5I3kfywQJBbux0
+      API_BASE_URL: https://challenge.snapsoft.hu 
