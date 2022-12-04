@@ -1,0 +1,15 @@
+#!/bin/bash
+# TODO meta: `../init <daynum>` script 
+
+# TODO wait for 6am?
+
+# TODO source ../something to get $AOC_SESS_ID
+# TODO: skip if exists
+wget https://adventofcode.com/`date +%Y`/day/`date +%d | sed s/^0//`/input --header="Cookie: session=$AOC_SESS_ID" -O input
+
+inotifywait -q -m -e close_write a0.rb |
+while read -r filename event; do
+  clear
+  date
+  time ruby ./a0.rb         # or "./$filename"
+done

@@ -1,7 +1,7 @@
 require 'set'
 
-INPUT='test'
-#INPUT='input'
+#INPUT='test'
+INPUT='input'
 
 # read_input
 data = File.read(INPUT).split("\n")

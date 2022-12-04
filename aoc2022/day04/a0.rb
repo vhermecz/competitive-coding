@@ -14,7 +14,7 @@ def contains(a, b)
 end
 
 def atall(a, b)
-	((a[0]..a[1]).to_set & (b[0]..b[1]).to_set).length > 0
+	not(a[0] > b[1] or a[1] < b[0])
 end
 
 p(data.filter do |pair|
