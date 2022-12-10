@@ -4,42 +4,21 @@ require 'set'
 INPUT='input'
 
 # read_input
-data = File.read(INPUT).split("\n").map do |row|
-	row = row.split(" ")
-	row[1] = row[1].to_i if row.length > 1
-	row
-end
-
-signalx = [1]
-
-data.each do |instr|
-	if instr.first == "addx"
-		signalx << signalx.last
-		signalx << signalx.last + instr[1]
-	elsif instr.first == "noop"
-		signalx << signalx.last
-	end
-end
-
-e = [20, 60, 100, 140, 180, 220].map do |cnt|
-	signalx[cnt-1]*cnt
-end
-
-screen = []
-
-240.times do |idx|
-	pos = idx % 40
-	if (signalx[idx]-pos).abs < 2
-		screen << "#"
-	else
-		screen << "."
-	end
-end
-
+data = File.read(INPUT).split("\n").map{|r|r.split(" ")}
 
 # solve
-p e.sum
-screen.each_slice(40).map(&:join).each do |row|
+signalx = [1]
+data.each do |instr|
+	signalx << signalx.last
+	signalx << signalx.last + instr[1].to_i if instr.first == "addx"
+end
+
+part1 = [20, 60, 100, 140, 180, 220].map{|cnt|signalx[cnt-1]*cnt}.sum
+
+part2 = 240.times.map{|idx|(signalx[idx]-idx%40).abs < 2 ? "#" : "."}
+
+p part1
+part2.each_slice(40).map(&:join).each do |row|
 	puts(row)
 end
 
