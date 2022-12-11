@@ -7,7 +7,7 @@ INPUT='input'
 data = File.read(INPUT).split("\n\n").map do |monkey|
 	monkey = monkey.split("\n").map{|i|i.strip.split(": ")[-1].split(" ")}
 	{
-		:items => monkey[1].map{|i|i[0..-1].to_i},
+		:items => monkey[1].map(&:to_i),
 		:xform_op => monkey[2][-2],
 		:xform_num => monkey[2][-1],
 		:div => monkey[3][-1].to_i,
