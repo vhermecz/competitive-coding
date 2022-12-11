@@ -5,33 +5,25 @@ INPUT='input'
 
 # read_input
 data = File.read(INPUT).split("\n\n").map do |monkey|
-	monkey = monkey.split("\n").map{|i|i.strip.split(": ")}
-	items = monkey[1][1].split(", ").map(&:to_i)
-	xform = monkey[2][1]
-	div = monkey[3][1].split(" ")[-1].to_i
-	tmon = monkey[4][1].split(" ")[-1].to_i
-	fmon = monkey[5][1].split(" ")[-1].to_i
-	mon = {
-		"items": items,
-		"xform": xform,
-		"div": div,
-		"tmon": tmon,
-		"fmon": fmon,
+	monkey = monkey.split("\n").map{|i|i.strip.split(": ")[-1].split(" ")}
+	{
+		:items => monkey[1].map{|i|i[0..-1].to_i},
+		:xform_op => monkey[2][-2],
+		:xform_num => monkey[2][-1],
+		:div => monkey[3][-1].to_i,
+		:tmon => monkey[4][-1].to_i,
+		:fmon => monkey[5][-1].to_i,
+		:cnt => 0,
 	}
-	mon
 end
 
-inspc = [0] * data.length
-
-def xform_calc(xform, old)
-	xform_op = xform.split(" ")[-2]
-	xform_num = xform.split(" ")[-1]
-	if xform_num == "old"
+def xform_calc(mon, old)
+	if mon[:xform_num] == "old"
 		n = old
 	else
-		n = xform_num.to_i
+		n = mon[:xform_num].to_i
 	end
-	if xform_op == "+"
+	if mon[:xform_op] == "+"
 		n = old + n
 	else
 		n = old * n
@@ -39,42 +31,27 @@ def xform_calc(xform, old)
 	n	
 end
 
-p data
 # solve
-
-modder = data.map{|m|m[:div]}.inject(:*)
-
-10000.times do |t|
-	data.length.times do |midx|
-		mon = data[midx]
-		#p ["MON", midx]
-		inspc[midx] += mon[:items].length
-		mon[:items].length.times do
-			item = mon[:items].shift
-			#p item
-			item = xform_calc(mon[:xform], item) % modder
-			#p item
-			if item % mon[:div] == 0
-				#p ["TRU", mon[:tmon]]
-				data[mon[:tmon]][:items] << item
-			else
-				#p ["FAL", mon[:fmon]]
-				data[mon[:fmon]][:items] << item
+def solver(data, itercnt, worrydiv)
+	data = Marshal.load(Marshal.dump(data))
+	modder = data.map{|m|m[:div]}.inject(:*)
+	itercnt.times do |t|
+		data.each do |mon|
+			mon[:cnt] += mon[:items].length
+			until mon[:items].empty? do
+				item = mon[:items].shift
+				item = (xform_calc(mon, item) % modder) / worrydiv
+				target = (item % mon[:div] == 0) ? mon[:tmon] : mon[:fmon]
+				data[target][:items] << item
 			end
 		end
 	end
-	# p t
-	# if t < 4
-	# 	data.length.times do |midx|
-	# 		p data[midx][:items]
-	# 	end
-	# end
-	p inspc if [0,19].include? t
+	inspc = data.map{|m|m[:cnt]}.sort
+	inspc[-1]*inspc[-2]
 end
 
-p inspc
+p solver(data, 20, 3)
+p solver(data, 10000, 1)
 
-p inspc.sort[-1]*inspc.sort[-2]
-
-# 00:24:29 2713310158 990
+# 00:24:29 56595 990
 # 00:39:26 15693274740 1213
