@@ -71,6 +71,6 @@ end
 p solve(anya:false)
 p solve(anya:true)
 
-# ~27 381 bad (forgot height of E)
+# ~27 381 bad (assumed 0,0 start-pos)
 # 28:01 361 1859
 # 29:15 354 1439
