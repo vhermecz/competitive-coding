@@ -22,7 +22,6 @@ def slice_ranges(dists, y, skip_beacon:false)
 		s, b = info
 		h=(s[1]-y).abs
 		ry=r-h
-		#p [s,r,h,ry]
 		lo = s[0]-ry
 		hi = s[0]+ry
 		lo+=1 if lo == b[0] && skip_beacon
@@ -31,27 +30,30 @@ def slice_ranges(dists, y, skip_beacon:false)
 	end.compact
 end
 
-def holey(ranges)
+def merge_ranges(ranges)
+	res = []
 	ranges = ranges.sort_by{|k|k.first*1000000000+k.last}
-	px = ranges.first.first - 1
+	s = ranges.first.first
+	e = ranges.first.last
 	ranges.each do |range|
-		return px+1 if px < range.first - 1
-		px = [range.last, px].max
+		if e < range.first - 1
+			res << (s..e)
+			e = s = range.first
+		end
+		e = [range.last, e].max
 	end
-	nil
+	res << (s..e)
+	res
 end
 
-ranges = slice_ranges(dists, yslice, skip_beacon:true)
-ranges = ranges.map(&:to_a).flatten.to_set
-p ranges.length
+ranges = merge_ranges(slice_ranges(dists, yslice, skip_beacon:true))
+p ranges.map{|range|range.last - range.first + 1}.sum
 
-(0..4000000).to_a.each do |i|
-	ranges = slice_ranges(dists, i)
-	#p i
-	hole = holey(ranges)
-	#p [i, hole]
-	if !hole.nil?
-		p hole*4000000 + i
+40000001.times.each do |y|
+	ranges = merge_ranges(slice_ranges(dists, y))
+	if ranges.length == 2
+		x = ranges.last.first - 1
+		p 4000000*x + y
 		break
 	end
 end
