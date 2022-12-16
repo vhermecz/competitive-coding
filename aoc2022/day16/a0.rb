@@ -26,21 +26,20 @@ def solve(grid, init, tend)
 		[$posmap_inv[state], opened]
 	end
 	statesize = 2**$valvemap.length * grid.length**init.length
-	curr = [nil] * statesize
+	curr = {}
 	curr[encode([init, 0])] = 0
 	p [statesize, $valvemap, grid.length, init.length]
 	time = 1
 	while time < tend
 		td = Time.now.to_f
-		nxt = [nil] * statesize
-		max_now = curr.compact.max
+		nxt = {}
+		max_now = curr.values.max
 		best = (2**$valvemap.length).times.map do |opened|
 			$valvemap.map do |pos, mask|
 				(tend-time)*grid[pos][0] if opened & mask == 0
 			end.compact.sum
 		end
-		curr.each_with_index do |score, state_code|
-			next if score.nil?
+		curr.each do |state_code, score|
 			pos, opened = decode(state_code)
 			next if score + best[opened] < max_now 
 			steps = pos.map do |current|
@@ -65,9 +64,9 @@ def solve(grid, init, tend)
 		end
 		curr = nxt
 		time += 1
-		p [time, curr.compact.max, curr.compact.length, Time.now.to_f - td]
+		p [time, curr.values.max, curr.length, Time.now.to_f - td]
 	end
-	curr.compact.max
+	curr.values.max
 end
 
 p solve(grid, ["AA"], 30)
