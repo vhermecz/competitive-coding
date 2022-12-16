@@ -4,14 +4,6 @@ require 'set'
 INPUT='input'
 
 # read_input
-# data = []
-# File.open( INPUT ) do |f|
-# 	while true do
-# 		row = f.gets.strip
-# 		break if row.empty?
-# 		data << row.split(",").map(&:to_i)
-# 	end
-# end
 grid = File.read(INPUT).split("\n").map do |row|
 	row = row.split(" ")
 	[row[1], [row[4].split("=").last.to_i, row[9..].map{|i|i[..1]}]]
@@ -46,9 +38,16 @@ time = 1
 while time < $tend
 	td = Time.now.to_f
 	nxt = [nil] * $statesize
+	max_now = curr.compact.max
+	best = (2**$valvemap.length).times.map do |opened|
+		$valvemap.map do |pos, mask|
+			($tend-time)*grid[pos][0] if opened & mask == 0
+		end.compact.sum
+	end
 	curr.each_with_index do |score, state_code|
 		next if score.nil?
 		pos, opened = decode(state_code)
+		next if score + best[opened] <= max_now 
 		steps = pos.map do |current|
 			steps = grid[current][1][0..]
 			steps << current if (grid[current][0] > 0) && ((opened & $valvemap[current]) == 0)
