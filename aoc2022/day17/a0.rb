@@ -61,7 +61,7 @@ def fingerprint(pit)
 		row -=1
 	end
 	res = []
-	while pit[row].sum < 9
+	while pit[row].sum < 9 && res.length < 10
 		res << pit[row][1...-1]
 		row -= 1
 	end
