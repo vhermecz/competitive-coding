@@ -16,16 +16,11 @@ def copy(data)
 	end.to_h
 end
 
-data["root"][1] = "="
-
-def get(name)
-	#p name
-	expr = $spec[name]
-	if expr.length == 1
-		return expr[0].to_i 
-	end
-	v1 = get(expr[0])
-	v2 = get(expr[2])
+def get(data, name)
+	expr = data[name]
+	return expr[0].to_i if expr.length == 1
+	v1 = get(data, expr[0])
+	v2 = get(data, expr[2])
 	op = expr[1]
 	if op == "+"
 		v = v1+v2
@@ -35,43 +30,44 @@ def get(name)
 		v = v1*v2
 	elsif op == "/"
 		v = v1/v2
-	elsif op 
-		v = v1 == v2
 	end
-	$spec[name] = [v]
+	data[name] = [v]
 	v
 end
 
 # solve
-1000000.times do |v|
-	v += (59078404896403 / 13) / 2
-	v += (9044137600992/13)
-	v += (30793309103046-28379346560301)/13
-	v += (29023655110004-28379346560301)/13
-	v += (28551318376629-28379346560301)/13
-	v += (28425247399324-28379346560301)/13
-	v += 12251353400/13
-	v += 3269997497/13
-	v += 872787500/13
-	v += 232954644/13
-	v += 62174606/13
-	v += 16603509/13
-	v += 4430595/13
-	v += 1183481/13
-	v += 315939/13
-	v += 85046/13
-	p v if v % 10000 == 0
-	$spec = copy(data)
-	$spec["humn"] = [v]
-	res = get("root")
-	p [v, res, get("prrg"), get("jntz"), get("prrg")-get("jntz")]
-	if res
-		print v, res
-		exit
+def solve1(data)
+	get(copy(data), "root")
+end
+
+def part2(data, v)
+	spec = copy(data)
+	spec["root"][1] = "-"
+	spec["humn"] = [v]
+	get(spec, "root")
+end
+
+def solve2(data)
+	n = 0
+	while true
+		v = part2(data, n)
+		return n if v == 0
+		while true
+			nv = part2(data, n+1)
+			return n+1 if nv == 0
+			if nv != v
+				n += nv/(v-nv)
+				break
+			end
+			v = nv
+			n += 1
+		end
 	end
 end
-#$spec = data
-#print get("root")
 
-# 6:30    301
-# 34:24    773
+p solve1(data)
+p solve2(data)
+
+# 6:30 87457751482938 301
+# 34:24 3221245824363 773
+# 55:50 proper solve part2
