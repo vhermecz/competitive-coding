@@ -47,7 +47,7 @@ def part2(data, v)
 	get(spec, "root")
 end
 
-def solve2(data)
+def solve2newt(data)
 	n = 0
 	while true
 		v = part2(data, n)
@@ -65,9 +65,49 @@ def solve2(data)
 	end
 end
 
+def solve2btrack(data)
+	spec = copy(data)
+	spec["humn"] = false
+	value = 0
+	crack = "root"
+	while crack != "humn" do
+		vars = [spec[crack][0], spec[crack][2]]
+		ncrack = vars.filter do |var|
+			begin
+				get(spec, var)
+				false
+			rescue
+				true
+			end
+		end.first
+		ovalue = get(spec, vars.filter{|v|v!=ncrack}.first)
+		op = spec[crack][1]
+		if crack == "root"
+			value = ovalue
+		elsif op == "+"
+			value -= ovalue
+		elsif op == "-" && spec[crack][0] == ncrack
+			value += ovalue
+		elsif op == "-"
+			value = ovalue - value
+		elsif op == "*"
+			value /= ovalue
+		elsif op == "/" && spec[crack][0] == ncrack
+			value *= ovalue
+		elsif op == "/"
+			value = ovalue / value
+		else
+			raise Exception("Unknown op")
+		end
+		crack = ncrack
+	end
+	value
+end
+
 p solve1(data)
-p solve2(data)
+p solve2btrack(data)
 
 # 6:30 87457751482938 301
 # 34:24 3221245824363 773
 # 55:50 proper solve part2
+# +12min real proper solve
