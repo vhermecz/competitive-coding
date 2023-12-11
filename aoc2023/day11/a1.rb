@@ -6,14 +6,13 @@ INPUT='input'
 matrix = File.read(INPUT).split("\n").map{|r|r.split("")}
 
 def solve_dim matrix, expansion
-	starcnt = matrix.flatten.filter{|v|v=='#'}.length
+	rowcounts = matrix.map{|r|r.filter{|v|v=='#'}.length}
+	total = rowcounts.sum
 	seen = 0
-	matrix.map do |row|
-		rowcnt = row.filter{|v|v=='#'}.length
-		res = seen*(starcnt-seen)
-		res *= expansion if rowcnt == 0
-		seen += rowcnt
-		res
+	rowcounts.map do |rowcount|
+		res = seen * (total - seen)
+		seen += rowcount
+		res * (rowcount.zero? ? expansion : 1)
 	end.sum
 end
 
