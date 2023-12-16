@@ -36,22 +36,19 @@ def dbg(v)
 	end
 end
 
-n_row = data.length
-n_col = data.first.length
-
 def energized(data, start_pos, start_dir)
 	n_row = data.length
 	n_col = data.first.length
-	visited2 = Set.new
+	visited = Set.new
 	seen = Set.new
 	expand = [[start_pos, start_dir]]
 	while !expand.empty?
 		curr_pos, curr_dir = expand.pop
 		next if seen.include? [curr_pos, curr_dir]
 		seen << [curr_pos, curr_dir]
-		visited2 << curr_pos if !(curr_pos.first < 0 || curr_pos.first >= n_row || curr_pos.last < 0 || curr_pos.last >= n_col)
 		next_pos = [curr_pos.first+DIRS[curr_dir].first, curr_pos.last+DIRS[curr_dir].last]
-		next if next_pos.first < 0 || next_pos.first >= n_row || next_pos.last < 0 || next_pos.last >= n_col
+		next if !next_pos.first.between?(0, n_row-1) || !next_pos.last.between?(0, n_col-1)
+		visited << next_pos
 		item = data[next_pos.first][next_pos.last]
 		if item == "|" && [:E, :W].include?(curr_dir)
 			expand << [next_pos, :S]
@@ -65,10 +62,13 @@ def energized(data, start_pos, start_dir)
 			expand << [next_pos, curr_dir]
 		end
 	end
-	visited2.length
+	visited.length
 end
+
 # solve
 p energized(data, [0, -1], :E)
+n_row = data.length
+n_col = data.first.length
 part2 = (
 	n_row.times.map{|i|[[i, -1], :E]}+
 	n_row.times.map{|i|[[i, n_col], :W]}+
