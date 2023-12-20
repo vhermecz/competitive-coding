@@ -1,0 +1,123 @@
+digraph G {
+
+	button -> {broadcaster}
+	broadcaster -> {gn gb rb df}
+
+	jb -> {fz}
+	xz -> {ck bg}
+	xm -> {qt cs}
+	df -> {hc lq}
+	mt -> {sx}
+	fr -> {ks hc}
+	tn -> {pf}
+	gt -> {pp kb}
+	jn -> {ck nz}
+	td -> {kz}
+	rd -> {vd}
+	pp -> {gv kb}
+	qt -> {jb vx bt gh td gb}
+	ms -> {xz}
+	vx -> {fp}
+	rb -> {ck mt}
+	nz -> {hh}
+	fp -> {rp qt}
+	gd -> {gc}
+	gv -> {kb}
+	nl -> {cc hc}
+	cs -> {qt}
+	kz -> {jb qt}
+	vg -> {fr hc}
+	zq -> {qt xm}
+	pv -> {ps}
+	bt -> {vd}
+	ps -> {kb rf}
+	hh -> {ck ms}
+	gh -> {td}
+	rf -> {kb nm}
+	rp -> {qt gh}
+	gc -> {kb pv}
+	gb -> {vx qt}
+	rq -> {ck ts}
+	nm -> {gt}
+	gn -> {kb tn}
+	ck -> {nz fv rb sx ms mt}
+	fv -> {vd}
+	cc -> {vg}
+	bg -> {ck rq}
+	hc -> {qr ch df dj cc rd}
+	qr -> {dj}
+	gq -> {hc ch}
+	pr -> {vd}
+	ks -> {lc hc}
+	dj -> {nl}
+	fz -> {qt zq}
+	lq -> {gq hc}
+	kb -> {pv pr tn nm pf gn gd}
+	ts -> {ck}
+	lc -> {hc}
+	jl -> {ck jn}
+	sx -> {jl}
+	pf -> {gd}
+	vd -> {finish}
+	ch -> {qr}
+
+	button [shape=polygon sides=6]
+	finish [shape=polygon sides=6]
+	jb [label="%jb"]
+	xz [label="%xz"]
+	xm [label="%xm"]
+	df [label="%df"]
+	mt [label="%mt"]
+	fr [label="%fr"]
+	tn [label="%tn"]
+	gt [label="%gt"]
+	jn [label="%jn"]
+	td [label="%td"]
+	rd [label="&rd" shape=polygon sides=4]
+	pp [label="%pp"]
+	qt [label="&qt" shape=polygon sides=4]
+	ms [label="%ms"]
+	vx [label="%vx"]
+	rb [label="%rb"]
+	nz [label="%nz"]
+	fp [label="%fp"]
+	gd [label="%gd"]
+	gv [label="%gv"]
+	nl [label="%nl"]
+	cs [label="%cs"]
+	kz [label="%kz"]
+	vg [label="%vg"]
+	zq [label="%zq"]
+	pv [label="%pv"]
+	bt [label="&bt" shape=polygon sides=4]
+	ps [label="%ps"]
+	hh [label="%hh"]
+	gh [label="%gh"]
+	rf [label="%rf"]
+	rp [label="%rp"]
+	gc [label="%gc"]
+	gb [label="%gb"]
+	rq [label="%rq"]
+	nm [label="%nm"]
+	gn [label="%gn"]
+	ck [label="&ck" shape=polygon sides=4]
+	fv [label="&fv" shape=polygon sides=4]
+	cc [label="%cc"]
+	bg [label="%bg"]
+	hc [label="&hc" shape=polygon sides=4]
+	qr [label="%qr"]
+	gq [label="%gq"]
+	pr [label="&pr" shape=polygon sides=4]
+	ks [label="%ks"]
+	dj [label="%dj"]
+	fz [label="%fz"]
+	lq [label="%lq"]
+	kb [label="&kb" shape=polygon sides=4]
+	ts [label="%ts"]
+	lc [label="%lc"]
+	jl [label="%jl"]
+	sx [label="%sx"]
+	pf [label="%pf"]
+	vd [label="&vd" shape=polygon sides=4]
+	ch [label="%ch"]
+}
