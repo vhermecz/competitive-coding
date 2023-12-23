@@ -39,8 +39,6 @@ def get_splits maze
 			nbs = DIRS.filter do |dy, dx|
 				maze[y+dy][x+dx] != "#"
 			end.length
-			#p [y+1, x+1, nbs] if nbs > 2 && maze[y][x] != '#'
-			#maze[y][x] = "W" if nbs > 2 && maze[y][x] != '#'
 			splits << [y, x] if nbs > 2 && maze[y][x] != '#'
 		end
 	end
@@ -61,27 +59,10 @@ def longest_route maze, start, stop, upslope=false, pgraph=false
 	trail << [start, 0, 0]
 	best = -1
 
-	cnt = 0
 	while !trail.empty?
-		cnt += 1
-		#p [cnt, trail.length, wh_cache.length] if cnt % 1000000 == 0
 		pos, dir, tlen = trail.pop()
-		# can cache?
-		if dir == 0 && splits.include?(pos) && !trail.last.nil? && tlen-trail.last.last == 1  # is split and came on foot
-			prevstep_dir = trail.last[1]-1
-			idx = trail.length - 1
-			while !splits.include?(trail[idx].first)
-				idx -= 1
-			end
-			wh_open = trail[idx].first
-			wh_open_dir = trail[idx][1] - 1
-			wh_len = tlen - trail[idx].last
-			wh_cache[[wh_open, wh_open_dir]] = [pos, wh_len]
-			wh_cache[[pos, (prevstep_dir+2)%4]] = [wh_open, wh_len] if upslope
-		end
 		# detect finish
 		if pos == stop && tlen > best
-			#p ["E", best, tlen, trail.length, wh_cache.length]
 			best = tlen
 			next
 		end
@@ -106,6 +87,16 @@ def longest_route maze, start, stop, upslope=false, pgraph=false
 			field = maze[npos.first][npos.last]
 			next if field == '#'
 			next if field != '.' && dir != SLOPES[field] && !upslope
+			if splits.include?(npos)  # create a wormhole
+				idx = trail.length - 2
+				idx -= 1 while !splits.include?(trail[idx].first)
+				wh_open = trail[idx].first
+				next if wh_open == npos
+				wh_open_dir = trail[idx][1] - 1
+				wh_len = 1 + tlen - trail[idx].last
+				wh_cache[[wh_open, wh_open_dir]] = [npos, wh_len]
+				wh_cache[[npos, (dir+2)%4]] = [wh_open, wh_len] if upslope
+			end
 			next if seen.include? npos
 			trail << [npos, 0, tlen+1]
 		end
@@ -134,12 +125,12 @@ stop = [n_row-1, n_col-2]
 p longest_route maze, start, stop, false
 p longest_route maze, start, stop, true
 
-
 #  23   00:17:40    500      0   03:07:13   2193      0
+# 1998
 # 5670 wrong @39:39
 # 5726 wrong @41:48
 # 5854 wrong @48:36
 # 6170 not-sent @7:08
 # 6170 wrong @7:21
 # @8:00 taking a break
-# 6434 @9:07:07
+# 6434
