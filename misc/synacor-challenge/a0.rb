@@ -34,6 +34,7 @@ module Instruction
 	OUT = InstructionDesc.new(:out, 19, 1)
 	IN = InstructionDesc.new(:in, 20, 1)
 	NOOP = InstructionDesc.new(:noop, 21, 0)
+	UNK = InstructionDesc.new(:unk, -1, 0)
 end
 
 Instruction::FROM_OPCODE = Instruction.constants(false).map do |c|
@@ -103,19 +104,31 @@ class MagicVm
 			when 4  # Ctrl+D
 				@debug = !@debug
 				print "Turning debug #{@debug ? 'on' : 'off'}\n"
+			when 6  # Ctrl+F
+				ip = @ip
+				5.times do
+					ip = prim_debug ip
+				end
 			when 8  # Ctrl+H
 				puts "Help:"
 				puts " Ctrl+C - terminate"
 				puts " Ctrl+D - switch debugging"
 				puts " Ctrl+H - this help"
 				puts " Ctlr+R - repl"
+				puts " Ctrl+V - enter char code"
+				puts " Ctrl+F - show the future 5 instructions"
 			when 18  # Ctrl+R
 				prim_debug_repl
+			when 22  # Ctrl+V
+				puts "Enter ordinal value for character"
+				value = gets.to_i
+				loop = false
 			else
 				loop = false
 			end
 		end
 		print "read-input::#{value.ord}\n" if @debug
+		value -= 3 if value == 13  # Fix newline on linux
 		value
 	end
 
@@ -130,14 +143,25 @@ class MagicVm
 				when ".exit"
 					loop = false
 				when ".dump"
+					dump_bytes = command[1] == "byte"
+					File.write(".dump", @memory.pack("#{dump_bytes ? "C" : "S"}*"))
+				when ".inspect"
 					puts "clock=#{@clock} ip=#{hex(@ip)} #{@registers.each_with_index.map{|v,i|"r#{i}=#{hex(v)}"}.join ' '}"
+					puts " stack: len=#{@stack.length} | #{@stack.last(10).map{|v|"#{hex(v)}"}.join ' '}"
+					# memory if addr[, len] params provided
+					ip = @ip
+					5.times do
+						ip = prim_debug ip
+					end
 				else
 					puts "Unknown command"
+					puts " .dump [byte] - Dump memory content"
+					puts " .inspect - Dump status"
 					puts " .exit - Quits repl"
 				end
 			else
 				if not Instruction.const_defined?(command.first.upcase.to_sym)
-					puts "Unknonw instruction"
+					puts "Unknown instruction"
 				else
 					op = Instruction.const_get(command.first.upcase.to_sym)
 					params = command[1..].each_with_index.map do |param, idx|
@@ -184,11 +208,13 @@ class MagicVm
 		end
 	end		
 
-	def prim_debug
-		opcode = @memory[@ip]
-		desc = Instruction::FROM_OPCODE[opcode]
-		params = desc.param_num.times.map{|p_idx|prim_debug_ref_serialize(@memory[@ip + 1 + p_idx])}
-		print "<@#{@ip}:#{@registers} #{desc.mnemonic.upcase} #{params.join ' '}>\n"
+	def prim_debug ip=nil
+		ip ||= @ip
+		opcode = @memory[ip]
+		desc = Instruction::FROM_OPCODE[opcode] || Instruction::UNK
+		params = desc.param_num.times.map{|p_idx|prim_debug_ref_serialize(@memory[ip + 1 + p_idx])}
+		print "<@#{ip}:#{@registers} #{desc.mnemonic.upcase} #{params.join ' '}>\n"
+		ip + 1 + desc.param_num
 	end
 
 	def process_next_instruction
