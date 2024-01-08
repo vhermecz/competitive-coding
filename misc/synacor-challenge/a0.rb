@@ -153,6 +153,14 @@ class MagicVm
 					5.times do
 						ip = prim_debug ip
 					end
+				when ".text"
+					addr = 0x1814
+					399.times do
+						len = @memory[addr]
+						print hex(addr) + "> "
+						puts @memory[addr+1..addr+len].map(&:chr).join
+						addr += len + 1
+					end
 				else
 					puts "Unknown command"
 					puts " .dump [byte] - Dump memory content"
