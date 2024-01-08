@@ -47,6 +47,11 @@ def hex(value)
 	"0x" + value.to_s(16).rjust(4, "0")
 end
 
+def parse_num(value)
+	return value.to_i(16) if value.start_with? "0x"
+	value.to_i
+end
+
 class MagicVm
 	attr_reader :memory, :registers, :stack
 	attr_accessor :debug, :ip
@@ -60,6 +65,8 @@ class MagicVm
 		@ip = 0
 		@clock = 0
 		@debug = false
+		@debug_coverage = nil
+		@debug_memory_coverage = nil
 	end
 
 	def self.from_snapshot_file(filename)
@@ -107,7 +114,7 @@ class MagicVm
 			when 6  # Ctrl+F
 				ip = @ip
 				5.times do
-					ip = prim_debug ip
+					ip = prim_debug ip, print_regs=false
 				end
 			when 8  # Ctrl+H
 				puts "Help:"
@@ -115,13 +122,55 @@ class MagicVm
 				puts " Ctrl+D - switch debugging"
 				puts " Ctrl+H - this help"
 				puts " Ctlr+R - repl"
+				puts " Ctrl+T - turn code coverage tracing on/off"
+				puts " Ctrl+U - turn memory tracing on/off"
 				puts " Ctrl+V - enter char code"
 				puts " Ctrl+F - show the future 5 instructions"
 			when 18  # Ctrl+R
 				prim_debug_repl
+			when 20  # Ctrl+T
+				if @debug_coverage.nil?
+					puts "Code Coverage Traing Turned on"
+					@debug_coverage = []
+				else
+					puts "Code Coverage Traing Turned off. Data collected:"
+					#puts @debug_coverage.uniq.sort.join ", "
+					lines = @debug_coverage.group_by{|v|v}.sort.map{|k,v|[k,v.length]}
+					lines << [0x20000, 0]
+					last_end_addr = block_start = lines.first.first
+					last_count = lines.first.last
+					line_cnt = 0
+					lines.each do |addr, count|
+						line_cnt += 1
+						instr = Instruction::FROM_OPCODE[@memory[addr]] || Instruction::UNK
+						end_addr = addr + 1 + instr.param_num
+						if addr != last_end_addr || count != last_count
+							print "#{hex(block_start)}..#{hex(last_end_addr)}:#{last_count} (#{line_cnt} lines)\n"
+							block_start = addr
+							line_cnt = 0
+						end
+						last_end_addr = end_addr
+						last_count = count
+					end
+					#puts lines.map{|k, v|"#{hex(k)}:#{v.length}"}
+					@debug_coverage = nil
+				end
+			when 21  # Ctrl+U
+				if @debug_memory_coverage.nil?
+					puts "Memory Tracing Turned on"
+					@debug_memory_coverage = @memory.dup
+				else
+					puts "Memory Tracing Turned off. Changes detected:"
+					@debug_memory_coverage.zip(@memory).each_with_index do |ms, addr|
+						if ms.first != ms.last
+							puts "#{hex(addr)}: #{hex(ms.first)} => #{hex(ms.last)}"
+						end
+					end
+					@debug_memory_coverage = nil
+				end
 			when 22  # Ctrl+V
 				puts "Enter ordinal value for character"
-				value = gets.to_i
+				value =  parse_num(gets)
 				loop = false
 			else
 				loop = false
@@ -145,6 +194,28 @@ class MagicVm
 				when ".dump"
 					dump_bytes = command[1] == "byte"
 					File.write(".dump", @memory.pack("#{dump_bytes ? "C" : "S"}*"))
+				when ".decode"
+					cnt = -1
+					addr_end = 0x10000
+					case command.length
+					when 1
+						addr = @ip
+						cnt = 10
+					when 2
+						addr = parse_num(command[1])
+						cnt = 10
+					when 3
+						addr = parse_num(command[1])
+						if command[2].start_with? "0x"
+							addr_end = parse_num(command[2])
+						else
+							cnt = parse_num(command[2])
+						end
+					end
+					while cnt != 0 && addr < addr_end
+						addr = prim_debug addr, print_regs=false
+						cnt -= 1
+					end
 				when ".inspect"
 					puts "clock=#{@clock} ip=#{hex(@ip)} #{@registers.each_with_index.map{|v,i|"r#{i}=#{hex(v)}"}.join ' '}"
 					puts " stack: len=#{@stack.length} | #{@stack.last(10).map{|v|"#{hex(v)}"}.join ' '}"
@@ -159,6 +230,24 @@ class MagicVm
 						len = @memory[addr]
 						print hex(addr) + "> "
 						puts @memory[addr+1..addr+len].map(&:chr).join
+						addr += len + 1
+					end
+				when ".text2"
+					addr = 0x1814
+					will_title = true
+					399.times do
+						len = @memory[addr]
+						value = @memory[addr+1..addr+len].map(&:chr).join
+						start_with_upper = value[0].upcase == value[0]
+						if start_with_upper
+							if will_title
+								print "\n#{hex(addr)} #{value}:"
+								will_title = false
+							end
+						else
+							will_title = true
+							print " #{value}"
+						end
 						addr += len + 1
 					end
 				else
@@ -193,22 +282,18 @@ class MagicVm
 	end
 
 	def prim_debug_ref_parse(serialized)
-		type, value, rest = serialized.split("::")
-		return nil if !rest.nil? || value.nil? || value.to_i.to_s != value
-		value = value.to_i
-		case type
-		when "literal"
-			value >= 0 && value <= 32767 ? value : nil
-		when "ref"
+		if serialized.start_with? "ref::"
+			value = value[5..].to_i
 			value >= 0 && value <= 7 ? value + 32768 : nil
 		else
-			nil
+			value = parse_num(value)
+			value >= 0 && value <= 32767 ? value : nil
 		end
 	end		
 
 	def prim_debug_ref_serialize(ref)
 		if ref <= 32767
-			"literal::#{ref}"
+			hex(ref)
 		elsif ref <= 32775
 			"reg::#{ref-32768}"
 		else
@@ -216,17 +301,22 @@ class MagicVm
 		end
 	end		
 
-	def prim_debug ip=nil
+	def prim_debug ip=nil, print_regs=true
 		ip ||= @ip
 		opcode = @memory[ip]
 		desc = Instruction::FROM_OPCODE[opcode] || Instruction::UNK
+		raw = (1+desc.param_num).times.map{|p_idx|hex(@memory[ip + p_idx])}
 		params = desc.param_num.times.map{|p_idx|prim_debug_ref_serialize(@memory[ip + 1 + p_idx])}
-		print "<@#{ip}:#{@registers} #{desc.mnemonic.upcase} #{params.join ' '}>\n"
+		print "#{hex(ip)}: " + raw.join(' ').ljust(30) + "#{desc.mnemonic.upcase} #{params.join ' '}".ljust(30)
+		print "#{@registers.each_with_index.map{|v,i|"r#{i}=#{hex(v)}"}.join ' '}" if print_regs
+		print " st:#{hex(@stack.length)}|#{@stack.last(6).map{|v|"#{hex(v)}"}.join ' '}" if print_regs
+		print "\n"
 		ip + 1 + desc.param_num
 	end
 
 	def process_next_instruction
 		prim_debug if @debug
+		@debug_coverage << @ip unless @debug_coverage.nil?
 		@clock += 1
 		#print "clock at #{@clock}" if (@clock % 100) == 0
 		op = @memory[@ip]

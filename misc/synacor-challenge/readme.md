@@ -147,3 +147,110 @@ Next tasks:
   - Where are the edges between locations stored
   - Where is the list of items for each location stored
   - Where is game state stored?
+
+### 24JAN08 4.5 17:20-21:50 trace code/data use, decode some functions, get xor'ed texts, initial understanding on logic
+
+`use tablet`: You find yourself writing "pWDWTEfURAdS" on the tablet.  Perhaps it's some kind of code?
+
+@19:15
+idea: trace memory
+
+0x0a84: 0x0923 => 0x0000 when `take tablet`
+
+
+Variables
+  0x6584: input prompt is read here
+
+0x05c8 is a function `array_apply_fn(r0:string*, r1:apply_fn*, r2:accumulator)`
+  apply_fn alters accumulator, r1 will be 0 (if apply_fn terminated) or length of array
+It is called with these apply functions:
+- SET r1 0x060e: simply print character
+- SET r1 0x0611: xor + print character
+- SET r1 0x0669: compare_arrays (r2-in: other array, r2-out: idx of difference if r1==0)
+- SET r1 0x14f3: 
+- SET r1 0x16cc: 
+- SET r1 0x16ec: 
+- SET r1 0x171b: 
+
+There are 35 callsites using xord printing.
+
+Callsites look like:
+
+```
+0x0b06: 0x0001 0x8000 0x6b24          SET r0 0x6b24
+0x0b09: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0b0c: 0x0009 0x8002 0x0f76 0x507a   ADD r2 0x0f76 0x507a
+0x0b10: 0x0011 0x05c8                 CALL 0x05c8
+```
+
+Could be extracted via finding the `0x0001 0x8000 {r0} 0x0001 0x8001 0x0611 0x0009 0x8002 {r2_1} {r2_2} 0x0011 0x05c8` patterns.
+
+```
+cases = [[0x6b24, 0x0f76, 0x507a], [0x6b36, 0x2865, 0x4813]]  # manually collected [r0, r2_1, r2_2]
+def hex(value)
+  "0x" + value.to_s(16).rjust(4, "0")
+end
+mem = File.read(".dump.short").unpack("S<*")
+cases.each do |start, xr1, xr2|
+  xor = (xr1+xr2) % 32768
+  len = mem[start]
+  text = mem[start+1..start+len].map{|v|(v ^ xor).chr}.join
+  p [hex(start), hex(xor), text]
+end
+```
+
+These are:
+- addr:0x6b24, xor:0x5ff0, text:"\nWhat do you do?\n"
+- addr:0x6b36, xor:0x7078, text:"You see no such item.\n"
+- addr:0x6b4d, xor:0x29e7, text:"\nThings of interest here:\n"
+- addr:0x6b68, xor:0x4179, text:"I don't understand; try 'help' for instructions.\n"
+- addr:0x6b9a, xor:0x0365, text:"look\n  You may merely 'look' to examine the room, or you may 'look <subject>' (such as 'look chair') to examine something specific.\ngo\n  You may 'go <exit>' to travel in that direction (such as 'go west'), or you may merely '<exit>' (such as 'west').\ninv\n  To see the contents of your inventory, merely 'inv'.\ntake\n  You may 'take <item>' (such as 'take large rock').\ndrop\n  To drop something in your inventory, you may 'drop <item>'.\nuse\n  You may activate or otherwise apply an item with 'use <item>'.\n"
+- addr:0x6d93, xor:0x04e7, text:"Your inventory:\n"
+- addr:0x6da4, xor:0x0560, text:"Taken.\n"
+- addr:0x6dac, xor:0x62f1, text:"You see no such item here.\n"
+- addr:0x6dc8, xor:0x146d, text:"Dropped.\n"
+- addr:0x6dd2, xor:0x1de9, text:"You can't find that in your pack.\n"
+- addr:0x6df5, xor:0x0261, text:"You can't find that in your pack.\n"
+- addr:0x6e18, xor:0x2472, text:"You aren't sure how to use that.\n"
+- addr:0x6e3a, xor:0x777a, text:"You have been eaten by a grue.\n"
+- addr:0x6e5a, xor:0x6860, text:"Chiseled on the wall of one of the passageways, you see:\n\n    "
+- addr:0x6e9d, xor:0x3265, text:"\n\nYou take note of this and keep walking.\n\n"
+- addr:0x6ec9, xor:0x6366, text:"That door is locked.\n"
+- addr:0x6edf, xor:0x71f7, text:"You find yourself writing \""
+- addr:0x6eff, xor:0x4ce7, text:"\" on the tablet.  Perhaps it's some kind of code?\n\n"
+- addr:0x6f33, xor:0x7afa, text:"You fill your lantern with oil.  It seems to cheer up!\n\n"
+- addr:0x6f6c, xor:0x78f8, text:"You'll have to find something to put the oil into first.\n\n"
+- addr:0x6fa7, xor:0x6575, text:"You light your lantern.\n\n"
+- addr:0x6fc1, xor:0x4977, text:"You douse your lantern.\n\n"
+- addr:0x6fdb, xor:0x4be0, text:"You're not sure what to do with the coin.\n"
+- addr:0x7006, xor:0x50e7, text:"You place the "
+- addr:0x7015, xor:0x01f6, text:" into the leftmost open slot.\n"
+- addr:0x7034, xor:0x78e9, text:"As you place the last coin, they are all released onto the floor.\n"
+- addr:0x7077, xor:0x00ea, text:"As you place the last coin, you hear a click from the north door.\n"
+- addr:0x70ba, xor:0x3fe8, text:"A strange, electronic voice is projected into your mind:\n\n  \"Unusual setting detected!  Starting calibration process!  Estimated time to completion: 1 billion years.\"\n\n"
+- addr:0x7163, xor:0x59eb, text:"You wake up on a sandy beach with a slight headache.  The last thing you remember is activating that teleporter... but now you can't find it anywhere in your pack.  Someone seems to have drawn a message in the sand here:\n\n    "
+- addr:0x724a, xor:0x74f1, text:"\n\nIt begins to rain.  The message washes away.\n\n"
+- addr:0x727b, xor:0x30f1, text:"A strange, electronic voice is projected into your mind:\n\n  \"Miscalibration detected!  Aborting teleportation!\"\n\nNothing else seems to happen.\n\n"
+- addr:0x730c, xor:0x18f8, text:"You activate the teleporter!  As you spiral through time and space, you think you see a pattern in the stars...\n\n    "
+- addr:0x7386, xor:0x0b6e, text:"\n\nAfter a few moments, you find yourself back on solid ground and a little disoriented.\n\n"
+- addr:0x73e0, xor:0x2d71, text:"You gaze into the mirror, and you see yourself gazing back.  But wait!  It looks like someone wrote on your face while you were unconscious on the beach!  Through the mirror, you see \""
+- addr:0x749d, xor:0x0a77, text:"\" scrawled in charcoal on your forehead.\n\nCongratulations; you have reached the end of the challenge!\n\n"
+
+Okay, so these are strings related to the use of objects.
+
+0x73e0 ... 0x749d => flag?
+0x7163 ... => message in the sand?
+0x70ba 0x7163 0x724a 0x727b 0x730c 0x7386 => teleporter use
+
+@21:05 - Yey, got the use function of the teleporter
+
+@21:23 CALL 0x0747 prints the flags
+
+@21:45 taking a break
+
+Findings:
+- Looks like the game setups up the required state to get the flags
+- Need to further understand the structure of the source
+
+Next tasks:
+- Further decode `usetablet.trace.txt`, understand how the use-fn is called for an object, find datastructure for objects

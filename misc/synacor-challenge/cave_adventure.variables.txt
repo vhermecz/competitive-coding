@@ -1,0 +1,7 @@
+# Variables
+
+0x0a96..0x0aaa: memory set by some game::use functions
+
+0x0ea4: misterious-6-bit-flag
+
+0x6584: input prompt is read here
