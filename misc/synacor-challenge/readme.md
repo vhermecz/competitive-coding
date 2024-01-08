@@ -13,7 +13,7 @@ VM expected ord=10 as enter, but on linux that was ord=13. Adding in `value-=3 i
 
 ### 24JAN07 0.5 10:10-10:40 Implementing memdump
 
-### 24JAN08 1 9:40-10:40 Printing out, analyzing text
+### 24JAN08 1.25 9:40-10:55 Printing out, analyzing text
 
 #### Game data structure
 
@@ -65,74 +65,85 @@ All the items in the game:
 - 0x4bce strange book
 - 0x565b journal
 
-There are 70 locations in the game:
-- 0x1814: Foothills
-- 0x18e4: Foothills
-- 0x193f: Dark cave
-- 0x19db: Dark cave
-- 0x1a4d: Dark cave
-- 0x1b20: Rope bridge
-- 0x1bb4: Falling through the air!
-- 0x1c7c: Moss cavern
-- 0x1d64: Moss cavern
-- 0x1dd6: Moss cavern
-- 0x1e8d: Passage
-- 0x1f5d: Passage
-- 0x1ff9: Twisty passages
-- 0x20a2: Twisty passages
-- 0x20fb: Twisty passages
-- 0x2154: Twisty passages
-- 0x21f7: Twisty passages
-- 0x2250: Twisty passages
-- 0x22fa: Twisty passages
-- 0x2353: Twisty passages
-- 0x23a0: Twisty passages
-- 0x23ed: Twisty passages
-- 0x2441: Dark passage
-- 0x24cb: Dark passage
-- 0x2505: Dark passage
-- 0x253f: Dark passage
-- 0x25bb: Ruins
-- 0x26c5: Ruins
-- 0x278d: Ruins
-- 0x28cf: Ruins
-- 0x2983: Ruins
-- 0x2a1e: Ruins
-- 0x2aa2: Ruins
-- 0x2b64: Ruins
-- 0x2c19: Synacor Headquarters
-- 0x2d36: Synacor Headquarters
-- 0x2de4: Beach
-- 0x2ea5: Beach
-- 0x2fbd: Beach
-- 0x30c1: Tropical Island
-- 0x31a9: Tropical Island
-- 0x3245: Tropical Island
-- 0x3348: Tropical Island
-- 0x3482: Tropical Island
-- 0x3594: Tropical Cave
-- 0x368b: Tropical Cave
-- 0x3720: Tropical Cave
-- 0x3882: Tropical Cave Alcove
-- 0x3940: Tropical Cave
-- 0x394e: This tunnel slopes deeper underground to the north, but the fireflies are all around to light your path.
-- 0x39c3: Vault Lock
-- 0x3a5a: Vault Lock
-- 0x3af8: Vault Lock
-- 0x3b94: Vault Door
-- 0x3ca7: Vault Lock
-- 0x3d46: Vault Lock
-- 0x3de8: Vault Lock
-- 0x3e8d: Vault Lock
-- 0x3f2a: Vault Lock
-- 0x3fc7: Vault Lock
-- 0x406b: Vault Lock
-- 0x410d: Vault Lock
-- 0x41ad: Vault Antechamber
-- 0x4261: Vault Lock
-- 0x42fd: Vault Lock
-- 0x439b: Vault Lock
-- 0x4432: Vault
-- 0x4513: Fumbling around in the darkness
-- 0x45a4: Fumbling around in the darkness
-- 0x4633: Panicked and lost
+There are 69 locations in the game:
+- 0x1814 Foothills: doorway south
+- 0x18e4 Foothills: north
+- 0x193f Dark cave: north south
+- 0x19db Dark cave: north south
+- 0x1a4d Dark cave: bridge south
+- 0x1b20 Rope bridge: continue back
+- 0x1bb4 Falling through the air!: down
+- 0x1c7c Moss cavern: west east
+- 0x1d64 Moss cavern: west
+- 0x1dd6 Moss cavern: east passage
+- 0x1e8d Passage: cavern ladder darkness
+- 0x1f5d Passage: continue back
+- 0x1ff9 Twisty passages: ladder north south east west
+- 0x20a2 Twisty passages: north south west
+- 0x20fb Twisty passages: north south east
+- 0x2154 Twisty passages: north south west east
+- 0x21f7 Twisty passages: north south east
+- 0x2250 Twisty passages: north south west east
+- 0x22fa Twisty passages: north east south
+- 0x2353 Twisty passages: west
+- 0x23a0 Twisty passages: west
+- 0x23ed Twisty passages: north south
+- 0x2441 Dark passage: west east
+- 0x24cb Dark passage: east west
+- 0x2505 Dark passage: east west
+- 0x253f Dark passage: east west
+- 0x25bb Ruins: east north
+- 0x26c5 Ruins: north south
+- 0x278d Ruins: north south east west
+- 0x28cf Ruins: south
+- 0x2983 Ruins: down west
+- 0x2a1e Ruins: up
+- 0x2aa2 Ruins: up east
+- 0x2b64 Ruins: down
+- 0x2c19 Synacor Headquarters: outside
+- 0x2d36 Synacor Headquarters: inside
+- 0x2de4 Beach: west east north
+- 0x2ea5 Beach: east north
+- 0x2fbd Beach: west north
+- 0x30c1 Tropical Island: north south east
+- 0x31a9 Tropical Island: north south west
+- 0x3245 Tropical Island: north south
+- 0x3348 Tropical Island: north south
+- 0x3482 Tropical Island: north south
+- 0x3594 Tropical Cave: north south
+- 0x368b Tropical Cave: north south
+- 0x3720 Tropical Cave: north south east
+- 0x3882 Tropical Cave Alcove: west
+- 0x3940 Tropical Cave: north south
+- 0x39c3 Vault Lock: east south
+- 0x3a5a Vault Lock: east south west
+- 0x3af8 Vault Lock: east south west
+- 0x3b94 Vault Door: south west vault
+- 0x3ca7 Vault Lock: north east south
+- 0x3d46 Vault Lock: north east south west
+- 0x3de8 Vault Lock: north east south west
+- 0x3e8d Vault Lock: north south west
+- 0x3f2a Vault Lock: north east south
+- 0x3fc7 Vault Lock: north east south west
+- 0x406b Vault Lock: north east south west
+- 0x410d Vault Lock: north south west
+- 0x41ad Vault Antechamber: north east south
+- 0x4261 Vault Lock: north east west
+- 0x42fd Vault Lock: north east west
+- 0x439b Vault Lock: north west
+- 0x4432 Vault: leave
+- 0x4513 Fumbling around in the darkness: forward back
+- 0x45a4 Fumbling around in the darkness: run investigate
+- 0x4633 Panicked and lost: run wait hide eaten
+
+Next tasks:
+- Should capture code area running during the game
+  - Init code coverage tracing
+  - Dump code coverage tracing
+  - NOTE: Could collect addresses we jumped to, add labels to them
+- Goal is probably to USE teleporter
+- Could identify:
+  - Where the code is located for item uses
+  - Where are the edges between locations stored
+  - Where is the list of items for each location stored
+  - Where is game state stored?
