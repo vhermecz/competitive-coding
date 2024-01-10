@@ -297,7 +297,7 @@ Done:
 - .decode to use rN instead of reg::N
 - add self-test and data sections into source.txt
 
-### 24JAN10 2.75 Draw graph, find twisty flag
+### 24JAN10 2.75 14:00..17:15 Draw graph, find twisty flag
 
 @14:00-14:27 write code for graph
 
@@ -374,3 +374,40 @@ Next steps:
 - Add actions and objects into scene-graph/game-graph
 
 @17:15
+
+### 24JAN10 2 17:15..19:45 Create annotations.txt and annotator.rb
+
+At s278d (Ruins) probably need to use the 5 coins to activate the statue
+
+@18:29 compiling the annotations.txt
+
+Discovered the dict structure:
+
+```
+0x6b14: 0x0007                        DATA
+0x6b15: 0x6565                        DATA  string "go"
+0x6b16: 0x6568                        DATA  string "look"
+0x6b17: 0x656d                        DATA  string "help"
+0x6b18: 0x6572                        DATA  string "inv"
+0x6b19: 0x6576                        DATA  string "take"
+0x6b1a: 0x657b                        DATA  string "drop"
+0x6b1b: 0x6580                        DATA  string "use"
+0x6b1c: 0x0007                        DATA
+0x6b1d: 0x0cc3                        DATA
+0x6b1e: 0x0baa                        DATA
+0x6b1f: 0x0d1b                        DATA
+0x6b20: 0x0d38                        DATA
+0x6b21: 0x0d5e                        DATA
+0x6b22: 0x0db6                        DATA
+0x6b23: 0x0e06                        DATA
+```
+
+Two arrays after one another. Index of key is looked up in first array, value is located by index in second.
+
+@18:57 annotator is nearing launch
+
+@19:10
+break
+@19:34
+
+finishing annotator.
