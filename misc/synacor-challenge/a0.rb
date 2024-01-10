@@ -192,8 +192,13 @@ class MagicVm
 				when ".exit"
 					loop = false
 				when ".dump"
-					dump_bytes = command[1] == "byte"
-					File.write(".dump", @memory.pack("#{dump_bytes ? "C" : "S"}*"))
+					dump_hex = command[1] == "hex"
+					if !dump_hex
+						dump_bytes = command[1] == "byte"
+						File.write(".dump", @memory.pack("#{dump_bytes ? "C" : "S"}*"))
+					else
+						File.write(".dump", @memory.each_with_index.map{|v,i|"#{hex(i)}: #{hex(v)}".ljust(38) + "DATA\n"}.join)
+					end
 				when ".decode"
 					cnt = -1
 					addr_end = 0x10000
@@ -213,7 +218,7 @@ class MagicVm
 						end
 					end
 					while cnt != 0 && addr < addr_end
-						addr = prim_debug addr, print_regs=false
+						addr = prim_debug addr, print_regs=false, print_info=true
 						cnt -= 1
 					end
 				when ".inspect"
@@ -225,11 +230,12 @@ class MagicVm
 						ip = prim_debug ip
 					end
 				when ".text"
-					addr = 0x1814
-					399.times do
+					#addr = 0x1814
+					addr = 0x17ca
+					404.times do
 						len = @memory[addr]
-						print hex(addr) + "> "
-						puts @memory[addr+1..addr+len].map(&:chr).join
+						print hex(addr) + ": "
+						puts '"""' + @memory[addr+1..addr+len].map(&:chr).join + '"""'
 						addr += len + 1
 					end
 				when ".text2"
@@ -252,8 +258,10 @@ class MagicVm
 					end
 				else
 					puts "Unknown command"
-					puts " .dump [byte] - Dump memory content"
+					puts " .decode [addr [addrend|cnt]]"
+					puts " .dump [byte|hex] - Dump memory content"
 					puts " .inspect - Dump status"
+					puts " .text - Decode text"
 					puts " .exit - Quits repl"
 				end
 			else
@@ -282,8 +290,8 @@ class MagicVm
 	end
 
 	def prim_debug_ref_parse(serialized)
-		if serialized.start_with? "ref::"
-			value = value[5..].to_i
+		if serialized.start_with? "r"
+			value = value[1..].to_i
 			value >= 0 && value <= 7 ? value + 32768 : nil
 		else
 			value = parse_num(value)
@@ -295,19 +303,24 @@ class MagicVm
 		if ref <= 32767
 			hex(ref)
 		elsif ref <= 32775
-			"reg::#{ref-32768}"
+			"r#{ref-32768}"
 		else
 			"invalid"
 		end
 	end		
 
-	def prim_debug ip=nil, print_regs=true
+	def prim_debug ip=nil, print_regs=true, print_info=false
 		ip ||= @ip
 		opcode = @memory[ip]
 		desc = Instruction::FROM_OPCODE[opcode] || Instruction::UNK
 		raw = (1+desc.param_num).times.map{|p_idx|hex(@memory[ip + p_idx])}
 		params = desc.param_num.times.map{|p_idx|prim_debug_ref_serialize(@memory[ip + 1 + p_idx])}
 		print "#{hex(ip)}: " + raw.join(' ').ljust(30) + "#{desc.mnemonic.upcase} #{params.join ' '}".ljust(30)
+		if print_info
+			if desc.mnemonic == :out && params[0].start_with?("0") && parse_num(params[0]) >= 32 && parse_num(params[0]) < 127
+				print "  # '#{parse_num(params[0]).chr}'"
+			end
+		end
 		print "#{@registers.each_with_index.map{|v,i|"r#{i}=#{hex(v)}"}.join ' '}" if print_regs
 		print " st:#{hex(@stack.length)}|#{@stack.last(6).map{|v|"#{hex(v)}"}.join ' '}" if print_regs
 		print "\n"

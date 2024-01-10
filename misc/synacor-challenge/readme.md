@@ -256,7 +256,7 @@ Next tasks:
 - Further decode `usetablet.trace.txt`, understand how the use-fn is called for an object, find datastructure for objects
 
 
-### JAN-09 1 20:00-20:20, 21:00-21:45 Found game::use, descriptor array of objects, decoded some functions
+### 24JAN09 1 20:00-20:20, 21:00-21:45 Found game::use, descriptor array of objects, decoded some functions
 
 Yey, trace format I invented is super useful, can search for register values during execution. Tablet use function is 0x1286:
 
@@ -282,3 +282,16 @@ Next tasks:
 - 0x0a82 is object descriptor land
 - 0x0e06 is game::use function?
 - Further decode `usetablet.trace.txt`, understand how the use-fn is called for an object, find datastructure for objects
+
+### 24JAN10 1.5 8:15-8:50, 12:00-13:00 Cleanup source.txt, found game graph
+
+Adding data into source dump
+
+@8:50 break
+
+Done:
+- Add .dump hex option to dump data in disasm format
+- .decode to print character on `OUT literat`
+- .text to print more strings, wrap in apos
+- .decode to use rN instead of reg::N
+- add self-test and data sections into source.txt
