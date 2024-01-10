@@ -190,6 +190,7 @@ cases = [[0x6b24, 0x0f76, 0x507a], [0x6b36, 0x2865, 0x4813]]  # manually collect
 def hex(value)
   "0x" + value.to_s(16).rjust(4, "0")
 end
+cases = [[0x68f1, 0x4133, 0x2e42]]
 mem = File.read(".dump.short").unpack("S<*")
 cases.each do |start, xr1, xr2|
   xor = (xr1+xr2) % 32768
@@ -295,3 +296,81 @@ Done:
 - .text to print more strings, wrap in apos
 - .decode to use rN instead of reg::N
 - add self-test and data sections into source.txt
+
+### 24JAN10 2.75 Draw graph, find twisty flag
+
+@14:00-14:27 write code for graph
+
+lunchbreak 
+
+@15:00-
+
+0x68f1 has some kind of text, pieced together from the xor'd text
+Must be text as it has 28 uniq values and length of 48.
+
+```
+when ".text2"
+  addr = 0x68f1
+  len = @memory[addr]
+  def decoder(memory, addr)
+    return memory[addr] ^ 0x4ce7 if addr < 0x6f33
+    return memory[addr] ^ 0x7afa if addr < 0x6f6c
+    memory[addr] ^ 0x78f8
+  end
+  # 0x6eff: xor:0x4ce7, text:"\" on the tablet.  Perhaps it's some kind of code?\n\n"
+  # 0x6f33: xor:0x7afa, text:"You fill your lantern with oil.  It seems to cheer up!\n\n"
+  # 0x6f6c: xor:0x78f8, text:"You'll have to find something to put the oil into first.\n\n"
+  value = len.times.map{|i|decoder(@memory, @memory[addr + 1 + i]).chr}.join ""
+  puts value
+```
+
+"ms Ih  es  h Iaist   'itIai  I'hoI lull\niek   dd" is not it :( :)
+
+Nope, it is just xor'd text for the post self-test "The self-test completion code is: BNCyODLfQkIl\n\n"
+
+In Twisty passage the flag is "rdMkyZhveeIv" by reverse engineering, r0=88=0x58
+
+Got this from brute forcing all 64 possible values, and matching with the expected md5.
+
+This means that s0973 and s0978 needs to be visited before s0982.
+
+Movement is: west, south, north
+
+Could have figured it out as this being the shortest path to trigger the reset
+
+Input to reproduce:
+- doorway
+- north
+- north
+- bridge
+- continue
+- down
+- west
+- passage
+- ladder
+- west
+- south
+- north
+
+@16:53
+annotating strings and functions manually is boring
+lets implement an annotation tool for the source.txt file
+
+Progress:
+- Code:
+- Add @calldepth
+- Print chars read by IN
+- Add some logic_* methods to read basic data structures
+- Add .graph to dump game graph
+- Fix asm repl, add CALL support
+- Fix prim_debug_ref_parse
+- Crack:
+- Find twisty flag
+- Draw game graph
+
+
+Next steps:
+- Crearte source annotator tool
+- Add actions and objects into scene-graph/game-graph
+
+@17:15

@@ -43,8 +43,8 @@ Instruction::FROM_OPCODE = Instruction.constants(false).map do |c|
 	end
 end.to_h
 
-def hex(value)
-	"0x" + value.to_s(16).rjust(4, "0")
+def hex(value, prefix="0x")
+	prefix + value.to_s(16).rjust(4, "0")
 end
 
 def parse_num(value)
@@ -63,6 +63,7 @@ class MagicVm
 		@registers = [0] * 8  # TODO initial value?
 		@stack = []  # TODO initial value?
 		@ip = 0
+		@calldepth = 0
 		@clock = 0
 		@debug = false
 		@debug_coverage = nil
@@ -177,8 +178,23 @@ class MagicVm
 			end
 		end
 		print "read-input::#{value.ord}\n" if @debug
+		print value.chr
 		value -= 3 if value == 13  # Fix newline on linux
 		value
+	end
+
+	def logic_read_array(addr)
+		len = @memory[addr]
+		@memory[addr+1..addr+len]
+	end
+
+	def logic_read_string(addr)
+		logic_read_array(addr).map(&:chr).join
+	end
+
+	def logic_read_string_list(addr)
+		len = @memory[addr]
+		@memory[addr+1..addr+len].map{|v|logic_read_string(v)}
 	end
 
 	def prim_debug_repl
@@ -192,6 +208,7 @@ class MagicVm
 				when ".exit"
 					loop = false
 				when ".dump"
+					puts "Dumping memory into file"
 					dump_hex = command[1] == "hex"
 					if !dump_hex
 						dump_bytes = command[1] == "byte"
@@ -233,29 +250,34 @@ class MagicVm
 					#addr = 0x1814
 					addr = 0x17ca
 					404.times do
-						len = @memory[addr]
-						print hex(addr) + ": "
-						puts '"""' + @memory[addr+1..addr+len].map(&:chr).join + '"""'
-						addr += len + 1
+						s = logic_read_string(addr)
+						puts hex(addr) + ': """' + s + '"""'
+						addr += 1 + s.length
 					end
-				when ".text2"
-					addr = 0x1814
-					will_title = true
-					399.times do
-						len = @memory[addr]
-						value = @memory[addr+1..addr+len].map(&:chr).join
-						start_with_upper = value[0].upcase == value[0]
-						if start_with_upper
-							if will_title
-								print "\n#{hex(addr)} #{value}:"
-								will_title = false
-							end
-						else
-							will_title = true
-							print " #{value}"
+				when ".graph"
+					# https://graphviz.org/doc/info/lang.html
+					# https://graphviz.org/docs/edges/
+					# 
+					puts "Dumping game graph into file"
+					graph = []
+					addr = 0x0923
+					graph << "strict digraph {"
+					while addr < 0x0a81
+						title = logic_read_string(@memory[addr])
+						#desc = logic_read_string(@memory[addr + 1])  # FIXME: Sometimes logic_read_string_array needed
+						edge_labels = logic_read_string_list(@memory[addr + 2])
+						edge_states = logic_read_array(@memory[addr + 3])
+						state = hex(addr, prefix='s')
+						graph << "  #{state} [label=\"#{state}\\n#{title}\"]"
+						edge_states.zip(edge_labels).each do |next_state, next_label|
+							graph << "  #{state} -> #{hex(next_state, prefix='s')} [label=\"#{next_label}\"]"
 						end
-						addr += len + 1
+
+						addr += 5
+						addr += 1 while @memory[addr] == 0  # handle some irregularities
 					end
+					graph << "}"
+					File.write("game.graph.dot", graph.join("\n"))
 				else
 					puts "Unknown command"
 					puts " .decode [addr [addrend|cnt]]"
@@ -271,18 +293,22 @@ class MagicVm
 					op = Instruction.const_get(command.first.upcase.to_sym)
 					params = command[1..].each_with_index.map do |param, idx|
 						value = prim_debug_ref_parse(param)
-						puts "Param #{idx} is invalid (#{param}"
+						puts "Param #{idx} is invalid (#{param})" if value.nil?
 						value
 					end
 					if params.any?{|v|v.nil?} || params.length != op.param_num
 						puts "Invalid or incorrect number of params"
 					else
-						@memory << op
+						@memory << op.opcode
 						@memory += params
+						#p @memory[MEMORY_SIZE..]
 						ip = @ip
 						@ip = MEMORY_SIZE
+						calldepth = @calldepth
 						process_next_instruction
+						process_next_instruction while @calldepth > calldepth
 						@ip = ip if @ip > MEMORY_SIZE  # reset if not altered ip
+						@memory = @memory[...MEMORY_SIZE]
 					end
 				end
 			end
@@ -291,10 +317,10 @@ class MagicVm
 
 	def prim_debug_ref_parse(serialized)
 		if serialized.start_with? "r"
-			value = value[1..].to_i
+			value = serialized[1..].to_i
 			value >= 0 && value <= 7 ? value + 32768 : nil
 		else
-			value = parse_num(value)
+			value = parse_num(serialized)
 			value >= 0 && value <= 32767 ? value : nil
 		end
 	end		
@@ -398,9 +424,11 @@ class MagicVm
 			@ip += 2
 			@stack << @ip
 			@ip = prim_read(a)
+			@calldepth += 1
 		when Instruction::RET.opcode
 			prim_halt if @stack.empty?
 			@ip = @stack.pop
+			@calldepth -= 1
 		when Instruction::OUT.opcode
 			prim_out(prim_read(a))
 			@ip += 2
