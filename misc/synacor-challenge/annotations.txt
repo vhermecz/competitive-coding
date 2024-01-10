@@ -1,4 +1,4 @@
-0x0000: segment intro
+0x0000: _ segment intro
 0x0126: segment self-test
 # functions
 0x05c8: function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
@@ -23,8 +23,8 @@
 0x08d7: function
 0x08de: function
 0x08ff: function
-0x0923: data scene-records
-0x0a82: data itemdesc-records
+0x0923: _ data scene-records
+0x0a82: _ data itemdesc-records
 0x0ac2: var current_scene?
 0x0ac3: var
 0x0ac4: function
@@ -475,7 +475,7 @@
 
 # xor'd strings
 0x68f1: string "The self-test completion code is: BNCyODLfQkIl"
-0x6922: data scene_edges-records
+0x6922: _ data scene_edges-records
 0x6b03: data itemdesc[]
 0x6b14: data dict user-actions
 0x6b24: string "What do you do?"

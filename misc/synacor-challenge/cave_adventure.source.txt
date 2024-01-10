@@ -450,7 +450,7 @@
 0x03ec: 0x0009 0x8001 0x8001 0x0001   ADD r1 r1 0x0001
 0x03f0: 0x000f 0x8002 0x17fa          RMEM r2 0x17fa
 0x03f3: 0x0009 0x8002 0x8002 0x17fa   ADD r2 r2 0x17fa
-0x03f7: 0x0001 0x8000 0x17fa          SET r0 0x17fa
+0x03f7: 0x0001 0x8000 0x17fa          SET r0 0x17fa     # string "complete"
 0x03fa: 0x0009 0x8000 0x8000 0x0001   ADD r0 r0 0x0001
 0x03fe: 0x0005 0x8003 0x8000 0x8002   GT r3 r0 r2
 0x0402: 0x0007 0x8003 0x0415          JT r3 0x0415
@@ -465,15 +465,15 @@
 0x041f: 0x0009 0x8000 0x8000 0x0001   ADD r0 r0 0x0001
 0x0423: 0x0010 0x17d6 0x8000          WMEM 0x17d6 r0
 0x0426: 0x0010 0x17e9 0x002c          WMEM 0x17e9 0x002c
-0x0429: 0x0001 0x8000 0x17d6          SET r0 0x17d6
-0x042c: 0x0011 0x0604                 CALL 0x0604
+0x0429: 0x0001 0x8000 0x17d6          SET r0 0x17d6     # string "self-test complete, all tests pass"
+0x042c: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x042e: 0x0002 0x8000                 PUSH r0
 0x0430: 0x0002 0x8001                 PUSH r1
 0x0432: 0x0002 0x8002                 PUSH r2
-0x0434: 0x0001 0x8000 0x68f1          SET r0 0x68f1
-0x0437: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0434: 0x0001 0x8000 0x68f1          SET r0 0x68f1     # string "The self-test completion code is: BNCyODLfQkIl"
+0x0437: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x043a: 0x0009 0x8002 0x4133 0x2e42   ADD r2 0x4133 0x2e42
-0x043e: 0x0011 0x05c8                 CALL 0x05c8
+0x043e: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0440: 0x0003 0x8002                 POP r2
 0x0442: 0x0003 0x8001                 POP r1
 0x0444: 0x0003 0x8000                 POP r0
@@ -711,8 +711,8 @@
 
 # function print_string(r0:string*)
 0x0604: 0x0002 0x8001                 PUSH r1
-0x0606: 0x0001 0x8001 0x060e          SET r1 0x060e
-0x0609: 0x0011 0x05c8                 CALL 0x05c8
+0x0606: 0x0001 0x8001 0x060e          SET r1 0x060e     # arr::apply_fn print_chr(r0:char)
+0x0609: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x060b: 0x0003 0x8001                 POP r1
 0x060d: 0x0012                        RET
 
@@ -736,7 +736,7 @@
 0x061f: 0x0002 0x8003                 PUSH r3
 0x0621: 0x000f 0x8003 0x8000          RMEM r3 r0
 0x0624: 0x0008 0x8003 0x0631          JF r3 0x0631
-0x0627: 0x0011 0x05c8                 CALL 0x05c8
+0x0627: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0629: 0x0007 0x8001 0x0631          JT r1 0x0631
 0x062c: 0x0001 0x8000 0x8002          SET r0 r2
 0x062f: 0x0006 0x0634                 JMP 0x0634
@@ -751,8 +751,8 @@
 0x0639: 0x0002 0x8001                 PUSH r1
 0x063b: 0x0002 0x8002                 PUSH r2
 0x063d: 0x0001 0x8002 0x8001          SET r2 r1
-0x0640: 0x0001 0x8001 0x065b          SET r1 0x065b
-0x0643: 0x0011 0x061d                 CALL 0x061d
+0x0640: 0x0001 0x8001 0x065b          SET r1 0x065b     # arr::apply_fn get_index_on_item_value_match() - terminate array_apply_fn on item matching accumulator, return index in accumulator
+0x0643: 0x0011 0x061d                 CALL 0x061d       # function find_item(r0:array*, r1:apply_fn*, r2:accumulator) r0 = -1 if fail else accumulator
 0x0645: 0x0003 0x8002                 POP r2
 0x0647: 0x0003 0x8001                 POP r1
 0x0649: 0x0012                        RET
@@ -763,8 +763,8 @@
 0x064a: 0x0002 0x8001                 PUSH r1
 0x064c: 0x0002 0x8002                 PUSH r2
 0x064e: 0x0001 0x8002 0x8001          SET r2 r1
-0x0651: 0x0001 0x8001 0x0686          SET r1 0x0686
-0x0654: 0x0011 0x061d                 CALL 0x061d
+0x0651: 0x0001 0x8001 0x0686          SET r1 0x0686     # arr::apply_fn ...() - trigger with index if array item matches r2 array
+0x0654: 0x0011 0x061d                 CALL 0x061d       # function find_item(r0:array*, r1:apply_fn*, r2:accumulator) r0 = -1 if fail else accumulator
 0x0656: 0x0003 0x8002                 POP r2
 0x0658: 0x0003 0x8001                 POP r1
 0x065a: 0x0012                        RET
@@ -796,7 +796,7 @@
 #   trigger with index if array item matches r2 array
 0x0686: 0x0002 0x8001                 PUSH r1
 0x0688: 0x0001 0x8001 0x8002          SET r1 r2
-0x068b: 0x0011 0x0699                 CALL 0x0699
+0x068b: 0x0011 0x0699                 CALL 0x0699       # function is_arrays_equal(r0: array1, r1: array2):r0:bool = 1 if matched
 0x068d: 0x0003 0x8001                 POP r1
 0x068f: 0x0008 0x8000 0x0698          JF r0 0x0698
 0x0692: 0x0001 0x8002 0x8001          SET r2 r1
@@ -818,7 +818,7 @@
 0x06ae: 0x000d 0x8002 0x8003 0x8004   OR r2 r3 r4
 0x06b2: 0x0008 0x8002 0x06c0          JF r2 0x06c0      # Both empty wins
 0x06b5: 0x0001 0x8002 0x8001          SET r2 r1
-0x06b8: 0x0001 0x8001 0x0669          SET r1 0x0669
+0x06b8: 0x0001 0x8001 0x0669          SET r1 0x0669     # arr::apply_fn compare_array_item(r0:value, r1:index, r2:other_array) - triggers on difference, sets index of difference into r2
 0x06bb: 0x0011 0x05c8                 CALL 0x05c8       # array_apply with compare_arrays
 0x06bd: 0x0008 0x8001 0x06c5          JF r1 0x06c5      # FAIL: Found diff
 0x06c0: 0x0001 0x8000 0x0001          SET r0 0x0001     # SUCC: Arrays equal
@@ -833,13 +833,13 @@
 
 0x06d1: 0x0002 0x8000                 PUSH r0
 0x06d3: 0x0002 0x8001                 PUSH r1
-0x06d5: 0x0001 0x8001 0x17ca          SET r1 0x17ca
+0x06d5: 0x0001 0x8001 0x17ca          SET r1 0x17ca     # string "Test string"
 0x06d8: 0x000f 0x8000 0x8001          RMEM r0 r1
 0x06db: 0x0002 0x8001                 PUSH r1
 0x06dd: 0x000a 0x8001 0x8001 0x8001   MULT r1 r1 r1
-0x06e1: 0x0011 0x0863                 CALL 0x0863
+0x06e1: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
 0x06e3: 0x0001 0x8001 0x4154          SET r1 0x4154
-0x06e6: 0x0011 0x0863                 CALL 0x0863
+0x06e6: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
 0x06e8: 0x0003 0x8001                 POP r1
 0x06ea: 0x0010 0x8001 0x8000          WMEM r1 r0
 0x06ed: 0x0009 0x8001 0x8001 0x0001   ADD r1 r1 0x0001
@@ -906,7 +906,7 @@
 0x0791: 0x0002 0x8000                 PUSH r0
 0x0793: 0x0002 0x8001                 PUSH r1
 0x0795: 0x0001 0x8001 0x8006          SET r1 r6
-0x0798: 0x0011 0x0863                 CALL 0x0863
+0x0798: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
 0x079a: 0x0001 0x8006 0x8000          SET r6 r0
 0x079d: 0x0003 0x8001                 POP r1
 0x079f: 0x0003 0x8000                 POP r0
@@ -926,8 +926,8 @@
 0x07cf: 0x0008 0x8005 0x0774          JF r5 0x0774
 0x07d2: 0x0008 0x8003 0x076e          JF r3 0x076e
 0x07d5: 0x0002 0x8000                 PUSH r0
-0x07d7: 0x0001 0x8000 0x1807          SET r0 0x1807
-0x07da: 0x0011 0x0604                 CALL 0x0604
+0x07d7: 0x0001 0x8000 0x1807          SET r0 0x1807     # var a-12-item-array
+0x07da: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x07dc: 0x0003 0x8000                 POP r0
 0x07de: 0x0003 0x8006                 POP r6
 0x07e0: 0x0003 0x8005                 POP r5
@@ -1072,426 +1072,426 @@
 ##   string** action_labels
 ##   scene** action_scenes
 0x0923: 0x1814                        DATA  # Foothill
-0x0924: 0x181e                        DATA
+0x0924: 0x181e                        DATA  string "You find yourself standing at the base of an enormous mountain...""
 0x0925: 0x6922                        DATA  # labels for go
 0x0926: 0x6925                        DATA  # actions for go
 0x0927: 0x0000                        DATA
 
-0x0928: 0x18e4                        DATA
-0x0929: 0x18ee                        DATA
+0x0928: 0x18e4                        DATA  string "Foothills"
+0x0929: 0x18ee                        DATA  string "As you begin to leave, you feel the urge for adventure pulling you back..."
 0x092a: 0x6928                        DATA
 0x092b: 0x692a                        DATA
 0x092c: 0x0000                        DATA
 
-0x092d: 0x193f                        DATA
-0x092e: 0x1949                        DATA
+0x092d: 0x193f                        DATA  string "Dark cave"
+0x092e: 0x1949                        DATA  string "This seems to be the mouth of a deep cave.  As you peer..."
 0x092f: 0x692c                        DATA
 0x0930: 0x692f                        DATA
 0x0931: 0x0000                        DATA
 
-0x0932: 0x19db                        DATA
-0x0933: 0x19e5                        DATA
+0x0932: 0x19db                        DATA  string "Dark cave"
+0x0933: 0x19e5                        DATA  string "The cave is somewhat narrow here, and the light from the doorway to the south is quite dim."
 0x0934: 0x6932                        DATA
 0x0935: 0x6935                        DATA
 0x0936: 0x0000                        DATA
 
-0x0937: 0x1a4d                        DATA
-0x0938: 0x1a57                        DATA
+0x0937: 0x1a4d                        DATA  string "Dark cave"
+0x0938: 0x1a57                        DATA  string "The cave acoustics dramatically change as you find yourself..."
 0x0939: 0x6938                        DATA
 0x093a: 0x693b                        DATA
 0x093b: 0x0000                        DATA
 
-0x093c: 0x1b20                        DATA
-0x093d: 0x1b2c                        DATA
+0x093c: 0x1b20                        DATA  string "Rope bridge"
+0x093d: 0x1b2c                        DATA  string "This rope bridge creaks as you walk along it.  You aren't..."
 0x093e: 0x693e                        DATA
 0x093f: 0x6941                        DATA
 0x0940: 0x0000                        DATA
 
-0x0941: 0x1bb4                        DATA
-0x0942: 0x1bcd                        DATA
+0x0941: 0x1bb4                        DATA  string "Falling through the air!"
+0x0942: 0x1bcd                        DATA  string "As you continue along the bridge, it snaps!  You try to grab the bridge..."
 0x0943: 0x6944                        DATA
 0x0944: 0x6946                        DATA
 0x0945: 0x0000                        DATA
 
-0x0946: 0x1c7c                        DATA
-0x0947: 0x1c88                        DATA
+0x0946: 0x1c7c                        DATA  string "Moss cavern"
+0x0947: 0x1c88                        DATA  string "You are standing in a large cavern full of bioluminescent moss..."
 0x0948: 0x6948                        DATA
 0x0949: 0x694b                        DATA
 0x094a: 0x0000                        DATA
 
-0x094b: 0x1d64                        DATA
-0x094c: 0x1d70                        DATA
+0x094b: 0x1d64                        DATA  string "Moss cavern"
+0x094c: 0x1d70                        DATA  string "You are standing in a large cavern full of bioluminescent moss..."
 0x094d: 0x694e                        DATA
 0x094e: 0x6950                        DATA
 0x094f: 0x0000                        DATA
 
-0x0950: 0x1dd6                        DATA
-0x0951: 0x1de2                        DATA
+0x0950: 0x1dd6                        DATA  string "Moss cavern"
+0x0951: 0x1de2                        DATA  string "You are standing in a large cavern full of bioluminescent moss..."
 0x0952: 0x6952                        DATA
 0x0953: 0x6955                        DATA
 0x0954: 0x0000                        DATA
 
-0x0955: 0x1e8d                        DATA
-0x0956: 0x1e95                        DATA
+0x0955: 0x1e8d                        DATA  string "Passage"
+0x0956: 0x1e95                        DATA  string "You are in a crevise on the west wall of the moss cavern.  A dark..."
 0x0957: 0x6958                        DATA
 0x0958: 0x695c                        DATA
 0x0959: 0x0000                        DATA
 
-0x095a: 0x1f5d                        DATA
+0x095a: 0x1f5d                        DATA  string "Passage"
 0x095b: 0x6960                        DATA
 0x095c: 0x6963                        DATA
 0x095d: 0x6966                        DATA
 0x095e: 0x0000                        DATA
 
 0x095f: 0x1ff9                        DATA  string: """Twisty passages"""
-0x0960: 0x2009                        DATA
+0x0960: 0x2009                        DATA  string "You are in a maze of twisty little passages, all dimly lit by more..."
 0x0961: 0x6969                        DATA
 0x0962: 0x696f                        DATA
 0x0963: 0x0eb4                        DATA              # function twistybit-reset
 
 0x0964: 0x20a2                        DATA  string: """Twisty passages"""
-0x0965: 0x20b2                        DATA
+0x0965: 0x20b2                        DATA  string "You are in a twisty maze of little passages, all alike."
 0x0966: 0x6975                        DATA
 0x0967: 0x6979                        DATA
 0x0968: 0x0eb8                        DATA              # function twistybit-set-1
 
 0x0969: 0x20fb                        DATA  string: """Twisty passages"""
-0x096a: 0x210b                        DATA
+0x096a: 0x210b                        DATA  string "You are in a maze of little twisty passages, all alike."
 0x096b: 0x697d                        DATA
 0x096c: 0x6981                        DATA
 0x096d: 0x0ec2                        DATA              # function twistybit-set-2
 
 0x096e: 0x2154                        DATA  string: """Twisty passages"""
-0x096f: 0x2164                        DATA
+0x096f: 0x2164                        DATA  string "You are in a maze of alike little passages ... hear a Grue."
 0x0970: 0x6985                        DATA
 0x0971: 0x698a                        DATA
 0x0972: 0x0ecc                        DATA              # function twistybit-set-4
 
 0x0973: 0x21f7                        DATA  string: """Twisty passages"""
-0x0974: 0x2207                        DATA
+0x0974: 0x2207                        DATA  string "You are in a little maze of twisty passages, all alike."
 0x0975: 0x698f                        DATA
 0x0976: 0x6993                        DATA
 0x0977: 0x0ed6                        DATA              # function twistybit-set-8
 
 0x0978: 0x2250                        DATA  string: """Twisty passages"""
-0x0979: 0x2260                        DATA
+0x0979: 0x2260                        DATA  string "You are in a twisty alike of little passages, ... a Grue."
 0x097a: 0x6997                        DATA
 0x097b: 0x699c                        DATA
 0x097c: 0x0ee0                        DATA              # function twistybit-set-16
 
 0x097d: 0x22fa                        DATA  string: """Twisty passages"""
-0x097e: 0x230a                        DATA
+0x097e: 0x230a                        DATA  string "You are in a maze of alike twisty passages, all little."
 0x097f: 0x69a1                        DATA
 0x0980: 0x69a5                        DATA
 0x0981: 0x0eea                        DATA              # function twistybit-set-32
 
 0x0982: 0x2353                        DATA  string: """Twisty passages"""
-0x0983: 0x2363                        DATA
+0x0983: 0x2363                        DATA  string "You are in a maze of twisty little passages, all alike."
 0x0984: 0x69a9                        DATA
 0x0985: 0x69ab                        DATA
 0x0986: 0x0ef4                        DATA  # funky function, function twistybit-set-64 + drops to s0987
 
 0x0987: 0x23a0                        DATA  string: """Twisty passages"""
-0x0988: 0x23b0                        DATA
+0x0988: 0x23b0                        DATA  string "You are in a maze of twisty little passages, all alike."
 0x0989: 0x69ad                        DATA
 0x098a: 0x69af                        DATA
 0x098b: 0x0000                        DATA
 
-0x098c: 0x23ed                        DATA
-0x098d: 0x23fd                        DATA
+0x098c: 0x23ed                        DATA  string "Twisty passages"
+0x098d: 0x23fd                        DATA  string "You are in a twisty maze of little passages, all alike."
 0x098e: 0x69b1                        DATA
 0x098f: 0x69b4                        DATA
 0x0990: 0x0e5e                        DATA
 
-0x0991: 0x2441                        DATA
-0x0992: 0x244e                        DATA
+0x0991: 0x2441                        DATA  string "Dark passage"
+0x0992: 0x244e                        DATA  string "You are in a narrow passage.  There is darkness to the west..."
 0x0993: 0x69b7                        DATA
 0x0994: 0x69ba                        DATA
 0x0995: 0x0e5e                        DATA
 
-0x0996: 0x24cb                        DATA
-0x0997: 0x24d8                        DATA
+0x0996: 0x24cb                        DATA  string "Dark passage"
+0x0997: 0x24d8                        DATA  string "You are in a dark, narrow passage."
 0x0998: 0x69bd                        DATA
 0x0999: 0x69c0                        DATA
 0x099a: 0x0e5e                        DATA
 
-0x099b: 0x2505                        DATA
-0x099c: 0x2512                        DATA
+0x099b: 0x2505                        DATA  string "Dark passage"
+0x099c: 0x2512                        DATA  string "You are in a dark, narrow passage."
 0x099d: 0x69c3                        DATA
 0x099e: 0x69c6                        DATA
 0x099f: 0x0e5e                        DATA
 
-0x09a0: 0x253f                        DATA
-0x09a1: 0x254c                        DATA
+0x09a0: 0x253f                        DATA  string "Dark passage"
+0x09a1: 0x254c                        DATA  string "You are in a dark, narrow passage.  To the west, you spot some..."
 0x09a2: 0x69c9                        DATA
 0x09a3: 0x69cc                        DATA
 0x09a4: 0x0e5e                        DATA
 
-0x09a5: 0x25bb                        DATA
-0x09a6: 0x25c1                        DATA
+0x09a5: 0x25bb                        DATA  string "Ruins"
+0x09a6: 0x25c1                        DATA  string "You stand in a large cavern with a huge ruin to the north, overgrown..."
 0x09a7: 0x69cf                        DATA
 0x09a8: 0x69d2                        DATA
 0x09a9: 0x0000                        DATA
 
-0x09aa: 0x26c5                        DATA
-0x09ab: 0x26cb                        DATA
+0x09aa: 0x26c5                        DATA  string "Ruins"
+0x09ab: 0x26cb                        DATA  string "You are in the once-opulent foyer of a massive ruined complex.  There..."
 0x09ac: 0x69d5                        DATA
 0x09ad: 0x69d8                        DATA
 0x09ae: 0x0000                        DATA
 
 # WHY 6 items?
 0x09af: 0x278d                        DATA  string: """Ruins"""
-0x09b0: 0x2793                        DATA
+0x09b0: 0x2793                        DATA  string "circular slots, symbols. Reads: _ + _ * _^2 + _^3 - _ = 399"
 0x09b1: 0x69db                        DATA
 0x09b2: 0x69e0                        DATA
 0x09b3: 0x0000                        DATA
 0x09b4: 0x0000                        DATA
 
 0x09b5: 0x28cf                        DATA  string: """Ruins"""
-0x09b6: 0x28d5                        DATA
+0x09b6: 0x28d5                        DATA  string "Because it has been so well-protected, this room hardly shows signs..."
 0x09b7: 0x69f1                        DATA
 0x09b8: 0x69f3                        DATA
 0x09b9: 0x0f4b                        DATA
 
-0x09ba: 0x2983                        DATA
-0x09bb: 0x2989                        DATA
+0x09ba: 0x2983                        DATA  string "Ruins"
+0x09bb: 0x2989                        DATA  string "You stand in what seems to have once been a dining hall; broken tables..."
 0x09bc: 0x69f5                        DATA
 0x09bd: 0x69f8                        DATA
 0x09be: 0x0000                        DATA
 
-0x09bf: 0x2a1e                        DATA
-0x09c0: 0x2a24                        DATA
+0x09bf: 0x2a1e                        DATA  string "Ruins"
+0x09c0: 0x2a24                        DATA  string "This seems to be a kitchen; there are brick stoves and shelves along the..."
 0x09c1: 0x69fb                        DATA
 0x09c2: 0x69fd                        DATA
 0x09c3: 0x0000                        DATA
 
-0x09c4: 0x2aa2                        DATA
-0x09c5: 0x2aa8                        DATA
+0x09c4: 0x2aa2                        DATA  string "Ruins"
+0x09c5: 0x2aa8                        DATA  string "You find yourself in what was once the living quarters for the complex..."
 0x09c6: 0x69ff                        DATA
 0x09c7: 0x6a02                        DATA
 0x09c8: 0x0000                        DATA
 
-0x09c9: 0x2b64                        DATA
-0x09ca: 0x2b6a                        DATA
+0x09c9: 0x2b64                        DATA  string "Ruins"
+0x09ca: 0x2b6a                        DATA  string "This was long ago a lavish throne room.  Dried-up fountains and crumbling..."
 0x09cb: 0x6a05                        DATA
 0x09cc: 0x6a07                        DATA
 0x09cd: 0x0000                        DATA
 
-0x09ce: 0x2c19                        DATA
-0x09cf: 0x2c2e                        DATA
+0x09ce: 0x2c19                        DATA  string "Synacor Headquarters"
+0x09cf: 0x2c2e                        DATA  string "You stand in the lobby of what appears to be a really fun place to work bookshelf...!"
 0x09d0: 0x6a09                        DATA
 0x09d1: 0x6a0b                        DATA
 0x09d2: 0x0000                        DATA
 
 0x09d3: 0x2d36                        DATA  string: """Synacor Headquarters"""
-0x09d4: 0x2d4b                        DATA
+0x09d4: 0x2d4b                        DATA  string "It's a warm, sunny day!  While the breeze from Lake Erie is certainly..."
 0x09d5: 0x6a0d                        DATA
 0x09d6: 0x6a0f                        DATA
 0x09d7: 0x0000                        DATA
 
-0x09d8: 0x2de4                        DATA
-0x09d9: 0x2dea                        DATA
+0x09d8: 0x2de4                        DATA  string "Beach"
+0x09d9: 0x2dea                        DATA  string "This is a sandy beach in a cove on some tropical island.  It is raining..."
 0x09da: 0x6a11                        DATA
 0x09db: 0x6a15                        DATA
 0x09dc: 0x0000                        DATA
 
-0x09dd: 0x2ea5                        DATA
-0x09de: 0x2eab                        DATA
+0x09dd: 0x2ea5                        DATA  string "Beach"
+0x09de: 0x2eab                        DATA  string "This is a sandy beach in a cove on some tropical island.  It is raining..."
 0x09df: 0x6a19                        DATA
 0x09e0: 0x6a1c                        DATA
 0x09e1: 0x0000                        DATA
 
-0x09e2: 0x2fbd                        DATA
-0x09e3: 0x2fc3                        DATA
+0x09e2: 0x2fbd                        DATA  string "Beach"
+0x09e3: 0x2fc3                        DATA  string "This is a sandy beach in a cove on some tropical island.  It is raining..."
 0x09e4: 0x6a1f                        DATA
 0x09e5: 0x6a22                        DATA
 0x09e6: 0x0000                        DATA
 
 0x09e7: 0x30c1                        DATA  string: """Tropical Island"""
-0x09e8: 0x30d1                        DATA
+0x09e8: 0x30d1                        DATA  string "The large trees here seem to be protecting you from the rain.  As you push through..."
 0x09e9: 0x6a25                        DATA
 0x09ea: 0x6a29                        DATA
 0x09eb: 0x0000                        DATA
 
-0x09ec: 0x31a9                        DATA
-0x09ed: 0x31b9                        DATA
+0x09ec: 0x31a9                        DATA  string "Tropical Island"
+0x09ed: 0x31b9                        DATA  string "The east embankment of the cove towers over you.  It produces a small waterfall..."
 0x09ee: 0x6a2d                        DATA
 0x09ef: 0x6a31                        DATA
 0x09f0: 0x0000                        DATA
 
-0x09f1: 0x3245                        DATA
-0x09f2: 0x3255                        DATA
+0x09f1: 0x3245                        DATA  string "Tropical Island"
+0x09f2: 0x3255                        DATA  string "The embankment of the cove come toegher here to your east and west.  Between these..."
 0x09f3: 0x6a35                        DATA
 0x09f4: 0x6a38                        DATA
 0x09f5: 0x0000                        DATA
 
-0x09f6: 0x3348                        DATA
-0x09f7: 0x3358                        DATA
+0x09f6: 0x3348                        DATA  string "Tropical Island"
+0x09f7: 0x3358                        DATA  string "You are on a narrow path between two steep rock faces which look like they have been..."
 0x09f8: 0x6a3b                        DATA
 0x09f9: 0x6a3e                        DATA
 0x09fa: 0x0000                        DATA
 
-0x09fb: 0x3482                        DATA
-0x09fc: 0x3492                        DATA
+0x09fb: 0x3482                        DATA  string "Tropical Island"
+0x09fc: 0x3492                        DATA  string "The narrow path slopes downward to the north and leads to the mouth of a small cave..."
 0x09fd: 0x6a41                        DATA
 0x09fe: 0x6a44                        DATA
 0x09ff: 0x0000                        DATA
 
-0x0a00: 0x3594                        DATA
-0x0a01: 0x35a2                        DATA
+0x0a00: 0x3594                        DATA  string "Tropical Cave"
+0x0a01: 0x35a2                        DATA  string "You stand at the entrance to a natural cave which looks like it hasn't been visited..."
 0x0a02: 0x6a47                        DATA
 0x0a03: 0x6a4a                        DATA
 0x0a04: 0x0000                        DATA
 
-0x0a05: 0x368b                        DATA
-0x0a06: 0x3699                        DATA
+0x0a05: 0x368b                        DATA  string "Tropical Cave"
+0x0a06: 0x3699                        DATA  string "Fireflies slowly drift around you and light the tunnel, which seems to get brighter..."
 0x0a07: 0x6a4d                        DATA
 0x0a08: 0x6a50                        DATA
 0x0a09: 0x0000                        DATA
 
-0x0a0a: 0x3720                        DATA
-0x0a0b: 0x372e                        DATA
+0x0a0a: 0x3720                        DATA  string "Tropical Cave"
+0x0a0b: 0x372e                        DATA  string "The cave is a little wider here.  You find the cobweb-encrusted remains of a small..."
 0x0a0c: 0x6a53                        DATA
 0x0a0d: 0x6a57                        DATA
 0x0a0e: 0x0000                        DATA
 
-0x0a0f: 0x3882                        DATA
-0x0a10: 0x3897                        DATA
+0x0a0f: 0x3882                        DATA  string "Tropical Cave Alcove"
+0x0a10: 0x3897                        DATA  string "At the back of this alcove, there is a small table, a chair, and a broken lantern..."
 0x0a11: 0x6a5b                        DATA
 0x0a12: 0x6a5d                        DATA
 0x0a13: 0x0000                        DATA
 
 0x0a14: 0x3940                        DATA  string: """Tropical Cave"""
-0x0a15: 0x394e                        DATA
+0x0a15: 0x394e                        DATA  string "This tunnel slopes deeper underground to the north, but the fireflies..."
 0x0a16: 0x6a5f                        DATA
 0x0a17: 0x6a62                        DATA
 0x0a18: 0x1219                        DATA
 
-0x0a19: 0x39c3                        DATA
-0x0a1a: 0x39ce                        DATA
+0x0a19: 0x39c3                        DATA  string "Vault Lock: *"
+0x0a1a: 0x39ce                        DATA  string "grid of rooms: '*' symbol."
 0x0a1b: 0x6a65                        DATA
 0x0a1c: 0x6a68                        DATA
 0x0a1d: 0x0f8c                        DATA
 
-0x0a1e: 0x3a5a                        DATA
-0x0a1f: 0x3a65                        DATA
+0x0a1e: 0x3a5a                        DATA  string "Vault Lock: 8"
+0x0a1f: 0x3a65                        DATA  string "grid of rooms: number '8'."
 0x0a20: 0x6a6b                        DATA
 0x0a21: 0x6a6f                        DATA
 0x0a22: 0x0f9d                        DATA
 
-0x0a23: 0x3af8                        DATA
-0x0a24: 0x3b03                        DATA
+0x0a23: 0x3af8                        DATA  string "Vault Lock: -"
+0x0a24: 0x3b03                        DATA  string "grid of rooms: '-' symbol."
 0x0a25: 0x6a73                        DATA
 0x0a26: 0x6a77                        DATA
 0x0a27: 0x0fae                        DATA
 
-0x0a28: 0x3b94                        DATA
-0x0a29: 0x3b9f                        DATA
+0x0a28: 0x3b94                        DATA  string "Vault Door: 30"
+0x0a29: 0x3b9f                        DATA  string "Door to the vault; large '30' carved into it. large mosaic  '1'."
 0x0a2a: 0x6a7b                        DATA
 0x0a2b: 0x6a7f                        DATA
 0x0a2c: 0x0fbf                        DATA
 
-0x0a2d: 0x3ca7                        DATA
-0x0a2e: 0x3cb2                        DATA
+0x0a2d: 0x3ca7                        DATA  string "Vault Lock: 4"
+0x0a2e: 0x3cb2                        DATA  string "grid of rooms: number '4'."
 0x0a2f: 0x6a83                        DATA
 0x0a30: 0x6a87                        DATA
 0x0a31: 0x0fd2                        DATA
 
 0x0a32: 0x3d46                        DATA  string: """Vault Lock: *"""
-0x0a33: 0x3d51                        DATA
+0x0a33: 0x3d51                        DATA  string "grid of rooms: '*' symbol."
 0x0a34: 0x6a8b                        DATA
 0x0a35: 0x6a90                        DATA
 0x0a36: 0x0fe3                        DATA
 
-0x0a37: 0x3de8                        DATA
-0x0a38: 0x3df3                        DATA
+0x0a37: 0x3de8                        DATA  string "Vault Lock: 11"
+0x0a38: 0x3df3                        DATA  string "grid of rooms: number '11'."
 0x0a39: 0x6a95                        DATA
 0x0a3a: 0x6a9a                        DATA
 0x0a3b: 0x0ff4                        DATA
 
-0x0a3c: 0x3e8d                        DATA
-0x0a3d: 0x3e98                        DATA
+0x0a3c: 0x3e8d                        DATA  string "Vault Lock: *"
+0x0a3d: 0x3e98                        DATA  string "grid of rooms: '*' symbol."
 0x0a3e: 0x6a9f                        DATA
 0x0a3f: 0x6aa3                        DATA
 0x0a40: 0x1005                        DATA
 
-0x0a41: 0x3f2a                        DATA
-0x0a42: 0x3f35                        DATA
+0x0a41: 0x3f2a                        DATA  string "Vault Lock: +"
+0x0a42: 0x3f35                        DATA  string "grid of rooms: '+' symbol."
 0x0a43: 0x6aa7                        DATA
 0x0a44: 0x6aab                        DATA
 0x0a45: 0x1016                        DATA
 
-0x0a46: 0x3fc7                        DATA
-0x0a47: 0x3fd2                        DATA
+0x0a46: 0x3fc7                        DATA  string "Vault Lock: 4"
+0x0a47: 0x3fd2                        DATA  string "grid of rooms: number '4'."
 0x0a48: 0x6aaf                        DATA
 0x0a49: 0x6ab4                        DATA
 0x0a4a: 0x1027                        DATA
 
-0x0a4b: 0x406b                        DATA
-0x0a4c: 0x4076                        DATA
+0x0a4b: 0x406b                        DATA  string "Vault Lock: -"
+0x0a4c: 0x4076                        DATA  string "grid of rooms: '-' symbol."
 0x0a4d: 0x6ab9                        DATA
 0x0a4e: 0x6abe                        DATA
 0x0a4f: 0x1038                        DATA
 
-0x0a50: 0x410d                        DATA
-0x0a51: 0x4118                        DATA
+0x0a50: 0x410d                        DATA  string "Vault Lock: 18"
+0x0a51: 0x4118                        DATA  string "grid of rooms: number '18'."
 0x0a52: 0x6ac3                        DATA
 0x0a53: 0x6ac7                        DATA
 0x0a54: 0x1049                        DATA
 
-0x0a55: 0x41ad                        DATA
-0x0a56: 0x41bf                        DATA
+0x0a55: 0x41ad                        DATA  string "Vault Antechamber: orb=22"
+0x0a56: 0x41bf                        DATA  string "number '22' is carved into the orb's pedestal."
 0x0a57: 0x6acb                        DATA
 0x0a58: 0x6acf                        DATA
 0x0a59: 0x105a                        DATA
 
-0x0a5a: 0x4261                        DATA
-0x0a5b: 0x426c                        DATA
+0x0a5a: 0x4261                        DATA  string "Vault Lock: -"
+0x0a5b: 0x426c                        DATA  string "grid of rooms: '-' symbol."
 0x0a5c: 0x6ad3                        DATA
 0x0a5d: 0x6ad7                        DATA
 0x0a5e: 0x105d                        DATA
 
-0x0a5f: 0x42fd                        DATA
-0x0a60: 0x4308                        DATA
+0x0a5f: 0x42fd                        DATA  string "Vault Lock: 9"
+0x0a60: 0x4308                        DATA  string "grid of rooms number '9'."
 0x0a61: 0x6adb                        DATA
 0x0a62: 0x6adf                        DATA
 0x0a63: 0x106e                        DATA
 
-0x0a64: 0x439b                        DATA
-0x0a65: 0x43a6                        DATA
+0x0a64: 0x439b                        DATA  string "Vault Lock: *"
+0x0a65: 0x43a6                        DATA  string "grid of rooms: '*' symbol."
 0x0a66: 0x6ae3                        DATA
 0x0a67: 0x6ae6                        DATA
 0x0a68: 0x107f                        DATA
 
-0x0a69: 0x4432                        DATA
-0x0a6a: 0x4438                        DATA
+0x0a69: 0x4432                        DATA  string "Vault"
+0x0a6a: 0x4438                        DATA  string "This vault contains incredible riches! ..."
 0x0a6b: 0x6ae9                        DATA
 0x0a6c: 0x6aeb                        DATA
 0x0a6d: 0x1268                        DATA
 
-0x0a6e: 0x4513                        DATA
-0x0a6f: 0x4533                        DATA
+0x0a6e: 0x4513                        DATA  string "Fumbling around in the darkness"
+0x0a6f: 0x4533                        DATA  string "Without a source of light, you have become hopelessly lost and are fumbling around in the darkness."
 0x0a70: 0x6aed                        DATA
 0x0a71: 0x6af0                        DATA
 0x0a72: 0x0000                        DATA
 
-0x0a73: 0x45a4                        DATA
-0x0a74: 0x45c4                        DATA
+0x0a73: 0x45a4                        DATA  string "Fumbling around in the darkness"
+0x0a74: 0x45c4                        DATA  string "You can't seem to find your way.  However, you do think you hear low growling in the distance."
 0x0a75: 0x6af3                        DATA
 0x0a76: 0x6af6                        DATA
 0x0a77: 0x0000                        DATA
 
-0x0a78: 0x4633                        DATA
-0x0a79: 0x4645                        DATA
+0x0a78: 0x4633                        DATA  string "Panicked and lost"
+0x0a79: 0x4645                        DATA  string "The growling is getting louder.  Did I mention there are Grues down here?"
 0x0a7a: 0x6af9                        DATA
 0x0a7b: 0x6afd                        DATA
 0x0a7c: 0x0000                        DATA
 
-0x0a7d: 0x469d                        DATA
-0x0a7e: 0x46a3                        DATA
+0x0a7d: 0x469d                        DATA  string "eaten"
+0x0a7e: 0x46a3                        DATA  string ""
 0x0a7f: 0x6b01                        DATA
 0x0a80: 0x6b02                        DATA
-0x0a81: 0x0e8b                        DATA
+0x0a81: 0x0e8b                        DATA  function eaten_by_a_grue()
 
 # structure for items
 #  string* name
@@ -1499,82 +1499,82 @@
 #  scene* location
 #  use_fn* action
 0x0a82: 0x46a4                        DATA  string: """tablet"""
-0x0a83: 0x46ab                        DATA
+0x0a83: 0x46ab                        DATA  string "The tablet seems appropriate for use as a writing surface but is unfortunately blank..."
 0x0a84: 0x0923                        DATA              # 0x0923 => 0x0000 when `take tablet`
 0x0a85: 0x1286                        DATA              # Address of tablet use_fn
 
-0x0a86: 0x4734                        DATA
-0x0a87: 0x4742                        DATA
+0x0a86: 0x4734                        DATA  string "empty lantern"
+0x0a87: 0x4742                        DATA  string "The lantern seems ... It is, however, sad that it is out of oil."
 0x0a88: 0x094b                        DATA
 0x0a89: 0x0000                        DATA
 
-0x0a8a: 0x47be                        DATA
-0x0a8b: 0x47c6                        DATA
+0x0a8a: 0x47be                        DATA  string "lantern"
+0x0a8b: 0x47c6                        DATA  string "The lantern seems ... It is off but happily full of oil."
 0x0a8c: 0x7fff                        DATA
 0x0a8d: 0x132b                        DATA
 
-0x0a8e: 0x483a                        DATA
-0x0a8f: 0x4846                        DATA
+0x0a8e: 0x483a                        DATA  string "lit lantern"
+0x0a8f: 0x4846                        DATA  string "The lantern seems ... It is lit and producing a bright light."
 0x0a90: 0x7fff                        DATA
 0x0a91: 0x1359                        DATA
 
 0x0a92: 0x489e                        DATA  string: """can"""
-0x0a93: 0x48a2                        DATA
+0x0a93: 0x48a2                        DATA  string "This can is full of high-quality lantern oil."
 0x0a94: 0x0987                        DATA
 0x0a95: 0x12d5                        DATA
 
-0x0a96: 0x48d0                        DATA
-0x0a97: 0x48d9                        DATA
+0x0a96: 0x48d0                        DATA  string "red coin"
+0x0a97: 0x48d9                        DATA  string "This coin is made of a red metal.  It has two dots on one side."
 0x0a98: 0x09aa                        DATA
 0x0a99: 0x1506                        DATA
 
-0x0a9a: 0x4919                        DATA
-0x0a9b: 0x4927                        DATA
+0x0a9a: 0x4919                        DATA  string "corroded coin"
+0x0a9b: 0x4927                        DATA  string "This coin is somewhat corroded.  It has a triangle on one side."
 0x0a9c: 0x09bf                        DATA
 0x0a9d: 0x1517                        DATA
 
-0x0a9e: 0x4967                        DATA
-0x0a9f: 0x4972                        DATA
+0x0a9e: 0x4967                        DATA  string "shiny coin"
+0x0a9f: 0x4972                        DATA  string "This coin is somehow still quite shiny.  It has a pentagon on one side."
 0x0aa0: 0x09c9                        DATA
 0x0aa1: 0x1528                        DATA
 
-0x0aa2: 0x49ba                        DATA
-0x0aa3: 0x49c7                        DATA
+0x0aa2: 0x49ba                        DATA  string "concave coin"
+0x0aa3: 0x49c7                        DATA  string "This coin is slightly rounded, almost like a tiny bowl.  It has seven dots on one side."
 0x0aa4: 0x09ba                        DATA
 0x0aa5: 0x1539                        DATA
 
-0x0aa6: 0x4a1f                        DATA
-0x0aa7: 0x4a29                        DATA
+0x0aa6: 0x4a1f                        DATA  string "blue coin"
+0x0aa7: 0x4a29                        DATA  string "This coin is made of a blue metal.  It has nine dots on one side."
 0x0aa8: 0x09c4                        DATA
 0x0aa9: 0x154a                        DATA
 
-0x0aaa: 0x4a6b                        DATA
-0x0aab: 0x4a76                        DATA
+0x0aaa: 0x4a6b                        DATA  string "teleporter"
+0x0aab: 0x4a76                        DATA  string "This small device has a button on it and reads "teleporter" on the side."
 0x0aac: 0x09b5                        DATA
-0x0aad: 0x155b                        DATA
+0x0aad: 0x155b                        DATA  function game::use::teleporter
 
-0x0aae: 0x4abf                        DATA
-0x0aaf: 0x4acd                        DATA
+0x0aae: 0x4abf                        DATA  string "business card"
+0x0aaf: 0x4acd                        DATA  string "This business card has "synacor.com" printed in red on one side."
 0x0ab0: 0x09ce                        DATA
 0x0ab1: 0x0000                        DATA
 
-0x0ab2: 0x4b0e                        DATA
-0x0ab3: 0x4b12                        DATA
+0x0ab2: 0x4b0e                        DATA  string "orb"
+0x0ab3: 0x4b12                        DATA  string "This is a clear glass sphere about the size of a tennis ball."
 0x0ab4: 0x0a55                        DATA
 0x0ab5: 0x0000                        DATA
 
-0x0ab6: 0x4b50                        DATA
-0x0ab7: 0x4b57                        DATA
+0x0ab6: 0x4b50                        DATA  string "mirror"
+0x0ab7: 0x4b57                        DATA  string "This is a rather mundane hand-held mirror from the otherwise magnificent vault room..."
 0x0ab8: 0x0a69                        DATA
 0x0ab9: 0x166f                        DATA
 
-0x0aba: 0x4bce                        DATA
-0x0abb: 0x4bdb                        DATA
+0x0aba: 0x4bce                        DATA  string "strange book"
+0x0abb: 0x4bdb                        DATA  string "A Brief Introduction to Interdimensional Physics text"
 0x0abc: 0x09ce                        DATA
 0x0abd: 0x0000                        DATA
 
-0x0abe: 0x565b                        DATA
-0x0abf: 0x5663                        DATA
+0x0abe: 0x565b                        DATA  string "journal"
+0x0abf: 0x5663                        DATA  string "journal-text"
 0x0ac0: 0x0a0f                        DATA
 0x0ac1: 0x0000                        DATA
 
@@ -1600,28 +1600,28 @@
 0x0aeb: 0x000f 0x8000 0x0ac3          RMEM r0 0x0ac3
 0x0aee: 0x0004 0x8000 0x8000 0x8001   EQ r0 r0 r1
 0x0af2: 0x0007 0x8000 0x0afd          JT r0 0x0afd
-0x0af5: 0x0001 0x8000 0x6584          SET r0 0x6584
+0x0af5: 0x0001 0x8000 0x6584          SET r0 0x6584     # buffer keyboard-input
 0x0af8: 0x0010 0x8000 0x0000          WMEM r0 0x0000
-0x0afb: 0x0011 0x0baa                 CALL 0x0baa
+0x0afb: 0x0011 0x0baa                 CALL 0x0baa       # function game::look
 0x0afd: 0x0010 0x0ac3 0x8001          WMEM 0x0ac3 r1
 0x0b00: 0x0002 0x8000                 PUSH r0
 0x0b02: 0x0002 0x8001                 PUSH r1
 0x0b04: 0x0002 0x8002                 PUSH r2
-0x0b06: 0x0001 0x8000 0x6b24          SET r0 0x6b24
-0x0b09: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0b06: 0x0001 0x8000 0x6b24          SET r0 0x6b24     # string "What do you do?"
+0x0b09: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0b0c: 0x0009 0x8002 0x0f76 0x507a   ADD r2 0x0f76 0x507a
-0x0b10: 0x0011 0x05c8                 CALL 0x05c8
+0x0b10: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0b12: 0x0003 0x8002                 POP r2
 0x0b14: 0x0003 0x8001                 POP r1
 0x0b16: 0x0003 0x8000                 POP r0
 0x0b18: 0x0001 0x8000 0x0020          SET r0 0x0020
-0x0b1b: 0x0001 0x8001 0x6584          SET r1 0x6584
-0x0b1e: 0x0011 0x06fd                 CALL 0x06fd
+0x0b1b: 0x0001 0x8001 0x6584          SET r1 0x6584     # buffer keyboard-input
+0x0b1e: 0x0011 0x06fd                 CALL 0x06fd       # function read_console_into_r1(r0: length, r1: string*)
 0x0b20: 0x0013 0x000a                 OUT 0x000a
 0x0b22: 0x0013 0x000a                 OUT 0x000a
-0x0b24: 0x0001 0x8000 0x6584          SET r0 0x6584
+0x0b24: 0x0001 0x8000 0x6584          SET r0 0x6584     # buffer keyboard-input
 0x0b27: 0x0001 0x8001 0x0020          SET r1 0x0020
-0x0b2a: 0x0011 0x0639                 CALL 0x0639
+0x0b2a: 0x0011 0x0639                 CALL 0x0639       # function index_of(r0:array*, r1:value):r0:int = -1 if fail else index of value in array
 0x0b2c: 0x0004 0x8001 0x8000 0x7fff   EQ r1 r0 0x7fff
 0x0b30: 0x0008 0x8001 0x0b36          JF r1 0x0b36
 0x0b33: 0x000f 0x8000 0x6584          RMEM r0 0x6584
@@ -1629,9 +1629,9 @@
 0x0b39: 0x000f 0x8001 0x6584          RMEM r1 0x6584
 0x0b3c: 0x0002 0x8001                 PUSH r1
 0x0b3e: 0x0010 0x6584 0x8002          WMEM 0x6584 r2
-0x0b41: 0x0001 0x8000 0x6b14          SET r0 0x6b14
-0x0b44: 0x0001 0x8001 0x6584          SET r1 0x6584
-0x0b47: 0x0011 0x064a                 CALL 0x064a
+0x0b41: 0x0001 0x8000 0x6b14          SET r0 0x6b14     # data dict user-actions
+0x0b44: 0x0001 0x8001 0x6584          SET r1 0x6584     # buffer keyboard-input
+0x0b47: 0x0011 0x064a                 CALL 0x064a       # function index_of(r0:array**, r1:array*):r0:int = -1 if fail else index of array in array
 0x0b49: 0x0003 0x8001                 POP r1
 0x0b4b: 0x0010 0x6584 0x8001          WMEM 0x6584 r1
 0x0b4e: 0x0004 0x8001 0x8000 0x7fff   EQ r1 r0 0x7fff
@@ -1655,7 +1655,7 @@
 0x0b8d: 0x0009 0x8000 0x8000 0x0001   ADD r0 r0 0x0001
 0x0b91: 0x0010 0x8000 0x8003          WMEM r0 r3
 0x0b94: 0x0006 0x0b9c                 JMP 0x0b9c
-0x0b96: 0x0001 0x8000 0x6584          SET r0 0x6584
+0x0b96: 0x0001 0x8000 0x6584          SET r0 0x6584     # buffer keyboard-input
 0x0b99: 0x0010 0x8000 0x0000          WMEM r0 0x0000
 0x0b9c: 0x0011 0x8001                 CALL r1
 0x0b9e: 0x0007 0x8001 0x0acc          JT r1 0x0acc
@@ -1680,16 +1680,16 @@
 0x0bc4: 0x0008 0x8001 0x0bd4          JF r1 0x0bd4
 0x0bc7: 0x0009 0x8001 0x8000 0x0001   ADD r1 r0 0x0001
 0x0bcb: 0x000f 0x8000 0x8001          RMEM r0 r1
-0x0bce: 0x0011 0x0604                 CALL 0x0604
+0x0bce: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x0bd0: 0x0013 0x000a                 OUT 0x000a
 0x0bd2: 0x0006 0x0cbc                 JMP 0x0cbc
 0x0bd4: 0x0002 0x8000                 PUSH r0
 0x0bd6: 0x0002 0x8001                 PUSH r1
 0x0bd8: 0x0002 0x8002                 PUSH r2
-0x0bda: 0x0001 0x8000 0x6b36          SET r0 0x6b36
-0x0bdd: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0bda: 0x0001 0x8000 0x6b36          SET r0 0x6b36     # string "You see no such item."
+0x0bdd: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0be0: 0x0009 0x8002 0x2865 0x4813   ADD r2 0x2865 0x4813
-0x0be4: 0x0011 0x05c8                 CALL 0x05c8
+0x0be4: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0be6: 0x0003 0x8002                 POP r2
 0x0be8: 0x0003 0x8001                 POP r1
 0x0bea: 0x0003 0x8000                 POP r0
@@ -1701,7 +1701,7 @@
 0x0bf7: 0x0013 0x0020                 OUT 0x0020
 0x0bf9: 0x0009 0x8000 0x8000 0x0000   ADD r0 r0 0x0000
 0x0bfd: 0x000f 0x8000 0x8000          RMEM r0 r0
-0x0c00: 0x0011 0x0604                 CALL 0x0604
+0x0c00: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x0c02: 0x0013 0x0020                 OUT 0x0020
 0x0c04: 0x0013 0x003d                 OUT 0x003d
 0x0c06: 0x0013 0x003d                 OUT 0x003d
@@ -1721,7 +1721,7 @@
 0x0c2b: 0x0009 0x8000 0x8000 0x0001   ADD r0 r0 0x0001
 0x0c2f: 0x0009 0x8000 0x8000 0x8001   ADD r0 r0 r1
 0x0c33: 0x000f 0x8000 0x8000          RMEM r0 r0
-0x0c36: 0x0011 0x0604                 CALL 0x0604
+0x0c36: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x0c38: 0x0013 0x000a                 OUT 0x000a
 0x0c3a: 0x0003 0x8000                 POP r0
 0x0c3c: 0x0002 0x8000                 PUSH r0
@@ -1730,10 +1730,10 @@
 0x0c43: 0x0002 0x8000                 PUSH r0
 0x0c45: 0x0002 0x8001                 PUSH r1
 0x0c47: 0x0002 0x8002                 PUSH r2
-0x0c49: 0x0001 0x8000 0x6b4d          SET r0 0x6b4d
-0x0c4c: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0c49: 0x0001 0x8000 0x6b4d          SET r0 0x6b4d     # string "Things of interest here:"
+0x0c4c: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0c4f: 0x0009 0x8002 0x0c9f 0x1d48   ADD r2 0x0c9f 0x1d48
-0x0c53: 0x0011 0x05c8                 CALL 0x05c8
+0x0c53: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0c55: 0x0003 0x8002                 POP r2
 0x0c57: 0x0003 0x8001                 POP r1
 0x0c59: 0x0003 0x8000                 POP r0
@@ -1776,7 +1776,7 @@
 0x0cae: 0x0009 0x8000 0x8000 0x0002   ADD r0 r0 0x0002
 0x0cb2: 0x000f 0x8000 0x8000          RMEM r0 r0
 0x0cb5: 0x0001 0x8001 0x16cc          SET r1 0x16cc
-0x0cb8: 0x0011 0x05c8                 CALL 0x05c8
+0x0cb8: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0cba: 0x0003 0x8000                 POP r0
 0x0cbc: 0x0003 0x8002                 POP r2
 0x0cbe: 0x0003 0x8001                 POP r1
@@ -1791,7 +1791,7 @@
 0x0ccc: 0x000f 0x8000 0x0ac2          RMEM r0 0x0ac2
 0x0ccf: 0x0009 0x8000 0x8000 0x0002   ADD r0 r0 0x0002
 0x0cd3: 0x000f 0x8000 0x8000          RMEM r0 r0
-0x0cd6: 0x0011 0x064a                 CALL 0x064a
+0x0cd6: 0x0011 0x064a                 CALL 0x064a       # function index_of(r0:array**, r1:array*):r0:int = -1 if fail else index of array in array
 0x0cd8: 0x0004 0x8002 0x8000 0x7fff   EQ r2 r0 0x7fff
 0x0cdc: 0x0007 0x8002 0x0cfc          JT r2 0x0cfc
 0x0cdf: 0x000f 0x8002 0x0ac2          RMEM r2 0x0ac2
@@ -1806,10 +1806,10 @@
 0x0cfc: 0x0002 0x8000                 PUSH r0
 0x0cfe: 0x0002 0x8001                 PUSH r1
 0x0d00: 0x0002 0x8002                 PUSH r2
-0x0d02: 0x0001 0x8000 0x6b68          SET r0 0x6b68
-0x0d05: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0d02: 0x0001 0x8000 0x6b68          SET r0 0x6b68     # string "I don't understand; try 'help' for instructions."
+0x0d05: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0d08: 0x0009 0x8002 0x2b02 0x1677   ADD r2 0x2b02 0x1677
-0x0d0c: 0x0011 0x05c8                 CALL 0x05c8
+0x0d0c: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0d0e: 0x0003 0x8002                 POP r2
 0x0d10: 0x0003 0x8001                 POP r1
 0x0d12: 0x0003 0x8000                 POP r0
@@ -1823,10 +1823,10 @@
 0x0d1d: 0x0002 0x8000                 PUSH r0
 0x0d1f: 0x0002 0x8001                 PUSH r1
 0x0d21: 0x0002 0x8002                 PUSH r2
-0x0d23: 0x0001 0x8000 0x6b9a          SET r0 0x6b9a
-0x0d26: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0d23: 0x0001 0x8000 0x6b9a          SET r0 0x6b9a     # string "...help, instructions-text..."
+0x0d26: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0d29: 0x0009 0x8002 0x02a9 0x00bc   ADD r2 0x02a9 0x00bc
-0x0d2d: 0x0011 0x05c8                 CALL 0x05c8
+0x0d2d: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0d2f: 0x0003 0x8002                 POP r2
 0x0d31: 0x0003 0x8001                 POP r1
 0x0d33: 0x0003 0x8000                 POP r0
@@ -1840,9 +1840,9 @@
 0x0d3e: 0x0002 0x8001                 PUSH r1
 0x0d40: 0x0002 0x8002                 PUSH r2
 0x0d42: 0x0001 0x8000 0x6d93          SET r0 0x6d93     # "Your inventory:\n"
-0x0d45: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0d45: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0d48: 0x0009 0x8002 0x001c 0x04cb   ADD r2 0x001c 0x04cb
-0x0d4c: 0x0011 0x05c8                 CALL 0x05c8
+0x0d4c: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0d4e: 0x0003 0x8002                 POP r2
 0x0d50: 0x0003 0x8001                 POP r1
 0x0d52: 0x0003 0x8000                 POP r0
@@ -1868,9 +1868,9 @@
 0x0d7f: 0x0002 0x8001                 PUSH r1
 0x0d81: 0x0002 0x8002                 PUSH r2
 0x0d83: 0x0001 0x8000 0x6da4          SET r0 0x6da4     # "Taken.\n"
-0x0d86: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0d86: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0d89: 0x0009 0x8002 0x017c 0x03e4   ADD r2 0x017c 0x03e4
-0x0d8d: 0x0011 0x05c8                 CALL 0x05c8
+0x0d8d: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0d8f: 0x0003 0x8002                 POP r2
 0x0d91: 0x0003 0x8001                 POP r1
 0x0d93: 0x0003 0x8000                 POP r0
@@ -1879,9 +1879,9 @@
 0x0d99: 0x0002 0x8001                 PUSH r1
 0x0d9b: 0x0002 0x8002                 PUSH r2
 0x0d9d: 0x0001 0x8000 0x6dac          SET r0 0x6dac     # "You see no such item here.\n"
-0x0da0: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0da0: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0da3: 0x0009 0x8002 0x119c 0x5155   ADD r2 0x119c 0x5155
-0x0da7: 0x0011 0x05c8                 CALL 0x05c8
+0x0da7: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0da9: 0x0003 0x8002                 POP r2
 0x0dab: 0x0003 0x8001                 POP r1
 0x0dad: 0x0003 0x8000                 POP r0
@@ -1904,9 +1904,9 @@
 0x0dd1: 0x0002 0x8001                 PUSH r1
 0x0dd3: 0x0002 0x8002                 PUSH r2
 0x0dd5: 0x0001 0x8000 0x6dc8          SET r0 0x6dc8     # "Dropped.\n"
-0x0dd8: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0dd8: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0ddb: 0x0009 0x8002 0x0c39 0x0834   ADD r2 0x0c39 0x0834
-0x0ddf: 0x0011 0x05c8                 CALL 0x05c8
+0x0ddf: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0de1: 0x0003 0x8002                 POP r2
 0x0de3: 0x0003 0x8001                 POP r1
 0x0de5: 0x0003 0x8000                 POP r0
@@ -1915,9 +1915,9 @@
 0x0deb: 0x0002 0x8001                 PUSH r1
 0x0ded: 0x0002 0x8002                 PUSH r2
 0x0def: 0x0001 0x8000 0x6dd2          SET r0 0x6dd2     # "You can't find that in your pack.\n"
-0x0df2: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0df2: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0df5: 0x0009 0x8002 0x1af3 0x02f6   ADD r2 0x1af3 0x02f6
-0x0df9: 0x0011 0x05c8                 CALL 0x05c8
+0x0df9: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0dfb: 0x0003 0x8002                 POP r2
 0x0dfd: 0x0003 0x8001                 POP r1
 0x0dff: 0x0003 0x8000                 POP r0
@@ -1943,9 +1943,9 @@
 0x0e29: 0x0002 0x8001                 PUSH r1
 0x0e2b: 0x0002 0x8002                 PUSH r2
 0x0e2d: 0x0001 0x8000 0x6df5          SET r0 0x6df5     # "You can't find that in your pack.\n"
-0x0e30: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0e30: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0e33: 0x0009 0x8002 0x020e 0x0053   ADD r2 0x020e 0x0053
-0x0e37: 0x0011 0x05c8                 CALL 0x05c8
+0x0e37: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0e39: 0x0003 0x8002                 POP r2
 0x0e3b: 0x0003 0x8001                 POP r1
 0x0e3d: 0x0003 0x8000                 POP r0
@@ -1954,9 +1954,9 @@
 0x0e43: 0x0002 0x8001                 PUSH r1
 0x0e45: 0x0002 0x8002                 PUSH r2
 0x0e47: 0x0001 0x8000 0x6e18          SET r0 0x6e18     # "You aren't sure how to use that.\n"
-0x0e4a: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0e4a: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0e4d: 0x0009 0x8002 0x0d27 0x174b   ADD r2 0x0d27 0x174b
-0x0e51: 0x0011 0x05c8                 CALL 0x05c8
+0x0e51: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0e53: 0x0003 0x8002                 POP r2
 0x0e55: 0x0003 0x8001                 POP r1
 0x0e57: 0x0003 0x8000                 POP r0
@@ -1988,9 +1988,9 @@
 0x0e8d: 0x0002 0x8001                 PUSH r1
 0x0e8f: 0x0002 0x8002                 PUSH r2
 0x0e91: 0x0001 0x8000 0x6e3a          SET r0 0x6e3a     # "You have been eaten by a grue.\n"
-0x0e94: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0e94: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0e97: 0x0009 0x8002 0x3929 0x3e51   ADD r2 0x3929 0x3e51
-0x0e9b: 0x0011 0x05c8                 CALL 0x05c8
+0x0e9b: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0e9d: 0x0003 0x8002                 POP r2
 0x0e9f: 0x0003 0x8001                 POP r1
 0x0ea1: 0x0003 0x8000                 POP r0
@@ -2013,42 +2013,42 @@
 # function twistybit-set-1
 0x0eb8: 0x0002 0x8000                 PUSH r0
 0x0eba: 0x0001 0x8000 0x0001          SET r0 0x0001
-0x0ebd: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0ebd: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0ebf: 0x0003 0x8000                 POP r0
 0x0ec1: 0x0012                        RET
 
 # function twistybit-set-2
 0x0ec2: 0x0002 0x8000                 PUSH r0
 0x0ec4: 0x0001 0x8000 0x0002          SET r0 0x0002
-0x0ec7: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0ec7: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0ec9: 0x0003 0x8000                 POP r0
 0x0ecb: 0x0012                        RET
 
 # function twistybit-set-4
 0x0ecc: 0x0002 0x8000                 PUSH r0
 0x0ece: 0x0001 0x8000 0x0004          SET r0 0x0004
-0x0ed1: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0ed1: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0ed3: 0x0003 0x8000                 POP r0
 0x0ed5: 0x0012                        RET
 
 # function twistybit-set-8
 0x0ed6: 0x0002 0x8000                 PUSH r0
 0x0ed8: 0x0001 0x8000 0x0008          SET r0 0x0008
-0x0edb: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0edb: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0edd: 0x0003 0x8000                 POP r0
 0x0edf: 0x0012                        RET
 
 # function twistybit-set-16
 0x0ee0: 0x0002 0x8000                 PUSH r0
 0x0ee2: 0x0001 0x8000 0x0010          SET r0 0x0010
-0x0ee5: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0ee5: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0ee7: 0x0003 0x8000                 POP r0
 0x0ee9: 0x0012                        RET
 
 # function twistybit-set-32
 0x0eea: 0x0002 0x8000                 PUSH r0
 0x0eec: 0x0001 0x8000 0x0020          SET r0 0x0020
-0x0eef: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0eef: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0ef1: 0x0003 0x8000                 POP r0
 0x0ef3: 0x0012                        RET
 
@@ -2058,27 +2058,27 @@
 0x0ef8: 0x0002 0x8002                 PUSH r2
 0x0efa: 0x0002 0x8003                 PUSH r3
 0x0efc: 0x0001 0x8000 0x0040          SET r0 0x0040
-0x0eff: 0x0011 0x0ea5                 CALL 0x0ea5
+0x0eff: 0x0011 0x0ea5                 CALL 0x0ea5       # function set_twistybit(r0:bit)
 0x0f01: 0x0002 0x8000                 PUSH r0
 0x0f03: 0x0002 0x8001                 PUSH r1
 0x0f05: 0x0002 0x8002                 PUSH r2
-0x0f07: 0x0001 0x8000 0x6e5a          SET r0 0x6e5a
-0x0f0a: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0f07: 0x0001 0x8000 0x6e5a          SET r0 0x6e5a     # string "Chiseled on the wall of one of the passageways, you see:    "
+0x0f0a: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0f0d: 0x0009 0x8002 0x1dee 0x4a72   ADD r2 0x1dee 0x4a72
 0x0f11: 0x0011 0x05c8                 CALL 0x05c8       # "Chiseled on the wall of one of the passageways, you see:\n\n    "
 0x0f13: 0x0003 0x8002                 POP r2
 0x0f15: 0x0003 0x8001                 POP r1
 0x0f17: 0x0003 0x8000                 POP r0
 0x0f19: 0x000f 0x8000 0x0ea4          RMEM r0 0x0ea4
-0x0f1c: 0x0001 0x8001 0x6518          SET r1 0x6518
+0x0f1c: 0x0001 0x8001 0x6518          SET r1 0x6518     # string "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 0x0f1f: 0x0001 0x8002 0x7fff          SET r2 0x7fff
 0x0f22: 0x0001 0x8003 0x6e99          SET r3 0x6e99
 0x0f25: 0x0011 0x0747                 CALL 0x0747       # twistybit FLAG
 0x0f27: 0x0002 0x8000                 PUSH r0
 0x0f29: 0x0002 0x8001                 PUSH r1
 0x0f2b: 0x0002 0x8002                 PUSH r2
-0x0f2d: 0x0001 0x8000 0x6e9d          SET r0 0x6e9d
-0x0f30: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0f2d: 0x0001 0x8000 0x6e9d          SET r0 0x6e9d     # string "You take note of this and keep walking."
+0x0f30: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0f33: 0x0009 0x8002 0x323e 0x0027   ADD r2 0x323e 0x0027
 0x0f37: 0x0011 0x05c8                 CALL 0x05c8       # "\n\nYou take note of this and keep walking.\n\n"
 0x0f39: 0x0003 0x8002                 POP r2
@@ -2101,10 +2101,10 @@
 0x0f5c: 0x0002 0x8000                 PUSH r0
 0x0f5e: 0x0002 0x8001                 PUSH r1
 0x0f60: 0x0002 0x8002                 PUSH r2
-0x0f62: 0x0001 0x8000 0x6ec9          SET r0 0x6ec9
-0x0f65: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x0f62: 0x0001 0x8000 0x6ec9          SET r0 0x6ec9     # string "That door is locked."
+0x0f65: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x0f68: 0x0009 0x8002 0x0ab1 0x58b5   ADD r2 0x0ab1 0x58b5
-0x0f6c: 0x0011 0x05c8                 CALL 0x05c8
+0x0f6c: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x0f6e: 0x0003 0x8002                 POP r2
 0x0f70: 0x0003 0x8001                 POP r1
 0x0f72: 0x0003 0x8000                 POP r0
@@ -2296,14 +2296,14 @@
 0x10a2: 0x0010 0x0f85 0x8000          WMEM 0x0f85 r0
 0x10a5: 0x0009 0x8001 0x8000 0x0f7f   ADD r1 r0 0x0f7f
 0x10a9: 0x000f 0x8001 0x8001          RMEM r1 r1
-0x10ac: 0x0001 0x8000 0x65b6          SET r0 0x65b6
-0x10af: 0x0011 0x0604                 CALL 0x0604
+0x10ac: 0x0001 0x8000 0x65b6          SET r0 0x65b6     # string "As you enter the room, the symbol on the floor briefly flashes "
+0x10af: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x10b1: 0x0001 0x8000 0x8001          SET r0 r1
-0x10b4: 0x0011 0x0604                 CALL 0x0604
-0x10b6: 0x0001 0x8000 0x65f6          SET r0 0x65f6
-0x10b9: 0x0011 0x0604                 CALL 0x0604
+0x10b4: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
+0x10b6: 0x0001 0x8000 0x65f6          SET r0 0x65f6     # string ".  The orb begins subtly glowing "
+0x10b9: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x10bb: 0x0001 0x8000 0x8001          SET r0 r1
-0x10be: 0x0011 0x0604                 CALL 0x0604
+0x10be: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x10c0: 0x0013 0x002e                 OUT 0x002e
 0x10c2: 0x0013 0x000a                 OUT 0x000a
 0x10c4: 0x0013 0x000a                 OUT 0x000a
@@ -2324,12 +2324,12 @@
 0x10e1: 0x000f 0x8000 0x0f85          RMEM r0 0x0f85
 0x10e4: 0x0009 0x8001 0x8000 0x0f7f   ADD r1 r0 0x0f7f
 0x10e8: 0x000f 0x8001 0x8001          RMEM r1 r1
-0x10eb: 0x0001 0x8000 0x6618          SET r0 0x6618
-0x10ee: 0x0011 0x0604                 CALL 0x0604
+0x10eb: 0x0001 0x8000 0x6618          SET r0 0x6618     # string "As you enter the room, the orb briefly flashes "
+0x10ee: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x10f0: 0x0001 0x8000 0x8001          SET r0 r1
-0x10f3: 0x0011 0x0604                 CALL 0x0604
-0x10f5: 0x0001 0x8000 0x6648          SET r0 0x6648
-0x10f8: 0x0011 0x0604                 CALL 0x0604
+0x10f3: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
+0x10f5: 0x0001 0x8000 0x6648          SET r0 0x6648     # string ".  The number on the floor vibrates strangely beneath your feet."
+0x10f8: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x10fa: 0x0003 0x8000                 POP r0
 0x10fc: 0x0001 0x8001 0x8000          SET r1 r0
 0x10ff: 0x000f 0x8000 0x0f86          RMEM r0 0x0f86
@@ -2343,21 +2343,21 @@
 0x1117: 0x0005 0x8002 0x8000 0x8001   GT r2 r0 r1
 0x111b: 0x0008 0x8002 0x1127          JF r2 0x1127
 0x111e: 0x0002 0x8000                 PUSH r0
-0x1120: 0x0001 0x8000 0x6689          SET r0 0x6689
-0x1123: 0x0011 0x0604                 CALL 0x0604
+0x1120: 0x0001 0x8000 0x6689          SET r0 0x6689     # string "  The orb seems to get heavier."
+0x1123: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x1125: 0x0003 0x8000                 POP r0
 0x1127: 0x0005 0x8002 0x8001 0x8000   GT r2 r1 r0
 0x112b: 0x0008 0x8002 0x1137          JF r2 0x1137
 0x112e: 0x0002 0x8000                 PUSH r0
-0x1130: 0x0001 0x8000 0x66a9          SET r0 0x66a9
-0x1133: 0x0011 0x0604                 CALL 0x0604
+0x1130: 0x0001 0x8000 0x66a9          SET r0 0x66a9     # string "  The orb seems to get lighter."
+0x1133: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x1135: 0x0003 0x8000                 POP r0
 0x1137: 0x0013 0x000a                 OUT 0x000a
 0x1139: 0x0013 0x000a                 OUT 0x000a
 0x113b: 0x0006 0x1144                 JMP 0x1144
 0x113d: 0x0011 0x124a                 CALL 0x124a
-0x113f: 0x0001 0x8000 0x66c9          SET r0 0x66c9
-0x1142: 0x0011 0x0604                 CALL 0x0604
+0x113f: 0x0001 0x8000 0x66c9          SET r0 0x66c9     # string "  The orb shatters!"
+0x1142: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x1144: 0x0003 0x8002                 POP r2
 0x1146: 0x0003 0x8001                 POP r1
 0x1148: 0x0003 0x8000                 POP r0
@@ -2410,7 +2410,7 @@
 0x11bb: 0x000f 0x8000 0x8000          RMEM r0 r0
 0x11be: 0x0011 0x08de                 CALL 0x08de
 0x11c0: 0x0001 0x8001 0x8002          SET r1 r2
-0x11c3: 0x0011 0x0863                 CALL 0x0863
+0x11c3: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
 0x11c5: 0x0003 0x8001                 POP r1
 0x11c7: 0x0010 0x8001 0x8000          WMEM r1 r0
 0x11ca: 0x0012                        RET
@@ -2420,27 +2420,27 @@
 0x11cd: 0x0009 0x8000 0x0ab2 0x0002   ADD r0 0x0ab2 0x0002
 0x11d1: 0x000f 0x8000 0x8000          RMEM r0 r0
 0x11d4: 0x0007 0x8000 0x1216          JT r0 0x1216
-0x11d7: 0x0001 0x8000 0x66df          SET r0 0x66df
-0x11da: 0x0011 0x0604                 CALL 0x0604
+0x11d7: 0x0001 0x8000 0x66df          SET r0 0x66df     # string "As you approach the vault door, "
+0x11da: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x11dc: 0x000f 0x8000 0x0f86          RMEM r0 0x0f86
 0x11df: 0x0004 0x8000 0x8000 0x001e   EQ r0 r0 0x001e
 0x11e3: 0x0007 0x8000 0x11f4          JT r0 0x11f4
-0x11e6: 0x0001 0x8000 0x6700          SET r0 0x6700
-0x11e9: 0x0011 0x0604                 CALL 0x0604
-0x11eb: 0x0001 0x8000 0x672c          SET r0 0x672c
-0x11ee: 0x0011 0x0604                 CALL 0x0604
+0x11e6: 0x0001 0x8000 0x6700          SET r0 0x6700     # string "the number on the vault door flashes black."
+0x11e9: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
+0x11eb: 0x0001 0x8000 0x672c          SET r0 0x672c     # string "  The orb evaporates out of your hands."
+0x11ee: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x11f0: 0x0011 0x124a                 CALL 0x124a
 0x11f2: 0x0006 0x1216                 JMP 0x1216
-0x11f4: 0x0001 0x8000 0x6756          SET r0 0x6756
-0x11f7: 0x0011 0x0604                 CALL 0x0604
+0x11f4: 0x0001 0x8000 0x6756          SET r0 0x6756     # string "the number on the vault door flashes white!"
+0x11f7: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x11f9: 0x000f 0x8000 0x0f88          RMEM r0 0x0f88
 0x11fc: 0x0009 0x8000 0x8000 0x0001   ADD r0 r0 0x0001
 0x1200: 0x0007 0x8000 0x120a          JT r0 0x120a
-0x1203: 0x0001 0x8000 0x6782          SET r0 0x6782
-0x1206: 0x0011 0x0604                 CALL 0x0604
+0x1203: 0x0001 0x8000 0x6782          SET r0 0x6782     # string "  The hourglass has already run out.  It flashes black and flips over, restarting the flow of sand."
+0x1206: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x1208: 0x0006 0x11eb                 JMP 0x11eb
-0x120a: 0x0001 0x8000 0x67e6          SET r0 0x67e6
-0x120d: 0x0011 0x0604                 CALL 0x0604
+0x120a: 0x0001 0x8000 0x67e6          SET r0 0x67e6     # string "  The hourglass is still running!  It flashes white!  You hear a click from the vault door..."
+0x120d: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x120f: 0x0009 0x8000 0x0ab2 0x0002   ADD r0 0x0ab2 0x0002
 0x1213: 0x0010 0x8000 0x7fff          WMEM r0 0x7fff
 0x1216: 0x0003 0x8000                 POP r0
@@ -2451,18 +2451,18 @@
 0x121b: 0x0009 0x8000 0x0ab2 0x0002   ADD r0 0x0ab2 0x0002
 0x121f: 0x000f 0x8000 0x8000          RMEM r0 r0
 0x1222: 0x0007 0x8000 0x1247          JT r0 0x1247
-0x1225: 0x0001 0x8000 0x686b          SET r0 0x686b
-0x1228: 0x0011 0x0604                 CALL 0x0604
+0x1225: 0x0001 0x8000 0x686b          SET r0 0x686b     # string "As you "
+0x1228: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x122a: 0x000f 0x8000 0x0ac2          RMEM r0 0x0ac2
 0x122d: 0x0004 0x8000 0x8000 0x0a55   EQ r0 r0 0x0a55
 0x1231: 0x0007 0x8000 0x123b          JT r0 0x123b
-0x1234: 0x0001 0x8000 0x6873          SET r0 0x6873
-0x1237: 0x0011 0x0604                 CALL 0x0604
+0x1234: 0x0001 0x8000 0x6873          SET r0 0x6873     # string "leave"
+0x1237: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x1239: 0x0006 0x1240                 JMP 0x1240
-0x123b: 0x0001 0x8000 0x6879          SET r0 0x6879
-0x123e: 0x0011 0x0604                 CALL 0x0604
-0x1240: 0x0001 0x8000 0x687f          SET r0 0x687f
-0x1243: 0x0011 0x0604                 CALL 0x0604
+0x123b: 0x0001 0x8000 0x6879          SET r0 0x6879     # string "enter"
+0x123e: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
+0x1240: 0x0001 0x8000 0x687f          SET r0 0x687f     # string " the room, the orb evaporates out of your hands!  It rematerializes on its pedestal."
+0x1243: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x1245: 0x0011 0x124a                 CALL 0x124a
 0x1247: 0x0003 0x8000                 POP r0
 0x1249: 0x0012                        RET
@@ -2486,8 +2486,8 @@
 0x126e: 0x000f 0x8000 0x8000          RMEM r0 r0
 0x1271: 0x0004 0x8000 0x8000 0x7fff   EQ r0 r0 0x7fff
 0x1275: 0x0007 0x8000 0x1283          JT r0 0x1283
-0x1278: 0x0001 0x8000 0x68d6          SET r0 0x68d6
-0x127b: 0x0011 0x0604                 CALL 0x0604
+0x1278: 0x0001 0x8000 0x68d6          SET r0 0x68d6     # string "The vault door is sealed."
+0x127b: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x127d: 0x0010 0x0ac2 0x0a28          WMEM 0x0ac2 0x0a28
 0x1280: 0x0010 0x0ac3 0x0a28          WMEM 0x0ac3 0x0a28
 0x1283: 0x0003 0x8000                 POP r0
@@ -2503,23 +2503,23 @@
 0x128e: 0x0002 0x8000                 PUSH r0
 0x1290: 0x0002 0x8001                 PUSH r1
 0x1292: 0x0002 0x8002                 PUSH r2
-0x1294: 0x0001 0x8000 0x6edf          SET r0 0x6edf
-0x1297: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x1294: 0x0001 0x8000 0x6edf          SET r0 0x6edf     # string "You find yourself writing \""
+0x1297: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x129a: 0x0009 0x8002 0x0fe8 0x620f   ADD r2 0x0fe8 0x620f
 0x129e: 0x0011 0x05c8                 CALL 0x05c8       # "You find yourself writing \""
 0x12a0: 0x0003 0x8002                 POP r2
 0x12a2: 0x0003 0x8001                 POP r1
 0x12a4: 0x0003 0x8000                 POP r0
 0x12a6: 0x0001 0x8000 0x1092          SET r0 0x1092
-0x12a9: 0x0001 0x8001 0x6518          SET r1 0x6518
+0x12a9: 0x0001 0x8001 0x6518          SET r1 0x6518     # string "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 0x12ac: 0x0001 0x8002 0x7fff          SET r2 0x7fff
 0x12af: 0x0001 0x8003 0x6efb          SET r3 0x6efb
 0x12b2: 0x0011 0x0747                 CALL 0x0747       # FLAG4
 0x12b4: 0x0002 0x8000                 PUSH r0
 0x12b6: 0x0002 0x8001                 PUSH r1
 0x12b8: 0x0002 0x8002                 PUSH r2
-0x12ba: 0x0001 0x8000 0x6eff          SET r0 0x6eff
-0x12bd: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x12ba: 0x0001 0x8000 0x6eff          SET r0 0x6eff     # string "\" on the tablet.  Perhaps it's some kind of code?"
+0x12bd: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x12c0: 0x0009 0x8002 0x2670 0x2677   ADD r2 0x2670 0x2677
 0x12c4: 0x0011 0x05c8                 CALL 0x05c8       # "\" on the tablet.  Perhaps it's some kind of code?\n\n"
 0x12c6: 0x0003 0x8002                 POP r2
@@ -2545,10 +2545,10 @@
 0x12f6: 0x0002 0x8000                 PUSH r0
 0x12f8: 0x0002 0x8001                 PUSH r1
 0x12fa: 0x0002 0x8002                 PUSH r2
-0x12fc: 0x0001 0x8000 0x6f33          SET r0 0x6f33
-0x12ff: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x12fc: 0x0001 0x8000 0x6f33          SET r0 0x6f33     # string "You fill your lantern with oil.  It seems to cheer up!"
+0x12ff: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1302: 0x0009 0x8002 0x6ee7 0x0c13   ADD r2 0x6ee7 0x0c13
-0x1306: 0x0011 0x05c8                 CALL 0x05c8
+0x1306: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x1308: 0x0003 0x8002                 POP r2
 0x130a: 0x0003 0x8001                 POP r1
 0x130c: 0x0003 0x8000                 POP r0
@@ -2556,10 +2556,10 @@
 0x1310: 0x0002 0x8000                 PUSH r0
 0x1312: 0x0002 0x8001                 PUSH r1
 0x1314: 0x0002 0x8002                 PUSH r2
-0x1316: 0x0001 0x8000 0x6f6c          SET r0 0x6f6c
-0x1319: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x1316: 0x0001 0x8000 0x6f6c          SET r0 0x6f6c     # string "You'll have to find something to put the oil into first."
+0x1319: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x131c: 0x0009 0x8002 0x14f7 0x6401   ADD r2 0x14f7 0x6401
-0x1320: 0x0011 0x05c8                 CALL 0x05c8
+0x1320: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x1322: 0x0003 0x8002                 POP r2
 0x1324: 0x0003 0x8001                 POP r1
 0x1326: 0x0003 0x8000                 POP r0
@@ -2575,10 +2575,10 @@
 0x133b: 0x0002 0x8000                 PUSH r0
 0x133d: 0x0002 0x8001                 PUSH r1
 0x133f: 0x0002 0x8002                 PUSH r2
-0x1341: 0x0001 0x8000 0x6fa7          SET r0 0x6fa7
-0x1344: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x1341: 0x0001 0x8000 0x6fa7          SET r0 0x6fa7     # string "You light your lantern."
+0x1344: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1347: 0x0009 0x8002 0x47a0 0x1dd5   ADD r2 0x47a0 0x1dd5
-0x134b: 0x0011 0x05c8                 CALL 0x05c8
+0x134b: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x134d: 0x0003 0x8002                 POP r2
 0x134f: 0x0003 0x8001                 POP r1
 0x1351: 0x0003 0x8000                 POP r0
@@ -2595,10 +2595,10 @@
 0x1369: 0x0002 0x8000                 PUSH r0
 0x136b: 0x0002 0x8001                 PUSH r1
 0x136d: 0x0002 0x8002                 PUSH r2
-0x136f: 0x0001 0x8000 0x6fc1          SET r0 0x6fc1
-0x1372: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x136f: 0x0001 0x8000 0x6fc1          SET r0 0x6fc1     # string "You douse your lantern."
+0x1372: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1375: 0x0009 0x8002 0x424d 0x072a   ADD r2 0x424d 0x072a
-0x1379: 0x0011 0x05c8                 CALL 0x05c8
+0x1379: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x137b: 0x0003 0x8002                 POP r2
 0x137d: 0x0003 0x8001                 POP r1
 0x137f: 0x0003 0x8000                 POP r0
@@ -2616,10 +2616,10 @@
 0x1395: 0x0002 0x8000                 PUSH r0
 0x1397: 0x0002 0x8001                 PUSH r1
 0x1399: 0x0002 0x8002                 PUSH r2
-0x139b: 0x0001 0x8000 0x6fdb          SET r0 0x6fdb
-0x139e: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x139b: 0x0001 0x8000 0x6fdb          SET r0 0x6fdb     # string "You're not sure what to do with the coin."
+0x139e: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x13a1: 0x0009 0x8002 0x1363 0x387d   ADD r2 0x1363 0x387d
-0x13a5: 0x0011 0x05c8                 CALL 0x05c8
+0x13a5: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x13a7: 0x0003 0x8002                 POP r2
 0x13a9: 0x0003 0x8001                 POP r1
 0x13ab: 0x0003 0x8000                 POP r0
@@ -2643,10 +2643,10 @@
 0x13e6: 0x0002 0x8000                 PUSH r0
 0x13e8: 0x0002 0x8001                 PUSH r1
 0x13ea: 0x0002 0x8002                 PUSH r2
-0x13ec: 0x0001 0x8000 0x7006          SET r0 0x7006
-0x13ef: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x13ec: 0x0001 0x8000 0x7006          SET r0 0x7006     # string "You place the "
+0x13ef: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x13f2: 0x0009 0x8002 0x37a8 0x193f   ADD r2 0x37a8 0x193f
-0x13f6: 0x0011 0x05c8                 CALL 0x05c8
+0x13f6: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x13f8: 0x0003 0x8002                 POP r2
 0x13fa: 0x0003 0x8001                 POP r1
 0x13fc: 0x0003 0x8000                 POP r0
@@ -2654,16 +2654,16 @@
 0x1400: 0x0002 0x8000                 PUSH r0
 0x1402: 0x0009 0x8002 0x8000 0x0000   ADD r2 r0 0x0000
 0x1406: 0x000f 0x8000 0x8002          RMEM r0 r2
-0x1409: 0x0011 0x0604                 CALL 0x0604
+0x1409: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x140b: 0x0003 0x8000                 POP r0
 0x140d: 0x0002 0x8000                 PUSH r0
 0x140f: 0x0002 0x8000                 PUSH r0
 0x1411: 0x0002 0x8001                 PUSH r1
 0x1413: 0x0002 0x8002                 PUSH r2
-0x1415: 0x0001 0x8000 0x7015          SET r0 0x7015
-0x1418: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x1415: 0x0001 0x8000 0x7015          SET r0 0x7015     # string " into the leftmost open slot."
+0x1418: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x141b: 0x0009 0x8002 0x015c 0x009a   ADD r2 0x015c 0x009a
-0x141f: 0x0011 0x05c8                 CALL 0x05c8
+0x141f: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x1421: 0x0003 0x8002                 POP r2
 0x1423: 0x0003 0x8001                 POP r1
 0x1425: 0x0003 0x8000                 POP r0
@@ -2709,14 +2709,14 @@
 0x14b1: 0x0010 0x09b4 0x0000          WMEM 0x09b4 0x0000
 0x14b4: 0x0001 0x8000 0x69e5          SET r0 0x69e5
 0x14b7: 0x0001 0x8001 0x14f3          SET r1 0x14f3
-0x14ba: 0x0011 0x05c8                 CALL 0x05c8
+0x14ba: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x14bc: 0x0002 0x8000                 PUSH r0
 0x14be: 0x0002 0x8001                 PUSH r1
 0x14c0: 0x0002 0x8002                 PUSH r2
-0x14c2: 0x0001 0x8000 0x7034          SET r0 0x7034
-0x14c5: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x14c2: 0x0001 0x8000 0x7034          SET r0 0x7034     # string "As you place the last coin, they are all released onto the floor."
+0x14c5: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x14c8: 0x0009 0x8002 0x72a4 0x0645   ADD r2 0x72a4 0x0645
-0x14cc: 0x0011 0x05c8                 CALL 0x05c8
+0x14cc: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x14ce: 0x0003 0x8002                 POP r2
 0x14d0: 0x0003 0x8001                 POP r1
 0x14d2: 0x0003 0x8000                 POP r0
@@ -2724,10 +2724,10 @@
 0x14d6: 0x0002 0x8000                 PUSH r0
 0x14d8: 0x0002 0x8001                 PUSH r1
 0x14da: 0x0002 0x8002                 PUSH r2
-0x14dc: 0x0001 0x8000 0x7077          SET r0 0x7077
-0x14df: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x14dc: 0x0001 0x8000 0x7077          SET r0 0x7077     # string "As you place the last coin, you hear a click from the north door."
+0x14df: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x14e2: 0x0009 0x8002 0x0048 0x00a2   ADD r2 0x0048 0x00a2
-0x14e6: 0x0011 0x05c8                 CALL 0x05c8
+0x14e6: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x14e8: 0x0003 0x8002                 POP r2
 0x14ea: 0x0003 0x8001                 POP r1
 0x14ec: 0x0003 0x8000                 POP r0
@@ -2749,7 +2749,7 @@
 0x1508: 0x0002 0x8001                 PUSH r1
 0x150a: 0x0001 0x8000 0x0a96          SET r0 0x0a96
 0x150d: 0x0001 0x8001 0x0002          SET r1 0x0002
-0x1510: 0x0011 0x1387                 CALL 0x1387
+0x1510: 0x0011 0x1387                 CALL 0x1387       # function use helper function called with r0:0x0a96..0x0aaa, r1:small int
 0x1512: 0x0003 0x8001                 POP r1
 0x1514: 0x0003 0x8000                 POP r0
 0x1516: 0x0012                        RET
@@ -2759,7 +2759,7 @@
 0x1519: 0x0002 0x8001                 PUSH r1
 0x151b: 0x0001 0x8000 0x0a9a          SET r0 0x0a9a
 0x151e: 0x0001 0x8001 0x0003          SET r1 0x0003
-0x1521: 0x0011 0x1387                 CALL 0x1387
+0x1521: 0x0011 0x1387                 CALL 0x1387       # function use helper function called with r0:0x0a96..0x0aaa, r1:small int
 0x1523: 0x0003 0x8001                 POP r1
 0x1525: 0x0003 0x8000                 POP r0
 0x1527: 0x0012                        RET
@@ -2769,7 +2769,7 @@
 0x152a: 0x0002 0x8001                 PUSH r1
 0x152c: 0x0001 0x8000 0x0a9e          SET r0 0x0a9e
 0x152f: 0x0001 0x8001 0x0005          SET r1 0x0005
-0x1532: 0x0011 0x1387                 CALL 0x1387
+0x1532: 0x0011 0x1387                 CALL 0x1387       # function use helper function called with r0:0x0a96..0x0aaa, r1:small int
 0x1534: 0x0003 0x8001                 POP r1
 0x1536: 0x0003 0x8000                 POP r0
 0x1538: 0x0012                        RET
@@ -2779,7 +2779,7 @@
 0x153b: 0x0002 0x8001                 PUSH r1
 0x153d: 0x0001 0x8000 0x0aa2          SET r0 0x0aa2
 0x1540: 0x0001 0x8001 0x0007          SET r1 0x0007
-0x1543: 0x0011 0x1387                 CALL 0x1387
+0x1543: 0x0011 0x1387                 CALL 0x1387       # function use helper function called with r0:0x0a96..0x0aaa, r1:small int
 0x1545: 0x0003 0x8001                 POP r1
 0x1547: 0x0003 0x8000                 POP r0
 0x1549: 0x0012                        RET
@@ -2789,7 +2789,7 @@
 0x154c: 0x0002 0x8001                 PUSH r1
 0x154e: 0x0001 0x8000 0x0aa6          SET r0 0x0aa6
 0x1551: 0x0001 0x8001 0x0009          SET r1 0x0009
-0x1554: 0x0011 0x1387                 CALL 0x1387
+0x1554: 0x0011 0x1387                 CALL 0x1387       # function use helper function called with r0:0x0a96..0x0aaa, r1:small int
 0x1556: 0x0003 0x8001                 POP r1
 0x1558: 0x0003 0x8000                 POP r0
 0x155a: 0x0012                        RET
@@ -2803,8 +2803,8 @@
 0x1564: 0x0002 0x8000                 PUSH r0
 0x1566: 0x0002 0x8001                 PUSH r1
 0x1568: 0x0002 0x8002                 PUSH r2
-0x156a: 0x0001 0x8000 0x70ba          SET r0 0x70ba
-0x156d: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x156a: 0x0001 0x8000 0x70ba          SET r0 0x70ba     # string "A strange, electronic voice is projected ... Unusual setting ... 1 billion years"
+0x156d: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1570: 0x0009 0x8002 0x3fe5 0x0003   ADD r2 0x3fe5 0x0003
 0x1574: 0x0011 0x05c8                 CALL 0x05c8       # "A strange, electronic voice ...Unusual setting detected!...Estimated time to completion: 1 billion years.\"\n\n"
 0x1576: 0x0003 0x8002                 POP r2
@@ -2823,15 +2823,15 @@
 0x1590: 0x0002 0x8000                 PUSH r0
 0x1592: 0x0002 0x8001                 PUSH r1
 0x1594: 0x0002 0x8002                 PUSH r2
-0x1596: 0x0001 0x8000 0x7163          SET r0 0x7163
-0x1599: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x1596: 0x0001 0x8000 0x7163          SET r0 0x7163     # string "You wake up on a sandy beach ... message in the sand here:"
+0x1599: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x159c: 0x0009 0x8002 0x1f73 0x3a78   ADD r2 0x1f73 0x3a78
 0x15a0: 0x0011 0x05c8                 CALL 0x05c8       # "You wake up on a sandy beach... Someone seems to have drawn a message in the sand here:\n\n    "
 0x15a2: 0x0003 0x8002                 POP r2
 0x15a4: 0x0003 0x8001                 POP r1
 0x15a6: 0x0003 0x8000                 POP r0
 0x15a8: 0x0001 0x8000 0x8007          SET r0 r7
-0x15ab: 0x0001 0x8001 0x6518          SET r1 0x6518
+0x15ab: 0x0001 0x8001 0x6518          SET r1 0x6518     # string "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 0x15ae: 0x0001 0x8002 0x7fff          SET r2 0x7fff
 0x15b1: 0x0002 0x8003                 PUSH r3
 0x15b3: 0x0001 0x8003 0x7246          SET r3 0x7246
@@ -2840,8 +2840,8 @@
 0x15ba: 0x0002 0x8000                 PUSH r0
 0x15bc: 0x0002 0x8001                 PUSH r1
 0x15be: 0x0002 0x8002                 PUSH r2
-0x15c0: 0x0001 0x8000 0x724a          SET r0 0x724a
-0x15c3: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x15c0: 0x0001 0x8000 0x724a          SET r0 0x724a     # string "It begins to rain.  The message washes away."
+0x15c3: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x15c6: 0x0009 0x8002 0x00ca 0x7427   ADD r2 0x00ca 0x7427
 0x15ca: 0x0011 0x05c8                 CALL 0x05c8       # "\n\nIt begins to rain.  The message washes away.\n\n"
 0x15cc: 0x0003 0x8002                 POP r2
@@ -2855,8 +2855,8 @@
 0x15e1: 0x0002 0x8000                 PUSH r0
 0x15e3: 0x0002 0x8001                 PUSH r1
 0x15e5: 0x0002 0x8002                 PUSH r2
-0x15e7: 0x0001 0x8000 0x727b          SET r0 0x727b
-0x15ea: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x15e7: 0x0001 0x8000 0x727b          SET r0 0x727b     # string "A strange, electronic voice is projected ... Miscalibration ... Aborting ..."
+0x15ea: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x15ed: 0x0009 0x8002 0x01aa 0x2f47   ADD r2 0x01aa 0x2f47
 0x15f1: 0x0011 0x05c8                 CALL 0x05c8       # "A strange, electronic voice is projected into your mind:\n\n  \"Miscalibration detected!  Aborting teleportation!...
 0x15f3: 0x0003 0x8002                 POP r2
@@ -2866,8 +2866,8 @@
 0x15fb: 0x0002 0x8000                 PUSH r0
 0x15fd: 0x0002 0x8001                 PUSH r1
 0x15ff: 0x0002 0x8002                 PUSH r2
-0x1601: 0x0001 0x8000 0x730c          SET r0 0x730c
-0x1604: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x1601: 0x0001 0x8000 0x730c          SET r0 0x730c     # string "You activate the teleporter! stars..."
+0x1604: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1607: 0x0009 0x8002 0x0d9d 0x0b5b   ADD r2 0x0d9d 0x0b5b
 0x160b: 0x0011 0x05c8                 CALL 0x05c8       # "You activate the teleporter!  As you spiral through time and space, you think you see a pattern in the stars...\n\n    "
 0x160d: 0x0003 0x8002                 POP r2
@@ -2878,13 +2878,13 @@
 0x161a: 0x000f 0x8001 0x8002          RMEM r1 r2
 0x161d: 0x0009 0x8000 0x8000 0x8001   ADD r0 r0 r1
 0x1621: 0x000a 0x8000 0x8000 0x7bac   MULT r0 r0 0x7bac
-0x1625: 0x0011 0x0863                 CALL 0x0863
+0x1625: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
 0x1627: 0x000f 0x8001 0x69eb          RMEM r1 0x69eb
 0x162a: 0x0009 0x8001 0x8001 0x69eb   ADD r1 r1 0x69eb
 0x162e: 0x0009 0x8002 0x8002 0x0001   ADD r2 r2 0x0001
 0x1632: 0x0005 0x8001 0x8002 0x8001   GT r1 r2 r1
 0x1636: 0x0008 0x8001 0x161a          JF r1 0x161a
-0x1639: 0x0001 0x8001 0x6518          SET r1 0x6518
+0x1639: 0x0001 0x8001 0x6518          SET r1 0x6518     # string "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 0x163c: 0x0001 0x8002 0x7fff          SET r2 0x7fff
 0x163f: 0x0002 0x8003                 PUSH r3
 0x1641: 0x0001 0x8003 0x7382          SET r3 0x7382
@@ -2893,8 +2893,8 @@
 0x1648: 0x0002 0x8000                 PUSH r0
 0x164a: 0x0002 0x8001                 PUSH r1
 0x164c: 0x0002 0x8002                 PUSH r2
-0x164e: 0x0001 0x8000 0x7386          SET r0 0x7386
-0x1651: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x164e: 0x0001 0x8000 0x7386          SET r0 0x7386     # string "After a few moments, you find yourself back on solid ground and a little disoriented."
+0x1651: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1654: 0x0009 0x8002 0x004a 0x0b24   ADD r2 0x004a 0x0b24
 0x1658: 0x0011 0x05c8                 CALL 0x05c8       # "\n\nAfter a few moments, you find yourself back on solid ground and a little disoriented.\n\n"
 0x165a: 0x0003 0x8002                 POP r2
@@ -2916,8 +2916,8 @@
 0x1677: 0x0002 0x8000                 PUSH r0
 0x1679: 0x0002 0x8001                 PUSH r1
 0x167b: 0x0002 0x8002                 PUSH r2
-0x167d: 0x0001 0x8000 0x73e0          SET r0 0x73e0
-0x1680: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x167d: 0x0001 0x8000 0x73e0          SET r0 0x73e0     # string "You gaze into the mirror, Through the mirror, you see " 
+0x1680: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x1683: 0x0009 0x8002 0x2b4f 0x0222   ADD r2 0x2b4f 0x0222
 0x1687: 0x0011 0x05c8                 CALL 0x05c8       # "You gaze into the mirror, and ... face while you were unconscious on the beach!  Through the mirror, you see \""
 0x1689: 0x0003 0x8002                 POP r2
@@ -2925,10 +2925,10 @@
 0x168d: 0x0003 0x8000                 POP r0
 0x168f: 0x000f 0x8000 0x0f89          RMEM r0 0x0f89
 0x1692: 0x000f 0x8001 0x0f8a          RMEM r1 0x0f8a
-0x1695: 0x0011 0x0863                 CALL 0x0863
+0x1695: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
 0x1697: 0x000f 0x8001 0x0f8b          RMEM r1 0x0f8b
-0x169a: 0x0011 0x0863                 CALL 0x0863
-0x169c: 0x0001 0x8001 0x654d          SET r1 0x654d
+0x169a: 0x0011 0x0863                 CALL 0x0863       # function bitwise_xor(r0, r1):r0
+0x169c: 0x0001 0x8001 0x654d          SET r1 0x654d     # string "dbqpwuiolxv8WTYUIOAHXVM"
 0x169f: 0x0001 0x8002 0x0004          SET r2 0x0004
 0x16a2: 0x0002 0x8003                 PUSH r3
 0x16a4: 0x0001 0x8003 0x7499          SET r3 0x7499
@@ -2937,8 +2937,8 @@
 0x16ab: 0x0002 0x8000                 PUSH r0
 0x16ad: 0x0002 0x8001                 PUSH r1
 0x16af: 0x0002 0x8002                 PUSH r2
-0x16b1: 0x0001 0x8000 0x749d          SET r0 0x749d
-0x16b4: 0x0001 0x8001 0x0611          SET r1 0x0611
+0x16b1: 0x0001 0x8000 0x749d          SET r0 0x749d     # string " scrawled in charcoal on your forehead.Congratulations; you have reached the end of the challenge!"
+0x16b4: 0x0001 0x8001 0x0611          SET r1 0x0611     # arr::apply_fn print_xor_char(r0:char, r2:xor_value)
 0x16b7: 0x0009 0x8002 0x0259 0x081e   ADD r2 0x0259 0x081e
 0x16bb: 0x0011 0x05c8                 CALL 0x05c8       # "\" scrawled in charcoal on your forehead.\n\nCongratulations; you have reached the end of the challenge!\n\n"
 0x16bd: 0x0003 0x8002                 POP r2
@@ -2953,17 +2953,17 @@
 
 0x16cc: 0x0013 0x002d                 OUT 0x002d
 0x16ce: 0x0013 0x0020                 OUT 0x0020
-0x16d0: 0x0011 0x0604                 CALL 0x0604
+0x16d0: 0x0011 0x0604                 CALL 0x0604       # function print_string(r0:string*)
 0x16d2: 0x0013 0x000a                 OUT 0x000a
 
 
 0x16d4: 0x0012                        RET
 0x16d5: 0x0002 0x8001                 PUSH r1
 0x16d7: 0x0002 0x8002                 PUSH r2
-0x16d9: 0x0001 0x8000 0x6b03          SET r0 0x6b03
+0x16d9: 0x0001 0x8000 0x6b03          SET r0 0x6b03     # data itemdesc[]
 0x16dc: 0x0001 0x8001 0x16ec          SET r1 0x16ec
 0x16df: 0x0001 0x8002 0x0000          SET r2 0x0000
-0x16e2: 0x0011 0x05c8                 CALL 0x05c8
+0x16e2: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x16e4: 0x0001 0x8000 0x8002          SET r0 r2
 0x16e7: 0x0003 0x8002                 POP r2
 0x16e9: 0x0003 0x8001                 POP r1
@@ -2985,9 +2985,9 @@
 
 0x170a: 0x0002 0x8000                 PUSH r0
 0x170c: 0x0002 0x8001                 PUSH r1
-0x170e: 0x0001 0x8000 0x6b03          SET r0 0x6b03
+0x170e: 0x0001 0x8000 0x6b03          SET r0 0x6b03     # data itemdesc[]
 0x1711: 0x0001 0x8001 0x171b          SET r1 0x171b
-0x1714: 0x0011 0x05c8                 CALL 0x05c8
+0x1714: 0x0011 0x05c8                 CALL 0x05c8       # function array_apply_fn(r0:string*, r1:apply_fn*(r0:char, r1:idx, r2:accu), r2:accu)
 0x1716: 0x0003 0x8001                 POP r1
 0x1718: 0x0003 0x8000                 POP r0
 0x171a: 0x0012                        RET
@@ -3009,9 +3009,9 @@
 0x1737: 0x0002 0x8001                 PUSH r1
 0x1739: 0x0002 0x8002                 PUSH r2
 0x173b: 0x0001 0x8002 0x8000          SET r2 r0
-0x173e: 0x0001 0x8000 0x6b03          SET r0 0x6b03
+0x173e: 0x0001 0x8000 0x6b03          SET r0 0x6b03     # data itemdesc[]
 0x1741: 0x0001 0x8001 0x1762          SET r1 0x1762
-0x1744: 0x0011 0x061d                 CALL 0x061d
+0x1744: 0x0011 0x061d                 CALL 0x061d       # function find_item(r0:array*, r1:apply_fn*, r2:accumulator) r0 = -1 if fail else accumulator
 0x1746: 0x0004 0x8001 0x8000 0x7fff   EQ r1 r0 0x7fff
 0x174a: 0x0007 0x8001 0x175a          JT r1 0x175a
 0x174d: 0x0009 0x8001 0x6b03 0x8000   ADD r1 0x6b03 r0
@@ -3028,7 +3028,7 @@
 0x1764: 0x0001 0x8001 0x8002          SET r1 r2
 0x1767: 0x0009 0x8000 0x8000 0x0000   ADD r0 r0 0x0000
 0x176b: 0x000f 0x8000 0x8000          RMEM r0 r0
-0x176e: 0x0011 0x0699                 CALL 0x0699
+0x176e: 0x0011 0x0699                 CALL 0x0699       # function is_arrays_equal(r0: array1, r1: array2):r0:bool = 1 if matched
 0x1770: 0x0003 0x8001                 POP r1
 0x1772: 0x0008 0x8000 0x177b          JF r0 0x177b
 0x1775: 0x0001 0x8002 0x8001          SET r2 r1
@@ -3626,75 +3626,75 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6927: 0x0928                        DATA
 
 0x6928: 0x0001                        DATA
-0x6929: 0x1939                        DATA
+0x6929: 0x1939                        DATA  string "north"
 
 0x692a: 0x0001                        DATA
 0x692b: 0x0923                        DATA
 
 0x692c: 0x0002                        DATA
-0x692d: 0x19cf                        DATA
-0x692e: 0x19d5                        DATA
+0x692d: 0x19cf                        DATA  string "north"
+0x692e: 0x19d5                        DATA  string "south"
 
 0x692f: 0x0002                        DATA
 0x6930: 0x0932                        DATA
 0x6931: 0x0923                        DATA
 
 0x6932: 0x0002                        DATA
-0x6933: 0x1a41                        DATA
-0x6934: 0x1a47                        DATA
+0x6933: 0x1a41                        DATA  string "north"
+0x6934: 0x1a47                        DATA  string "south"
 
 0x6935: 0x0002                        DATA
 0x6936: 0x0937                        DATA
 0x6937: 0x092d                        DATA
 
 0x6938: 0x0002                        DATA
-0x6939: 0x1b13                        DATA
-0x693a: 0x1b1a                        DATA
+0x6939: 0x1b13                        DATA  string "bridge"
+0x693a: 0x1b1a                        DATA  string "south"
 
 0x693b: 0x0002                        DATA
 0x693c: 0x093c                        DATA
 0x693d: 0x092d                        DATA
 
 0x693e: 0x0002                        DATA
-0x693f: 0x1ba6                        DATA
-0x6940: 0x1baf                        DATA
+0x693f: 0x1ba6                        DATA  string "continue"
+0x6940: 0x1baf                        DATA  string "back"
 
 0x6941: 0x0002                        DATA
 0x6942: 0x0941                        DATA
 0x6943: 0x0937                        DATA
 
 0x6944: 0x0001                        DATA
-0x6945: 0x1c77                        DATA
+0x6945: 0x1c77                        DATA  string "down"
 
 0x6946: 0x0001                        DATA
 0x6947: 0x0946                        DATA
 
 0x6948: 0x0002                        DATA
-0x6949: 0x1d5a                        DATA
-0x694a: 0x1d5f                        DATA
+0x6949: 0x1d5a                        DATA  string "west"
+0x694a: 0x1d5f                        DATA  string "east"
 
 0x694b: 0x0002                        DATA
 0x694c: 0x0950                        DATA
 0x694d: 0x094b                        DATA
 
 0x694e: 0x0001                        DATA
-0x694f: 0x1dd1                        DATA
+0x694f: 0x1dd1                        DATA  string "west"
 
 0x6950: 0x0001                        DATA
 0x6951: 0x0946                        DATA
 
 0x6952: 0x0002                        DATA
-0x6953: 0x1e80                        DATA
-0x6954: 0x1e85                        DATA
+0x6953: 0x1e80                        DATA  string "east"
+0x6954: 0x1e85                        DATA  string "passage"
 
 0x6955: 0x0002                        DATA
 0x6956: 0x0946                        DATA
 0x6957: 0x0955                        DATA
 
 0x6958: 0x0003                        DATA
-0x6959: 0x1f46                        DATA
-0x695a: 0x1f4d                        DATA
-0x695b: 0x1f54                        DATA
+0x6959: 0x1f46                        DATA  string "cavern"
+0x695a: 0x1f4d                        DATA  string "ladder"
+0x695b: 0x1f54                        DATA  string "darkness"
 
 0x695c: 0x0003                        DATA
 0x695d: 0x0950                        DATA
@@ -3702,23 +3702,23 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x695f: 0x095a                        DATA
 
 0x6960: 0x0002                        DATA
-0x6961: 0x1f65                        DATA
-0x6962: 0x1f9f                        DATA
+0x6961: 0x1f65                        DATA  string "It is pitch black.  You are likely to be eaten by a grue."
+0x6962: 0x1f9f                        DATA  string "You feel that your light source is more than sufficient to keep grues away."
 
 0x6963: 0x0002                        DATA
-0x6964: 0x1feb                        DATA
-0x6965: 0x1ff4                        DATA
+0x6964: 0x1feb                        DATA  string "continue"
+0x6965: 0x1ff4                        DATA  string "back"
 
 0x6966: 0x0002                        DATA
 0x6967: 0x0991                        DATA
 0x6968: 0x0955                        DATA
 
 0x6969: 0x0005                        DATA
-0x696a: 0x2085                        DATA
-0x696b: 0x208c                        DATA
-0x696c: 0x2092                        DATA
-0x696d: 0x2098                        DATA
-0x696e: 0x209d                        DATA
+0x696a: 0x2085                        DATA  string "ladder"
+0x696b: 0x208c                        DATA  string "north"
+0x696c: 0x2092                        DATA  string "south"
+0x696d: 0x2098                        DATA  string "east"
+0x696e: 0x209d                        DATA  string "west"
 
 0x696f: 0x0005                        DATA
 0x6970: 0x0955                        DATA
@@ -3728,9 +3728,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6974: 0x0973                        DATA
 
 0x6975: 0x0003                        DATA
-0x6976: 0x20ea                        DATA
-0x6977: 0x20f0                        DATA
-0x6978: 0x20f6                        DATA
+0x6976: 0x20ea                        DATA  string "north"
+0x6977: 0x20f0                        DATA  string "south"
+0x6978: 0x20f6                        DATA  string "west"
 
 0x6979: 0x0003                        DATA
 0x697a: 0x0969                        DATA
@@ -3738,9 +3738,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x697c: 0x0964                        DATA
 
 0x697d: 0x0003                        DATA
-0x697e: 0x2143                        DATA
-0x697f: 0x2149                        DATA
-0x6980: 0x214f                        DATA
+0x697e: 0x2143                        DATA  string "north"
+0x697f: 0x2149                        DATA  string "south"
+0x6980: 0x214f                        DATA  string "east"
 
 0x6981: 0x0003                        DATA
 0x6982: 0x095f                        DATA
@@ -3748,10 +3748,10 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6984: 0x0969                        DATA
 
 0x6985: 0x0004                        DATA
-0x6986: 0x21e1                        DATA
-0x6987: 0x21e7                        DATA
-0x6988: 0x21ed                        DATA
-0x6989: 0x21f2                        DATA
+0x6986: 0x21e1                        DATA  string "north"
+0x6987: 0x21e7                        DATA  string "south"
+0x6988: 0x21ed                        DATA  string "west"
+0x6989: 0x21f2                        DATA  string "east"
 
 0x698a: 0x0004                        DATA
 0x698b: 0x097d                        DATA
@@ -3760,9 +3760,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x698e: 0x098c                        DATA
 
 0x698f: 0x0003                        DATA
-0x6990: 0x223f                        DATA
-0x6991: 0x2245                        DATA
-0x6992: 0x224b                        DATA
+0x6990: 0x223f                        DATA  string "north"
+0x6991: 0x2245                        DATA  string "south"
+0x6992: 0x224b                        DATA  string "east"
 
 0x6993: 0x0003                        DATA
 0x6994: 0x0973                        DATA
@@ -3770,10 +3770,10 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6996: 0x095f                        DATA
 
 0x6997: 0x0004                        DATA
-0x6998: 0x22e4                        DATA
-0x6999: 0x22ea                        DATA
-0x699a: 0x22f0                        DATA
-0x699b: 0x22f5                        DATA
+0x6998: 0x22e4                        DATA  string "north"
+0x6999: 0x22ea                        DATA  string "south"
+0x699a: 0x22f0                        DATA  string "west"
+0x699b: 0x22f5                        DATA  string "east"
 
 0x699c: 0x0004                        DATA
 0x699d: 0x0982                        DATA
@@ -3782,9 +3782,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x69a0: 0x098c                        DATA
 
 0x69a1: 0x0003                        DATA
-0x69a2: 0x2342                        DATA
-0x69a3: 0x2348                        DATA
-0x69a4: 0x234d                        DATA
+0x69a2: 0x2342                        DATA  string "north"
+0x69a3: 0x2348                        DATA  string "east"
+0x69a4: 0x234d                        DATA  string "south"
 
 0x69a5: 0x0003                        DATA
 0x69a6: 0x0969                        DATA
@@ -3792,78 +3792,78 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x69a8: 0x097d                        DATA
 
 0x69a9: 0x0001                        DATA
-0x69aa: 0x239b                        DATA
+0x69aa: 0x239b                        DATA  string "west"
 
 0x69ab: 0x0001                        DATA
 0x69ac: 0x095f                        DATA
 
 0x69ad: 0x0001                        DATA
-0x69ae: 0x23e8                        DATA
+0x69ae: 0x23e8                        DATA  string "west"
 
 0x69af: 0x0001                        DATA
 0x69b0: 0x095f                        DATA
 
 0x69b1: 0x0002                        DATA
-0x69b2: 0x2435                        DATA
-0x69b3: 0x243b                        DATA
+0x69b2: 0x2435                        DATA  string "north"
+0x69b3: 0x243b                        DATA  string "south"
 
 0x69b4: 0x0002                        DATA
 0x69b5: 0x0969                        DATA
 0x69b6: 0x0964                        DATA
 
 0x69b7: 0x0002                        DATA
-0x69b8: 0x24c1                        DATA
-0x69b9: 0x24c6                        DATA
+0x69b8: 0x24c1                        DATA  string "west"
+0x69b9: 0x24c6                        DATA  string "east"
 
 0x69ba: 0x0002                        DATA
 0x69bb: 0x0996                        DATA
 0x69bc: 0x095a                        DATA
 
 0x69bd: 0x0002                        DATA
-0x69be: 0x24fb                        DATA
-0x69bf: 0x2500                        DATA
+0x69be: 0x24fb                        DATA  string "east"
+0x69bf: 0x2500                        DATA  string "west"
 
 0x69c0: 0x0002                        DATA
 0x69c1: 0x0991                        DATA
 0x69c2: 0x099b                        DATA
 
 0x69c3: 0x0002                        DATA
-0x69c4: 0x2535                        DATA
-0x69c5: 0x253a                        DATA
+0x69c4: 0x2535                        DATA  string "east"
+0x69c5: 0x253a                        DATA  string "west"
 
 0x69c6: 0x0002                        DATA
 0x69c7: 0x0996                        DATA
 0x69c8: 0x09a0                        DATA
 
 0x69c9: 0x0002                        DATA
-0x69ca: 0x25b1                        DATA
-0x69cb: 0x25b6                        DATA
+0x69ca: 0x25b1                        DATA  string "east"
+0x69cb: 0x25b6                        DATA  string "west"
 
 0x69cc: 0x0002                        DATA
 0x69cd: 0x099b                        DATA
 0x69ce: 0x09a5                        DATA
 
 0x69cf: 0x0002                        DATA
-0x69d0: 0x26ba                        DATA
-0x69d1: 0x26bf                        DATA
+0x69d0: 0x26ba                        DATA  string "east"
+0x69d1: 0x26bf                        DATA  string "north"
 
 0x69d2: 0x0002                        DATA
 0x69d3: 0x09a0                        DATA
 0x69d4: 0x09aa                        DATA
 
 0x69d5: 0x0002                        DATA
-0x69d6: 0x2781                        DATA
-0x69d7: 0x2787                        DATA
+0x69d6: 0x2781                        DATA  string "north"
+0x69d7: 0x2787                        DATA  string "south"
 
 0x69d8: 0x0002                        DATA
 0x69d9: 0x09af                        DATA
 0x69da: 0x09a5                        DATA
 
 0x69db: 0x0004                        DATA
-0x69dc: 0x28b9                        DATA
-0x69dd: 0x28bf                        DATA
-0x69de: 0x28c5                        DATA
-0x69df: 0x28ca                        DATA
+0x69dc: 0x28b9                        DATA  string "north"
+0x69dd: 0x28bf                        DATA  string "south"
+0x69de: 0x28c5                        DATA  string "east"
+0x69df: 0x28ca                        DATA  string "west"
 
 0x69e0: 0x0004                        DATA
 0x69e1: 0x09b5                        DATA
@@ -3886,55 +3886,55 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x69f0: 0x0000                        DATA
 
 0x69f1: 0x0001                        DATA
-0x69f2: 0x297d                        DATA
+0x69f2: 0x297d                        DATA  string "south"
 
 0x69f3: 0x0001                        DATA
 0x69f4: 0x09af                        DATA
 
 0x69f5: 0x0002                        DATA
-0x69f6: 0x2a14                        DATA
-0x69f7: 0x2a19                        DATA
+0x69f6: 0x2a14                        DATA  string "down"
+0x69f7: 0x2a19                        DATA  string "west"
 
 0x69f8: 0x0002                        DATA
 0x69f9: 0x09bf                        DATA
 0x69fa: 0x09af                        DATA
 
 0x69fb: 0x0001                        DATA
-0x69fc: 0x2a9f                        DATA
+0x69fc: 0x2a9f                        DATA  string "up"
 
 0x69fd: 0x0001                        DATA
 0x69fe: 0x09ba                        DATA
 
 0x69ff: 0x0002                        DATA
-0x6a00: 0x2b5c                        DATA
-0x6a01: 0x2b5f                        DATA
+0x6a00: 0x2b5c                        DATA  string "up"
+0x6a01: 0x2b5f                        DATA  string "east"
 
 0x6a02: 0x0002                        DATA
 0x6a03: 0x09c9                        DATA
 0x6a04: 0x09af                        DATA
 
 0x6a05: 0x0001                        DATA
-0x6a06: 0x2c14                        DATA
+0x6a06: 0x2c14                        DATA  string "down"
 
 0x6a07: 0x0001                        DATA
 0x6a08: 0x09c4                        DATA
 
 0x6a09: 0x0001                        DATA
-0x6a0a: 0x2d2e                        DATA
+0x6a0a: 0x2d2e                        DATA  string "outside"
 
 0x6a0b: 0x0001                        DATA
 0x6a0c: 0x09d3                        DATA
 
 0x6a0d: 0x0001                        DATA
-0x6a0e: 0x2ddd                        DATA
+0x6a0e: 0x2ddd                        DATA  string "inside"
 
 0x6a0f: 0x0001                        DATA
 0x6a10: 0x09ce                        DATA
 
 0x6a11: 0x0003                        DATA
-0x6a12: 0x2e95                        DATA
-0x6a13: 0x2e9a                        DATA
-0x6a14: 0x2e9f                        DATA
+0x6a12: 0x2e95                        DATA  string "west"
+0x6a13: 0x2e9a                        DATA  string "east"
+0x6a14: 0x2e9f                        DATA  string "north"
 
 0x6a15: 0x0003                        DATA
 0x6a16: 0x09dd                        DATA
@@ -3942,25 +3942,25 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a18: 0x09e7                        DATA
 
 0x6a19: 0x0002                        DATA
-0x6a1a: 0x2fb2                        DATA
-0x6a1b: 0x2fb7                        DATA
+0x6a1a: 0x2fb2                        DATA  string "east"
+0x6a1b: 0x2fb7                        DATA  string "north"
 
 0x6a1c: 0x0002                        DATA
 0x6a1d: 0x09d8                        DATA
 0x6a1e: 0x09e7                        DATA
 
 0x6a1f: 0x0002                        DATA
-0x6a20: 0x30b6                        DATA
-0x6a21: 0x30bb                        DATA
+0x6a20: 0x30b6                        DATA  string "west"
+0x6a21: 0x30bb                        DATA  string "north"
 
 0x6a22: 0x0002                        DATA
 0x6a23: 0x09d8                        DATA
 0x6a24: 0x09ec                        DATA
 
 0x6a25: 0x0003                        DATA
-0x6a26: 0x3198                        DATA
-0x6a27: 0x319e                        DATA
-0x6a28: 0x31a4                        DATA
+0x6a26: 0x3198                        DATA  string "north"
+0x6a27: 0x319e                        DATA  string "south"
+0x6a28: 0x31a4                        DATA  string "east"
 
 0x6a29: 0x0003                        DATA
 0x6a2a: 0x09f1                        DATA
@@ -3968,9 +3968,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a2c: 0x09ec                        DATA
 
 0x6a2d: 0x0003                        DATA
-0x6a2e: 0x3234                        DATA
-0x6a2f: 0x323a                        DATA
-0x6a30: 0x3240                        DATA
+0x6a2e: 0x3234                        DATA  string "north"
+0x6a2f: 0x323a                        DATA  string "south"
+0x6a30: 0x3240                        DATA  string "west"
 
 0x6a31: 0x0003                        DATA
 0x6a32: 0x09f1                        DATA
@@ -3978,49 +3978,49 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a34: 0x09e7                        DATA
 
 0x6a35: 0x0002                        DATA
-0x6a36: 0x333c                        DATA
-0x6a37: 0x3342                        DATA
+0x6a36: 0x333c                        DATA  string "north"
+0x6a37: 0x3342                        DATA  string "south"
 
 0x6a38: 0x0002                        DATA
 0x6a39: 0x09f6                        DATA
 0x6a3a: 0x09e7                        DATA
 
 0x6a3b: 0x0002                        DATA
-0x6a3c: 0x3476                        DATA
-0x6a3d: 0x347c                        DATA
+0x6a3c: 0x3476                        DATA  string "north"
+0x6a3d: 0x347c                        DATA  string "south"
 
 0x6a3e: 0x0002                        DATA
 0x6a3f: 0x09fb                        DATA
 0x6a40: 0x09f1                        DATA
 
 0x6a41: 0x0002                        DATA
-0x6a42: 0x3588                        DATA
-0x6a43: 0x358e                        DATA
+0x6a42: 0x3588                        DATA  string "north"
+0x6a43: 0x358e                        DATA  string "south"
 
 0x6a44: 0x0002                        DATA
 0x6a45: 0x0a00                        DATA
 0x6a46: 0x09f6                        DATA
 
 0x6a47: 0x0002                        DATA
-0x6a48: 0x367f                        DATA
-0x6a49: 0x3685                        DATA
+0x6a48: 0x367f                        DATA  string "north"
+0x6a49: 0x3685                        DATA  string "south"
 
 0x6a4a: 0x0002                        DATA
 0x6a4b: 0x0a05                        DATA
 0x6a4c: 0x09fb                        DATA
 
 0x6a4d: 0x0002                        DATA
-0x6a4e: 0x3714                        DATA
-0x6a4f: 0x371a                        DATA
+0x6a4e: 0x3714                        DATA  string "north"
+0x6a4f: 0x371a                        DATA  string "south"
 
 0x6a50: 0x0002                        DATA
 0x6a51: 0x0a0a                        DATA
 0x6a52: 0x0a00                        DATA
 
 0x6a53: 0x0003                        DATA
-0x6a54: 0x3871                        DATA
-0x6a55: 0x3877                        DATA
-0x6a56: 0x387d                        DATA
+0x6a54: 0x3871                        DATA  string "north"
+0x6a55: 0x3877                        DATA  string "south"
+0x6a56: 0x387d                        DATA  string "east"
 
 0x6a57: 0x0003                        DATA
 0x6a58: 0x0a14                        DATA
@@ -4028,31 +4028,31 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a5a: 0x0a0f                        DATA
 
 0x6a5b: 0x0001                        DATA
-0x6a5c: 0x393b                        DATA
+0x6a5c: 0x393b                        DATA  string "west"
 
 0x6a5d: 0x0001                        DATA
 0x6a5e: 0x0a0a                        DATA
 
 0x6a5f: 0x0002                        DATA
-0x6a60: 0x39b7                        DATA
-0x6a61: 0x39bd                        DATA
+0x6a60: 0x39b7                        DATA  string "north"
+0x6a61: 0x39bd                        DATA  string "south"
 
 0x6a62: 0x0002                        DATA
 0x6a63: 0x0a55                        DATA
 0x6a64: 0x0a0a                        DATA
 
 0x6a65: 0x0002                        DATA
-0x6a66: 0x3a4f                        DATA
-0x6a67: 0x3a54                        DATA
+0x6a66: 0x3a4f                        DATA  string "east"
+0x6a67: 0x3a54                        DATA  string "south"
 
 0x6a68: 0x0002                        DATA
 0x6a69: 0x0a1e                        DATA
 0x6a6a: 0x0a2d                        DATA
 
 0x6a6b: 0x0003                        DATA
-0x6a6c: 0x3ae8                        DATA
-0x6a6d: 0x3aed                        DATA
-0x6a6e: 0x3af3                        DATA
+0x6a6c: 0x3ae8                        DATA  string "east"
+0x6a6d: 0x3aed                        DATA  string "south"
+0x6a6e: 0x3af3                        DATA  string "west"
 
 0x6a6f: 0x0003                        DATA
 0x6a70: 0x0a23                        DATA
@@ -4060,9 +4060,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a72: 0x0a19                        DATA
 
 0x6a73: 0x0003                        DATA
-0x6a74: 0x3b84                        DATA
-0x6a75: 0x3b89                        DATA
-0x6a76: 0x3b8f                        DATA
+0x6a74: 0x3b84                        DATA  string "east"
+0x6a75: 0x3b89                        DATA  string "south"
+0x6a76: 0x3b8f                        DATA  string "west"
 
 0x6a77: 0x0003                        DATA
 0x6a78: 0x0a28                        DATA
@@ -4070,9 +4070,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a7a: 0x0a1e                        DATA
 
 0x6a7b: 0x0003                        DATA
-0x6a7c: 0x3c96                        DATA
-0x6a7d: 0x3c9c                        DATA
-0x6a7e: 0x3ca1                        DATA
+0x6a7c: 0x3c96                        DATA  string "south"
+0x6a7d: 0x3c9c                        DATA  string "west"
+0x6a7e: 0x3ca1                        DATA  string "vault"
 
 0x6a7f: 0x0003                        DATA
 0x6a80: 0x0a3c                        DATA
@@ -4080,9 +4080,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a82: 0x0a69                        DATA
 
 0x6a83: 0x0003                        DATA
-0x6a84: 0x3d35                        DATA
-0x6a85: 0x3d3b                        DATA
-0x6a86: 0x3d40                        DATA
+0x6a84: 0x3d35                        DATA  string "north"
+0x6a85: 0x3d3b                        DATA  string "east"
+0x6a86: 0x3d40                        DATA  string "south"
 
 0x6a87: 0x0003                        DATA
 0x6a88: 0x0a19                        DATA
@@ -4090,10 +4090,10 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a8a: 0x0a41                        DATA
 
 0x6a8b: 0x0004                        DATA
-0x6a8c: 0x3dd2                        DATA
-0x6a8d: 0x3dd8                        DATA
-0x6a8e: 0x3ddd                        DATA
-0x6a8f: 0x3de3                        DATA
+0x6a8c: 0x3dd2                        DATA  string "north"
+0x6a8d: 0x3dd8                        DATA  string "east"
+0x6a8e: 0x3ddd                        DATA  string "south"
+0x6a8f: 0x3de3                        DATA  string "west"
 
 0x6a90: 0x0004                        DATA
 0x6a91: 0x0a1e                        DATA
@@ -4102,10 +4102,10 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a94: 0x0a2d                        DATA
 
 0x6a95: 0x0004                        DATA
-0x6a96: 0x3e77                        DATA
-0x6a97: 0x3e7d                        DATA
-0x6a98: 0x3e82                        DATA
-0x6a99: 0x3e88                        DATA
+0x6a96: 0x3e77                        DATA  string "north"
+0x6a97: 0x3e7d                        DATA  string "east"
+0x6a98: 0x3e82                        DATA  string "south"
+0x6a99: 0x3e88                        DATA  string "west"
 
 0x6a9a: 0x0004                        DATA
 0x6a9b: 0x0a23                        DATA
@@ -4114,9 +4114,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6a9e: 0x0a32                        DATA
 
 0x6a9f: 0x0003                        DATA
-0x6aa0: 0x3f19                        DATA
-0x6aa1: 0x3f1f                        DATA
-0x6aa2: 0x3f25                        DATA
+0x6aa0: 0x3f19                        DATA  string "north"
+0x6aa1: 0x3f1f                        DATA  string "south"
+0x6aa2: 0x3f25                        DATA  string "west"
 
 0x6aa3: 0x0003                        DATA
 0x6aa4: 0x0a28                        DATA
@@ -4124,9 +4124,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6aa6: 0x0a37                        DATA
 
 0x6aa7: 0x0003                        DATA
-0x6aa8: 0x3fb6                        DATA
-0x6aa9: 0x3fbc                        DATA
-0x6aaa: 0x3fc1                        DATA
+0x6aa8: 0x3fb6                        DATA  string "north"
+0x6aa9: 0x3fbc                        DATA  string "east"
+0x6aaa: 0x3fc1                        DATA  string "south"
 
 0x6aab: 0x0003                        DATA
 0x6aac: 0x0a2d                        DATA
@@ -4134,10 +4134,10 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6aae: 0x0a55                        DATA
 
 0x6aaf: 0x0004                        DATA
-0x6ab0: 0x4055                        DATA
-0x6ab1: 0x405b                        DATA
-0x6ab2: 0x4060                        DATA
-0x6ab3: 0x4066                        DATA
+0x6ab0: 0x4055                        DATA  string "north"
+0x6ab1: 0x405b                        DATA  string "east"
+0x6ab2: 0x4060                        DATA  string "south"
+0x6ab3: 0x4066                        DATA  string "west"
 
 0x6ab4: 0x0004                        DATA
 0x6ab5: 0x0a32                        DATA
@@ -4158,9 +4158,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6ac2: 0x0a46                        DATA
 
 0x6ac3: 0x0003                        DATA
-0x6ac4: 0x419c                        DATA
-0x6ac5: 0x41a2                        DATA
-0x6ac6: 0x41a8                        DATA
+0x6ac4: 0x419c                        DATA  string "north"
+0x6ac5: 0x41a2                        DATA  string "south"
+0x6ac6: 0x41a8                        DATA  string "west"
 
 0x6ac7: 0x0003                        DATA
 0x6ac8: 0x0a3c                        DATA
@@ -4168,9 +4168,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6aca: 0x0a4b                        DATA
 
 0x6acb: 0x0003                        DATA
-0x6acc: 0x4250                        DATA
-0x6acd: 0x4256                        DATA
-0x6ace: 0x425b                        DATA
+0x6acc: 0x4250                        DATA  string "north"
+0x6acd: 0x4256                        DATA  string "east"
+0x6ace: 0x425b                        DATA  string "south"
 
 0x6acf: 0x0003                        DATA
 0x6ad0: 0x0a41                        DATA
@@ -4178,9 +4178,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6ad2: 0x0a14                        DATA
 
 0x6ad3: 0x0003                        DATA
-0x6ad4: 0x42ed                        DATA
-0x6ad5: 0x42f3                        DATA
-0x6ad6: 0x42f8                        DATA
+0x6ad4: 0x42ed                        DATA  string "north"
+0x6ad5: 0x42f3                        DATA  string "east"
+0x6ad6: 0x42f8                        DATA  string "west"
 
 0x6ad7: 0x0003                        DATA
 0x6ad8: 0x0a46                        DATA
@@ -4188,9 +4188,9 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6ada: 0x0a55                        DATA
 
 0x6adb: 0x0003                        DATA
-0x6adc: 0x438b                        DATA
-0x6add: 0x4391                        DATA
-0x6ade: 0x4396                        DATA
+0x6adc: 0x438b                        DATA  string "north"
+0x6add: 0x4391                        DATA  string "east"
+0x6ade: 0x4396                        DATA  string "west"
 
 0x6adf: 0x0003                        DATA
 0x6ae0: 0x0a4b                        DATA
@@ -4198,39 +4198,39 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6ae2: 0x0a5a                        DATA
 
 0x6ae3: 0x0002                        DATA
-0x6ae4: 0x4427                        DATA
-0x6ae5: 0x442d                        DATA
+0x6ae4: 0x4427                        DATA  string "north"
+0x6ae5: 0x442d                        DATA  string "west"
 
 0x6ae6: 0x0002                        DATA
 0x6ae7: 0x0a50                        DATA
 0x6ae8: 0x0a5f                        DATA
 
 0x6ae9: 0x0001                        DATA
-0x6aea: 0x450d                        DATA
+0x6aea: 0x450d                        DATA  string "leave"
 
 0x6aeb: 0x0001                        DATA
 0x6aec: 0x0a28                        DATA
 
 0x6aed: 0x0002                        DATA
-0x6aee: 0x4597                        DATA
-0x6aef: 0x459f                        DATA
+0x6aee: 0x4597                        DATA  string "forward"
+0x6aef: 0x459f                        DATA  string "back"
 
 0x6af0: 0x0002                        DATA
 0x6af1: 0x0a73                        DATA
 0x6af2: 0x0a73                        DATA
 
 0x6af3: 0x0002                        DATA
-0x6af4: 0x4623                        DATA
-0x6af5: 0x4627                        DATA
+0x6af4: 0x4623                        DATA  string "run"
+0x6af5: 0x4627                        DATA  string "investigate"
 
 0x6af6: 0x0002                        DATA
 0x6af7: 0x0a78                        DATA
 0x6af8: 0x0a78                        DATA
 
 0x6af9: 0x0003                        DATA
-0x6afa: 0x468f                        DATA
-0x6afb: 0x4693                        DATA
-0x6afc: 0x4698                        DATA
+0x6afa: 0x468f                        DATA  string "run"
+0x6afb: 0x4693                        DATA  string "wait"
+0x6afc: 0x4698                        DATA  string "hide"
 
 0x6afd: 0x0003                        DATA
 0x6afe: 0x0a7d                        DATA
@@ -4271,13 +4271,13 @@ Day 144: We are abandoning the mission.  None of us can work out the solution to
 0x6b1a: 0x657b                        DATA  string "drop"
 0x6b1b: 0x6580                        DATA  string "use"
 0x6b1c: 0x0007                        DATA
-0x6b1d: 0x0cc3                        DATA
-0x6b1e: 0x0baa                        DATA
-0x6b1f: 0x0d1b                        DATA
-0x6b20: 0x0d38                        DATA
-0x6b21: 0x0d5e                        DATA
-0x6b22: 0x0db6                        DATA
-0x6b23: 0x0e06                        DATA
+0x6b1d: 0x0cc3                        DATA  function game::go
+0x6b1e: 0x0baa                        DATA  function game::look
+0x6b1f: 0x0d1b                        DATA  function game::help
+0x6b20: 0x0d38                        DATA  function game::inv
+0x6b21: 0x0d5e                        DATA  function game::take
+0x6b22: 0x0db6                        DATA  function game::drop
+0x6b23: 0x0e06                        DATA  function game::use
 
 
 0x6b24: xor:0x5ff0, text:"\nWhat do you do?\n"

@@ -375,7 +375,7 @@ Next steps:
 
 @17:15
 
-### 24JAN10 2 17:15..19:45 Create annotations.txt and annotator.rb
+### 24JAN10 2.25 17:15..20:00 Create annotations.txt and annotator.rb
 
 At s278d (Ruins) probably need to use the 5 coins to activate the statue
 
@@ -411,3 +411,10 @@ break
 @19:34
 
 finishing annotator.
+@20:00 done
+
+The result looks like this:
+
+![a few annotation rules](docs/20240110_annotations.example.png)
+
+![annotations being added by annotator](docs/20240110_annotator_in_action.png)
