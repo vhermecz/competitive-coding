@@ -418,3 +418,250 @@ The result looks like this:
 ![a few annotation rules](docs/20240110_annotations.example.png)
 
 ![annotations being added by annotator](docs/20240110_annotator_in_action.png)
+
+### 24JAN14 3 12:30-14:15, 15:30-16:30, 23:45-23:52 Cracking the calibration function
+
+40 minutes on freaking 0x17a1, got me nowhere
+
+JS:
+```
+func x({r0,r1}) {
+  if (r0 == 0) {
+    r0 = r1 + 1
+  else {
+    if (r1 == 0) {
+      r0 -= 1
+      r1 = r7
+      return x({r0,r1})
+    }
+    tmp = r0
+    r1 -= 1
+    {r0, r1} = x({r0, r1})
+    r1 = r0
+    r0 = tmp - 1
+    {r0, r1} = x({r0, r1})
+  }
+  return {r0,r1}
+}
+```
+
+Ruby:
+```
+class Test
+  def initialize(r0, r1, r7)
+    @r0 = r0
+    @r1 = r1
+    @r7 = r7
+    @cache = {}
+  end
+  def exec
+    x(@r0, @r1)
+  end
+  def x r0, r1
+    key = [r0, r1]
+    return @cache[key] if !@cache[key].nil?
+    if r0 == 0
+      r0 = r1 + 1
+    else
+      if r1 == 0
+        r0 -= 1
+        r1 = @r7
+        r0, r1 = x(r0, r1)
+      else
+        tmp = r0
+        r1 -= 1
+        r0, r1 = x(r0, r1)
+        r1 = r0
+        r0 = tmp - 1
+        r0, r1 = x(r0, r1)
+      end
+    end
+    @cache[key] = [r0, r1]
+  end
+end
+
+Test.new(4,1,0).exec
+```
+
+@13:40 okay, this not gonna happen today.
+
+@14:05 fsck
+
+```
+class Test
+  def initialize(r0, r1, r7)
+    @r0 = r0
+    @r1 = r1
+    @r7 = r7
+    @cache = {}
+  end
+  def exec
+    x(@r0, @r1)
+  end
+  def x r0, r1
+    key = [r0, r1]
+    return @cache[key] if !@cache[key].nil?
+    if r0 == 0
+      r0 = r1 + 1
+    elsif r1 == 0
+      r0, r1 = x(r0-1, @r7)
+    else
+      r0, r1 = x(r0-1, x(r0, r1-1)[0])
+    end
+    @cache[key] = [r0, r1]
+  end
+end
+
+Test.new(4,1,0).exec
+```
+
+@14:15
+break
+@15:30
+
+ok, r1 is not important as a return value, so return is scalar only
+
+```
+def x r0, r1
+  if r0 == 0
+    r1 + 1
+  elsif r1 == 0
+    x(r0-1, r7)
+  else
+    r1 = x(r0, r1-1)
+    x(r0-1, r1)
+  end
+end
+```
+
+So for K = r7 = 1
+
+```
+9|10 11 21 4093
+8| 9 10 19 2045
+7| 8  9 17 1021
+6| 7  8 15 509
+5| 6  7 13 253
+4| 5  6 11 125
+3| 4  5  9  61
+2| 3  4  7  29
+1| 2  3  5  13  65533
+0| 1  2  3   5  13
+ -----------------------
+   0  1  2   3   4
+
+s0(x) := x+1
+s1(x) := x+2
+s2(x) := 2x+3 = 2(x+1)+1
+s3(x) := 2^(x+3)-3
+s4(x) := omg
+```
+
+For K = r7 = 0
+
+```
+9|10 10 10 10
+8| 9  9  9  9
+7| 8  8  8  8
+6| 7  7  7  7
+5| 6  6  6  6
+4| 5  5  5  5
+3| 4  4  4  4
+2| 3  3  3  3
+1| 2  2  2  2  2
+0| 1  1  1  1  1
+ -----------------------
+   0  1  2  3  4
+
+s(x) := x+1
+```
+
+For K = r7 = 2
+
+```
+9|10 12
+8| 9 11
+7| 8 10
+6| 7  9 23
+5| 6  8 20 3278
+4| 5  7 17 1091
+3| 4  6 14  362
+2| 3  5 11  119
+1| 2  4  8   38
+0| 1  3  5   11
+ -----------------------
+   0  1  2    3  4
+
+s0(x) := x+1
+s1(x) := x+3
+s2(x) := 3x+5 = 3(x+1)+2
+s3(x) := 
+```
+
+
+```
+9|10
+8| 9
+7| 8
+6| 7
+5| 6
+4| 5
+3| 4
+2| 3
+1| 2
+0| 1
+ -----------------------
+   0  1  2  3  4
+
+s(x) := x+1
+```
+
+@16:30
+break
+@23:45
+continue for K=2, s(3)
+@23:52
+
+### 24JAN15 0.5 7:00-7:30 Validating calibration
+
+NOTE: Might be bogus because of the modulo:
+
+```
+LIMIT = 32768
+LIMIT.times do |k|
+  puts k if k%100 == 0
+  s = LIMIT.times.map{|v|(v+1)%LIMIT}
+  4.times do
+    sn = [s[k]]
+    (LIMIT-1).times do
+      sn << s[sn.last]
+    end
+    s = sn
+  end
+  puts "yee", k if s[1] == 6
+end
+```
+
+If not working, should figure out the rule behind the s3 series to compute s4(1) = s3(s4(0)) = s3(k)
+
+```
+s0(x) := x+1
+s1(x) := x+1+k
+s2(x) := (k+1) * x+k
+  k=1 s2(x) := 2x+3 = 2(x+1)+1
+  k=2 s2(x) := 3x+5 = 3(x+1)+2
+  k=3 s2(x) := 4(x+1)+3
+s3(x) := ...
+```
+
+yee was printed with `25734` aka `0x6486`. validation:
+
+```
+SET r7, 0x6486
+WMEM 0x1583, 0x0006
+WMEM 0x1587, 0x0015
+WMEM 0x1588, 0x0015
+CALL 0x155b
+```
+
+Yey, code got accepted.

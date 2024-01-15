@@ -14,7 +14,7 @@
 0x0699: function is_arrays_equal(r0: array1, r1: array2):r0:bool = 1 if matched
 0x06d1: function
 0x06fd: function read_console_into_r1(r0: length, r1: string*)
-0x0747: function
+0x0747: function decode_flag
 0x07e7: function
 0x0863: function bitwise_xor(r0, r1):r0
 0x087b: function
@@ -93,9 +93,7 @@
 0x1737: function
 0x1762: function
 0x177c: function
-0x17a1: function
-0x17a9: function
-0x17b6: function
+0x17a1: function calibration_genack_fn
 
 # normal strings
 0x17ca: string "Test string"
