@@ -29,13 +29,13 @@ def first_price_map_from_secret_seq(secret_seq)
 end
 
 def find_best(price_maps)
-  price_sets = price_maps.map{|pm|pm.keys}
-  valid_prices = price_sets.reduce(Set.new) { |acc, set| acc.merge(set) }
-  valid_prices.map do |substr|
-    price_maps.map do |price_map|
-      price_map[substr] || 0
-    end.sum
-  end.max
+  agg = Hash.new { |hash, key| hash[key] = 0 }
+  price_maps.each do |price_map|
+    price_map.each do |key, price|
+      agg[key] += price
+    end
+  end
+  agg.values.max
 end
 
 secret_sequences = data.map{|v|secret_sequence(v, 2000)}
